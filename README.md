@@ -92,19 +92,14 @@ HereMapView(mapViewState)
   <td><a href="https://docs-android.mapconductor.com/components/marker/"><img src="docs/images/marker.png"><br>Marker</a></td>
   <td><pre>
 val markerState = remember { MarkerState(
-    position = GeoPoint(
-        latitude = 52.530909,
-        longitude = 13.385076,
-    ),
+    position = GeoPoint(...),
     icon = DefaultMarkerIcon().copy(
         label = "HERE Technologies",
     ),
     onClick = {
         it.animate(MarkerAnimation.Bounce)
-    }
-) }
-
-HereMapView(state = mapViewState) {
+    },
+) }</pre><pre>HereMapView(state = mapViewState) {
     Marker(markerState)
 }
 </pre></td>
