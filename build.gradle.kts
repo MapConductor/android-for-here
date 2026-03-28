@@ -1,7 +1,7 @@
 ﻿plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    alias()
+    alias(libs.plugins.kotlin.compose)
     id("org.jlleitschuh.gradle.ktlint")
     id("maven-publish")
     id("signing")
@@ -93,8 +93,7 @@ dependencies {
             ),
         ),
     )
-    compileOnly(project(":mapconductor-core"))
-    implementation(project(":mapconductor-heatmap"))
+    implementation("com.mapconductor:core:$libraryVersion")
     implementation(libs.jts.core)
 
     testImplementation(libs.junit)
@@ -134,7 +133,7 @@ publishing {
                 description.set(libraryDescription)
                 url.set(
                     project.findProperty("libraryUrl") as String?
-                        ?: "https://github.com/MapConductor/android-sdk",
+                        ?: "https://github.com/MapConductor/android-for-here",
                 )
 
                 licenses {
@@ -148,17 +147,17 @@ publishing {
                     developer {
                         id.set(project.findProperty("developerId") as String? ?: "mapconductor")
                         name.set(project.findProperty("developerName") as String? ?: "MapConductor Team")
-                        email.set(project.findProperty("developerEmail") as String? ?: "dev@mapconductor.com")
+                        email.set(project.findProperty("developerEmail") as String? ?: "info@mkgeeklab.com")
                     }
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/MapConductor/android-sdk.git")
+                    connection.set("scm:git:git://github.com/MapConductor/android-for-here.git")
                     developerConnection
-                        .set("scm:git:ssh://github.com:MapConductor/android-sdk.git")
+                        .set("scm:git:ssh://github.com:MapConductor/android-for-here.git")
                     url.set(
                         project.findProperty("scmUrl") as String?
-                            ?: "https://github.com/MapConductor/android-sdk.git",
+                            ?: "https://github.com/MapConductor/android-for-here.git",
                     )
                 }
             }
@@ -168,7 +167,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            setUrl("https://maven.pkg.github.com/MapConductor/android-sdk")
+            setUrl("https://github.com/MapConductor/android-for-here")
             credentials {
                 username =
                     project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
