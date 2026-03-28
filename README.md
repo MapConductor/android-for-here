@@ -65,3 +65,25 @@ fun MapView(modifier: Modififer = Modififer) {
 ```
 
 ![](docs/images/basic-setup-here.png)
+
+
+**Quick examples**
+<table>
+<tr>
+  <td><a href="https://docs-android.mapconductor.com/components/mapviewstate/"><img src="docs/images/mapview.png"><br>Map</a></td>
+  <td><pre>
+val initCameraPosition = MapCameraPosition(
+    position = GeoPoint(
+        latitude = 52.530909,
+        longitude = 13.385076,
+    ),
+    zoom = 17.0,
+    tilt = 60.0,
+    bearing = 30.0,
+)
+val mapViewState = rememberHereMapViewState(
+    cameraPosition = initCameraPosition,
+)
+</pre></td>
+</tr>
+</table>

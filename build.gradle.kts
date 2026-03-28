@@ -93,7 +93,8 @@ dependencies {
             ),
         ),
     )
-    implementation("com.mapconductor:core:$libraryVersion")
+    debugImplementation(project(":mapconductor-core"))
+    releaseImplementation("com.mapconductor:core:$libraryVersion")
     implementation(libs.jts.core)
 
     testImplementation(libs.junit)
