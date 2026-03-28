@@ -104,9 +104,7 @@ val markerState = remember { MarkerState(
     }
 ) }
 
-HereMapView(
-    state = mapViewState,
-) {
+HereMapView(state = mapViewState) {
     Marker(markerState)
 }
 </pre></td>
