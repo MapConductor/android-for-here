@@ -84,6 +84,31 @@ val initCameraPosition = MapCameraPosition(
 val mapViewState = rememberHereMapViewState(
     cameraPosition = initCameraPosition,
 )
+
+HereMapView(mapViewState)
+</pre></td>
+</tr>
+<tr>
+  <td><a href="https://docs-android.mapconductor.com/components/marker/"><img src="docs/images/marker.png"><br>Map</a></td>
+  <td><pre>
+val markerState = remember { MarkerState(
+        position = GeoPoint(
+            latitude = 52.530909,
+            longitude = 13.385076,
+        ),
+        icon = DefaultMarkerIcon().copy(
+            label = "HERE Technologies",
+        ),
+        onClick = {
+            // Perform click action
+        }
+    ) }
+
+HereMapView(
+    state = mapViewState,
+) {
+    Marker(markerState)
+}
 </pre></td>
 </tr>
 </table>
