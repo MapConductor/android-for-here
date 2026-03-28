@@ -99,7 +99,9 @@ val markerState = remember { MarkerState(
     onClick = {
         it.animate(MarkerAnimation.Bounce)
     },
-) }</pre><pre>HereMapView(state = mapViewState) {
+) }
+
+HereMapView(state = mapViewState) {
     Marker(markerState)
 }
 </pre></td>
