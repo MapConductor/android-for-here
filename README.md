@@ -83,9 +83,11 @@ fun MapExample() {
         tilt = 60.0,
         bearing = 30.0,
     )
+    
     val mapViewState = rememberHereMapViewState(
         cameraPosition = initCameraPosition,
     )
+
     HereMapView(mapViewState)
 }
 ```
@@ -107,6 +109,7 @@ fun MarkerExample() {
             it.animate(MarkerAnimation.Bounce)
         },
     ) }
+
     HereMapView(state = mapViewState) {
         Marker(markerState)
     }
@@ -122,12 +125,14 @@ fun MarkerExample() {
 @Composable
 fun InfoBubbleExample() {
     var selectedMarker by remember { mutableStateOf<MarkerState?>(null) }
+
     val markerState = remember { MarkerState(
         ...,
         onClick = {
             selectedMarker = it
         },
     ) }
+
     HereMapView(state = mapViewState) {
         Marker(markerState)
         InfoBubble(
@@ -147,6 +152,7 @@ fun InfoBubbleExample() {
 ```kotlin
 @Composable
 fun CircleExample() {
+
     val circleState = remember { CircleState(
         center = GeoPoint(...),
         radiusMeters = 50.0,
@@ -155,9 +161,30 @@ fun CircleExample() {
             it.state.fillColor = Color.Red.copy(alpha = 0.5f)
         }
     ) }
+
     HereMapView(state = mapViewState) {
         Circle(circleState)
     }
 }
 ```
 ![](docs/images/circle.png)
+
+------------------------------------------------------------------------
+
+### Polyline [[docs]](https://docs-android.mapconductor.com/components/polyline/)
+
+```kotlin
+@Composable
+fun PolylineExample() {
+
+    val polylineState = remember { PolylineState(
+            points = airpots,
+            strokeColor = Color.Blue.copy(alpha = 0.5f),
+        ) }
+
+    HereMapView(state = mapViewState) {
+        Polyline(polylineState)
+    }
+}
+```
+![](docs/images/polyline.png)
