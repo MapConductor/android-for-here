@@ -112,7 +112,6 @@ fun MarkerExample() {
   <td><pre>@Composable
 fun InfoBubbleExample() {
   var selectedMarker by remember { mutableStateOf<MarkerState?>(null) }
-
   val markerState = remember { MarkerState(
     ...,
     onClick = {
