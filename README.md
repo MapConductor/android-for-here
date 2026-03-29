@@ -69,7 +69,7 @@ fun MapView(modifier: Modififer = Modififer) {
 
 ## Components
 
-### HereMapView [docs](https://docs-android.mapconductor.com/components/mapviewstate/)
+### HereMapView [[docs]](https://docs-android.mapconductor.com/components/mapviewstate/)
 
 ```kotlin
 @Composable
@@ -91,7 +91,7 @@ fun MapExample() {
 ```
 ![](docs/images/mapview.png)
 
-### Marker [docs](https://docs-android.mapconductor.com/components/marker/)
+### Marker [[docs]](https://docs-android.mapconductor.com/components/marker/)
 
 ```kotlin
 @Composable
@@ -113,7 +113,7 @@ fun MarkerExample() {
 ![](docs/images/marker.png)
 
 
-### InfoBubble [docs](https://docs-android.mapconductor.com/components/infobubble/)
+### InfoBubble [[docs]](https://docs-android.mapconductor.com/components/infobubble/)
 
 ```kotlin
 @Composable
@@ -138,7 +138,7 @@ fun InfoBubbleExample() {
 ![](docs/images/infobubble.png)
 
 
-### Circle [docs](https://docs-android.mapconductor.com/components/circle/)
+### Circle [[docs]](https://docs-android.mapconductor.com/components/circle/)
 
 ```kotlin
 @Composable
