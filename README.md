@@ -108,6 +108,28 @@ fun MarkerExample() {
 }</pre></td>
 </tr>
 <tr>
+  <td><a href="https://docs-android.mapconductor.com/components/infobubble/"><img src="docs/images/infobubble.png"><br>InfoBubble</a></td>
+  <td><pre>@Composable
+fun InfoBubbleExample() {
+  var selectedMarker by remember { mutableStateOf<MarkerState?>(null) }
+
+  val markerState = remember { MarkerState(
+    ...,
+    onClick = {
+      selectedMarker = it
+    },
+  ) }
+  HereMapView(state = mapViewState) {
+    Marker(markerState)
+    InfoBubble(
+      marker = it,
+    ) {
+      Text("Hello, world!")
+    }
+  }
+}</pre></td>
+</tr>
+<tr>
   <td><a href="https://docs-android.mapconductor.com/components/circle/"><img src="docs/images/circle.png"><br>Circle</a></td>
   <td><pre>@Composable
 fun CircleExample() {
