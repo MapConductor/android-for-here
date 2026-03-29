@@ -83,7 +83,7 @@ fun MapExample() {
         tilt = 60.0,
         bearing = 30.0,
     )
-    
+
     val mapViewState = rememberHereMapViewState(
         cameraPosition = initCameraPosition,
     )
@@ -110,7 +110,7 @@ fun MarkerExample() {
         },
     ) }
 
-    HereMapView(state = mapViewState) {
+    HereMapView(...) {
         Marker(markerState)
     }
 }
@@ -133,7 +133,7 @@ fun InfoBubbleExample() {
         },
     ) }
 
-    HereMapView(state = mapViewState) {
+    HereMapView(...) {
         Marker(markerState)
         InfoBubble(
             marker = it,
@@ -162,7 +162,7 @@ fun CircleExample() {
         }
     ) }
 
-    HereMapView(state = mapViewState) {
+    HereMapView(...) {
         Circle(circleState)
     }
 }
@@ -182,9 +182,30 @@ fun PolylineExample() {
             strokeColor = Color.Blue.copy(alpha = 0.5f),
         ) }
 
-    HereMapView(state = mapViewState) {
+    HereMapView(...) {
         Polyline(polylineState)
     }
 }
 ```
 ![](docs/images/polyline.png)
+
+------------------------------------------------------------------------
+
+### Polygon [[docs]](https://docs-android.mapconductor.com/components/polygon/)
+
+```kotlin
+@Composable
+fun PolygonExample() {
+
+    val polygonState = remember { PolygonState(
+        points = goryokaku,
+        strokeColor = Color.Red.copy(alpha = 0.5f),
+        fillColor =  Color.Red.copy(alpha = 0.7f),
+    ) }
+
+    HereMapView(...) {
+        Polygon(polygonState)
+    }
+}
+```
+![](docs/images/polygon.png)
