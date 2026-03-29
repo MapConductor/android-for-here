@@ -104,4 +104,25 @@ val markerState = remember { MarkerState(
 }
 </pre></td>
 </tr>
+<tr>
+  <td><a href="https://docs-android.mapconductor.com/components/circle/"><img src="docs/images/circle.png"><br>Circle</a></td>
+  <td><pre>
+val circleState = remember { CircleState(
+    center = GeoPoint(
+        latitude = 52.530909,
+        longitude = 13.385076,
+    ),
+    radiusMeters = 50.0,
+    fillColor = Color.Blue.copy(alpha = 0.5f),
+    onClick = {
+        it.state.fillColor = Color.Red.copy(alpha = 0.5f)
+    }
+)}</pre><pre>HereMapView(
+    state = mapViewState,
+    modifier = modifier,
+) {
+    Circle(circleState)
+}
+</pre></td>
+</tr>
 </table>
