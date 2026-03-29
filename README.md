@@ -91,6 +91,8 @@ fun MapExample() {
 ```
 ![](docs/images/mapview.png)
 
+------------------------------------------------------------------------
+
 ### Marker [[docs]](https://docs-android.mapconductor.com/components/marker/)
 
 ```kotlin
@@ -112,6 +114,7 @@ fun MarkerExample() {
 ```
 ![](docs/images/marker.png)
 
+------------------------------------------------------------------------
 
 ### InfoBubble [[docs]](https://docs-android.mapconductor.com/components/infobubble/)
 
@@ -137,6 +140,7 @@ fun InfoBubbleExample() {
 ```
 ![](docs/images/infobubble.png)
 
+------------------------------------------------------------------------
 
 ### Circle [[docs]](https://docs-android.mapconductor.com/components/circle/)
 
