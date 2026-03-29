@@ -31,5 +31,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "mapconductor-for-here"
+rootProject.name = "android-for-here"
 include(":sample-app")

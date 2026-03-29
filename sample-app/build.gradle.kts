@@ -57,7 +57,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(findProject(":mapconductor-for-here") ?: project(":"))
+    implementation(findProject(":android-for-here") ?: project(":"))
     // HERE SDK: place heresdk-*.aar in the project root's libs/ directory.
     // The SDK cannot be redistributed; download it from https://developer.here.com/
     implementation(
