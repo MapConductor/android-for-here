@@ -67,82 +67,99 @@ fun MapView(modifier: Modififer = Modififer) {
 ![](docs/images/basic-setup-here.png)
 
 
-**Quick examples**
+## Components
 
-<table>
-<tr>
-  <td><a href="https://docs-android.mapconductor.com/components/mapviewstate/"><img src="docs/images/mapview.png"><br>Map</a></td>
-  <td><pre>@Composable
+### HereMapView
+
+[![](docs/images/mapview.png)](https://docs-android.mapconductor.com/components/mapviewstate/)
+Docs: [HereMapView](https://docs-android.mapconductor.com/components/mapviewstate/)
+
+```kotlin
+@Composable
 fun MapExample() {
-  val initCameraPosition = MapCameraPosition(
-    position = GeoPoint(
-      latitude = 52.530909,
-      longitude = 13.385076,
-    ),
-    zoom = 17.0,
-    tilt = 60.0,
-    bearing = 30.0,
-  )
-  val mapViewState = rememberHereMapViewState(
-    cameraPosition = initCameraPosition,
-  )
-  HereMapView(mapViewState)
-}</pre></td>
-</tr>
-<tr>
-  <td><a href="https://docs-android.mapconductor.com/components/marker/"><img src="docs/images/marker.png"><br>Marker</a></td>
-  <td><pre>@Composable
+    val initCameraPosition = MapCameraPosition(
+        position = GeoPoint(
+            latitude = 52.530909,
+            longitude = 13.385076
+        ),
+        zoom = 17.0,
+        tilt = 60.0,
+        bearing = 30.0,
+    )
+    val mapViewState = rememberHereMapViewState(
+        cameraPosition = initCameraPosition,
+    )
+    HereMapView(mapViewState)
+}
+```
+
+### Marker
+
+[![](docs/images/marker.png)](https://docs-android.mapconductor.com/components/marker/)
+Docs: [Marker](https://docs-android.mapconductor.com/components/marker/)
+
+```kotlin
+@Composable
 fun MarkerExample() {
-  val markerState = remember { MarkerState(
-    position = GeoPoint(...),
-    icon = DefaultMarkerIcon().copy(
-      label = "HERE Technologies",
-    ),
-    onClick = {
-      it.animate(MarkerAnimation.Bounce)
-    },
-  ) }
-  HereMapView(state = mapViewState) {
-    Marker(markerState)
-  }
-}</pre></td>
-</tr>
-<tr>
-  <td><a href="https://docs-android.mapconductor.com/components/infobubble/"><img src="docs/images/infobubble.png"><br>InfoBubble</a></td>
-  <td><pre>@Composable
+    val markerState = remember { MarkerState(
+        position = GeoPoint(...),
+        icon = DefaultMarkerIcon().copy(
+            label = "HERE Technologies",
+        ),
+        onClick = {
+            it.animate(MarkerAnimation.Bounce)
+        },
+    ) }
+    HereMapView(state = mapViewState) {
+        Marker(markerState)
+    }
+}
+```
+
+### InfoBubble
+
+[![](docs/images/infobubble.png)](https://docs-android.mapconductor.com/components/infobubble/)
+Docs: [InfoBubble](https://docs-android.mapconductor.com/components/infobubble/)
+
+```kotlin
+@Composable
 fun InfoBubbleExample() {
-  var selectedMarker by remember { mutableStateOf<MarkerState?>(null) }
-  val markerState = remember { MarkerState(
-    ...,
-    onClick = {
-      selectedMarker = it
-    },
-  ) }
-  HereMapView(state = mapViewState) {
-    Marker(markerState)
-    InfoBubble(
-      marker = it,
-    ) {
-      Text("Hello, world!")
+    var selectedMarker by remember { mutableStateOf<MarkerState?>(null) }
+    val markerState = remember { MarkerState(
+        ...,
+        onClick = {
+            selectedMarker = it
+        },
+    ) }
+    HereMapView(state = mapViewState) {
+        Marker(markerState)
+        InfoBubble(
+            marker = it,
+        ) {
+            Text("Hello, world!")
+        }
     }
-  }
-}</pre></td>
-</tr>
-<tr>
-  <td><a href="https://docs-android.mapconductor.com/components/circle/"><img src="docs/images/circle.png"><br>Circle</a></td>
-  <td><pre>@Composable
+}
+```
+
+### Circle
+
+[![](docs/images/circle.png)](https://docs-android.mapconductor.com/components/circle/)
+Docs: [Circle](https://docs-android.mapconductor.com/components/circle/)
+
+```kotlin
+@Composable
 fun CircleExample() {
-  val circleState = remember { CircleState(
-    center = GeoPoint(...),
-    radiusMeters = 50.0,
-    fillColor = Color.Blue.copy(alpha = 0.5f),
-    onClick = {
-      it.state.fillColor = Color.Red.copy(alpha = 0.5f)
+    val circleState = remember { CircleState(
+        center = GeoPoint(...),
+        radiusMeters = 50.0,
+        fillColor = Color.Blue.copy(alpha = 0.5f),
+        onClick = {
+            it.state.fillColor = Color.Red.copy(alpha = 0.5f)
+        }
+    ) }
+    HereMapView(state = mapViewState) {
+        Circle(circleState)
     }
-  ) }
-  HereMapView(state = mapViewState) {
-    Circle(circleState)
-  }
-}</pre></td>
-</tr>
-</table>
+}
+```
