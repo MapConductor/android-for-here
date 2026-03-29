@@ -3,7 +3,7 @@
 ## Description
 
 MapConductor provides a unified API for Android Jetpack Compose.
-You can use HERE view with Jetpack Compose, but you can also switch to other Maps SDKs (such as MapLibre, GoogleMaps, and so on), anytimes.
+You can use HERE view with Jetpack Compose, but you can also switch to other Maps SDKs (such as MapLibre, Google Maps, and so on), anytimes.
 Even you use the wrapper API, but you can still access to the native HERE view if you want.
 
 ## Setup
@@ -99,7 +99,8 @@ val markerState = remember { MarkerState(
     onClick = {
         it.animate(MarkerAnimation.Bounce)
     },
-) }</pre><pre>HereMapView(state = mapViewState) {
+) }
+HereMapView(state = mapViewState) {
     Marker(markerState)
 }
 </pre></td>
@@ -108,19 +109,14 @@ val markerState = remember { MarkerState(
   <td><a href="https://docs-android.mapconductor.com/components/circle/"><img src="docs/images/circle.png"><br>Circle</a></td>
   <td><pre>
 val circleState = remember { CircleState(
-    center = GeoPoint(
-        latitude = 52.530909,
-        longitude = 13.385076,
-    ),
+    center = GeoPoint(...),
     radiusMeters = 50.0,
     fillColor = Color.Blue.copy(alpha = 0.5f),
     onClick = {
         it.state.fillColor = Color.Red.copy(alpha = 0.5f)
     }
-)}</pre><pre>HereMapView(
-    state = mapViewState,
-    modifier = modifier,
-) {
+) }
+HereMapView(state = mapViewState) {
     Circle(circleState)
 }
 </pre></td>
