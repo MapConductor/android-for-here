@@ -69,10 +69,7 @@ fun MapView(modifier: Modififer = Modififer) {
 
 ## Components
 
-### HereMapView
-
-[![](docs/images/mapview.png)](https://docs-android.mapconductor.com/components/mapviewstate/)
-Docs: [HereMapView](https://docs-android.mapconductor.com/components/mapviewstate/)
+### HereMapView [docs](https://docs-android.mapconductor.com/components/mapviewstate/)
 
 ```kotlin
 @Composable
@@ -92,11 +89,9 @@ fun MapExample() {
     HereMapView(mapViewState)
 }
 ```
+![](docs/images/mapview.png)
 
-### Marker
-
-[![](docs/images/marker.png)](https://docs-android.mapconductor.com/components/marker/)
-Docs: [Marker](https://docs-android.mapconductor.com/components/marker/)
+### Marker [docs](https://docs-android.mapconductor.com/components/marker/)
 
 ```kotlin
 @Composable
@@ -115,11 +110,10 @@ fun MarkerExample() {
     }
 }
 ```
+![](docs/images/marker.png)
 
-### InfoBubble
 
-[![](docs/images/infobubble.png)](https://docs-android.mapconductor.com/components/infobubble/)
-Docs: [InfoBubble](https://docs-android.mapconductor.com/components/infobubble/)
+### InfoBubble [docs](https://docs-android.mapconductor.com/components/infobubble/)
 
 ```kotlin
 @Composable
@@ -141,11 +135,10 @@ fun InfoBubbleExample() {
     }
 }
 ```
+![](docs/images/infobubble.png)
 
-### Circle
 
-[![](docs/images/circle.png)](https://docs-android.mapconductor.com/components/circle/)
-Docs: [Circle](https://docs-android.mapconductor.com/components/circle/)
+### Circle [docs](https://docs-android.mapconductor.com/components/circle/)
 
 ```kotlin
 @Composable
@@ -163,3 +156,4 @@ fun CircleExample() {
     }
 }
 ```
+![](docs/images/circle.png)
