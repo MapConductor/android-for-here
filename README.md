@@ -18,8 +18,8 @@ fun MapView(modifier: Modififer = Modififer) {
     var selectedMarker by remember { mutableStateOf<MarkerState?>(null) }
 
     val center = GeoPoint(
-        latitude = 52.530909,
-        longitude = 13.385076,
+        latitude = 35.6762,
+        longitude = 139.6503,
     )
 
     val mapViewState =
@@ -27,24 +27,19 @@ fun MapView(modifier: Modififer = Modififer) {
             cameraPosition =
                 MapCameraPosition(
                     position = center,
-                    zoom = 11.0,
+                    zoom = 2.0,
                 ),
         )
 
     val markerState = remember { MarkerState(
-            position = center,
-            icon = DefaultMarkerIcon().copy(
-                label = "HERE Technologies",
-                fillColor = Color(
-                    red = 31,
-                    green = 244,
-                    blue = 229,
-                )
-            ),
-            onClick = {
-                selectedMarker = it
-            }
-        )
+        position = center,
+        icon = DefaultMarkerIcon().copy(
+            label = "Tokyo",
+        ),
+        onClick = {
+            selectedMarker = it
+        }
+    )
     }
 
     HereMapView(
@@ -135,10 +130,12 @@ fun InfoBubbleExample() {
 
     HereMapView(...) {
         Marker(markerState)
-        InfoBubble(
-            marker = it,
-        ) {
-            Text("Hello, world!")
+        selectedMarker?.let {
+            InfoBubble(
+                marker = it,
+            ) {
+                Text("Hello, world!")
+            }
         }
     }
 }
@@ -180,6 +177,7 @@ fun PolylineExample() {
     val polylineState = remember { PolylineState(
             points = airpots,
             strokeColor = Color.Blue.copy(alpha = 0.5f),
+            geodesic = true,
         ) }
 
     HereMapView(...) {
