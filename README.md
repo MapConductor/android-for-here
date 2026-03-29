@@ -209,3 +209,27 @@ fun PolygonExample() {
 }
 ```
 ![](docs/images/polygon.png)
+
+------------------------------------------------------------------------
+
+### Polygon [[docs]](https://docs-android.mapconductor.com/components/polygon/)
+
+```kotlin
+@Composable
+fun GroundImageExample() {
+    val groundImageState = remember { GroundImageState(
+        bounds = GeoRectBounds(
+            southWest = GeoPoint.fromLatLong(...),
+            northEast = GeoPoint.fromLatLong(...),
+        ),
+        image = image,
+        opacity = 0.5f,
+    ) }
+
+    HereMapView(state = mapViewState) {
+        GroundImage(groundImageState)
+    }
+}
+```
+![](docs/images/groundimage.png)
+
