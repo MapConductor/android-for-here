@@ -212,7 +212,35 @@ fun PolygonExample() {
 
 ------------------------------------------------------------------------
 
-### Polygon [[docs]](https://docs-android.mapconductor.com/components/polygon/)
+### Polygon Hole
+
+```kotlin
+@Composable
+fun PolygonExample() {
+
+    val polygonState =
+        remember {
+            PolygonState(
+                points = listOf(...),
+                holes = listOf(
+                            listOf(...),
+                            listOf(...),
+                        ),
+                fillColor = Color(0xCC787880),
+                strokeColor = Color.Red,
+                strokeWidth = 2.dp,
+            )
+        }
+
+    HereMapView(...) {
+        Polygon(polygonState)
+    }
+}
+```
+![](docs/images/polygon-hole.png)
+
+------------------------------------------------------------------------
+### GroundImage [[docs]](https://docs-android.mapconductor.com/components/groundimage/)
 
 ```kotlin
 @Composable
