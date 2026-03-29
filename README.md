@@ -86,7 +86,6 @@ fun MapExample() {
   val mapViewState = rememberHereMapViewState(
     cameraPosition = initCameraPosition,
   )
-
   HereMapView(mapViewState)
 }</pre></td>
 </tr>
@@ -102,8 +101,7 @@ fun MarkerExample() {
     onClick = {
       it.animate(MarkerAnimation.Bounce)
     },
-) }
-
+  ) }
   HereMapView(state = mapViewState) {
     Marker(markerState)
   }
