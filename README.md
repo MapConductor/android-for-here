@@ -68,57 +68,62 @@ fun MapView(modifier: Modififer = Modififer) {
 
 
 **Quick examples**
+
 <table>
 <tr>
   <td><a href="https://docs-android.mapconductor.com/components/mapviewstate/"><img src="docs/images/mapview.png"><br>Map</a></td>
-  <td><pre>
-val initCameraPosition = MapCameraPosition(
+  <td><pre>@Composable
+fun MapExample() {
+  val initCameraPosition = MapCameraPosition(
     position = GeoPoint(
-        latitude = 52.530909,
-        longitude = 13.385076,
+      latitude = 52.530909,
+      longitude = 13.385076,
     ),
     zoom = 17.0,
     tilt = 60.0,
     bearing = 30.0,
-)
-val mapViewState = rememberHereMapViewState(
+  )
+  val mapViewState = rememberHereMapViewState(
     cameraPosition = initCameraPosition,
-)
+  )
 
-HereMapView(mapViewState)
-</pre></td>
+  HereMapView(mapViewState)
+}</pre></td>
 </tr>
 <tr>
   <td><a href="https://docs-android.mapconductor.com/components/marker/"><img src="docs/images/marker.png"><br>Marker</a></td>
-  <td><pre>
-val markerState = remember { MarkerState(
+  <td><pre>@Composable
+fun MarkerExample() {
+  val markerState = remember { MarkerState(
     position = GeoPoint(...),
     icon = DefaultMarkerIcon().copy(
-        label = "HERE Technologies",
+      label = "HERE Technologies",
     ),
     onClick = {
-        it.animate(MarkerAnimation.Bounce)
+      it.animate(MarkerAnimation.Bounce)
     },
 ) }
-HereMapView(state = mapViewState) {
+
+  HereMapView(state = mapViewState) {
     Marker(markerState)
-}
-</pre></td>
+  }
+}</pre></td>
 </tr>
 <tr>
   <td><a href="https://docs-android.mapconductor.com/components/circle/"><img src="docs/images/circle.png"><br>Circle</a></td>
-  <td><pre>
-val circleState = remember { CircleState(
+  <td><pre>@Composable
+fun CircleExample() {
+  val circleState = remember { CircleState(
     center = GeoPoint(...),
     radiusMeters = 50.0,
     fillColor = Color.Blue.copy(alpha = 0.5f),
     onClick = {
-        it.state.fillColor = Color.Red.copy(alpha = 0.5f)
+      it.state.fillColor = Color.Red.copy(alpha = 0.5f)
     }
-) }
-HereMapView(state = mapViewState) {
+  ) }
+  HereMapView(state = mapViewState) {
     Circle(circleState)
-}
-</pre></td>
+  }
+}</pre></td>
 </tr>
 </table>
