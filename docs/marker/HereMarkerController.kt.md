@@ -1,18 +1,23 @@
-Excellent. Here is the high-quality SDK documentation for the provided `HereMarkerController` code snippet.
-
 # HereMarkerController
 
-The `HereMarkerController` is a class responsible for managing and rendering markers on a HERE map instance. It serves as a high-level abstraction over the map's native marker system, providing a unified API for adding, updating, and removing markers.
+The `HereMarkerController` is a class responsible for managing and rendering markers on a HERE map
+instance. It serves as a high-level abstraction over the map's native marker system, providing a
+unified API for adding, updating, and removing markers.
 
-A key feature of this controller is its ability to automatically switch between rendering individual markers and using a server-side tile-based rendering strategy. This optimization, known as marker tiling, significantly improves performance when displaying a large number of markers by rendering them as raster tile images instead of individual map objects.
+A key feature of this controller is its ability to automatically switch between rendering individual
+markers and using a server-side tile-based rendering strategy. This optimization, known as marker
+tiling, significantly improves performance when displaying a large number of markers by rendering
+them as raster tile images instead of individual map objects.
 
-An instance of this controller should be created using the `HereMarkerController.create()` factory method.
+An instance of this controller should be created using the `HereMarkerController.create()` factory
+method.
 
 ## Companion Object
 
 ### create
 
-Creates a new instance of the `HereMarkerController`. This is the designated factory method for initializing the controller and its required dependencies, such as the marker renderer and manager.
+Creates a new instance of the `HereMarkerController`. This is the designated factory method for
+initializing the controller and its required dependencies, such as the marker renderer and manager.
 
 **Signature**
 ```kotlin
@@ -23,15 +28,21 @@ fun create(
 ```
 
 **Description**
-This method sets up the `HereMarkerController` with the necessary components to interact with a HERE map. It initializes the `HereMarkerRenderer` for drawing markers and the `MarkerManager` for state management.
+This method sets up the `HereMarkerController` with the necessary components to interact with a HERE
+map. It initializes the `HereMarkerRenderer` for drawing markers and the `MarkerManager` for state
+management.
 
 **Parameters**
 
-| Parameter      | Type                  | Description                                                                                                                                                           |
-| :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `holder`       | `HereViewHolder`      | The view holder that provides the connection to the underlying `MapView` instance.                                                                                    |
-| `markerTiling` | `MarkerTilingOptions` | *(Optional)* Configuration for the marker tiling optimization. Tiling is enabled when the number of markers exceeds `minMarkerCount`. Defaults to `MarkerTilingOptions.Default`. |
-
+- `holder`
+    - Type: `HereViewHolder`
+    - Description: The view holder that provides the connection to the underlying `MapView`
+                   instance.
+- `markerTiling`
+    - Type: `MarkerTilingOptions`
+    - Description: *(Optional)* Configuration for the marker tiling optimization. Tiling is enabled
+                   when the number of markers exceeds `minMarkerCount`. Defaults to
+                   `MarkerTilingOptions.Default`.
 **Returns**
 
 A new, fully initialized `HereMarkerController` instance.
@@ -54,7 +65,9 @@ val markerController = HereMarkerController.create(
 
 ### setRasterLayerCallback
 
-Sets a callback to receive updates for the raster layer used for tiled markers. When marker tiling is active, the controller generates a `RasterLayerState` that must be added to the map to display the tiled markers. This callback provides that state.
+Sets a callback to receive updates for the raster layer used for tiled markers. When marker tiling
+is active, the controller generates a `RasterLayerState` that must be added to the map to display
+the tiled markers. This callback provides that state.
 
 **Signature**
 ```kotlin
@@ -62,14 +75,17 @@ fun setRasterLayerCallback(callback: MarkerTileRasterLayerCallback?)
 ```
 
 **Description**
-Register a callback function that will be invoked whenever the raster layer for tiled markers is created, updated, or removed. Your application should use this callback to manage the `RasterLayer` on the map view. Pass `null` to remove a previously set callback.
+Register a callback function that will be invoked whenever the raster layer for tiled markers is
+created, updated, or removed. Your application should use this callback to manage the `RasterLayer`
+on the map view. Pass `null` to remove a previously set callback.
 
 **Parameters**
 
-| Parameter  | Type                          | Description                                                                                                                                                           |
-| :--------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `callback` | `MarkerTileRasterLayerCallback?` | The callback to be invoked with the `RasterLayerState`. It receives the new state, or `null` if the tile layer is removed (e.g., when all markers are cleared). |
-
+- `callback`
+    - Type: `MarkerTileRasterLayerCallback?`
+    - Description: The callback to be invoked with the `RasterLayerState`. It receives the new
+                   state, or `null` if the tile layer is removed (e.g., when all markers are
+                   cleared).
 **Returns**
 
 This method does not return a value.
@@ -93,7 +109,8 @@ markerController.setRasterLayerCallback { rasterLayerState ->
 
 ### find
 
-Finds the nearest marker to a given geographic position within a specified tap tolerance. This is primarily used to detect user interactions like taps on a marker.
+Finds the nearest marker to a given geographic position within a specified tap tolerance. This is
+primarily used to detect user interactions like taps on a marker.
 
 **Signature**
 ```kotlin
@@ -101,17 +118,19 @@ override fun find(position: GeoPointInterface): MarkerEntityInterface<HereActual
 ```
 
 **Description**
-This method calculates if the given `position` (e.g., from a map tap event) falls within the tappable area of a nearby marker. The tappable area is determined by the marker's icon size, anchor point, and a system-defined tolerance, ensuring a user-friendly touch target.
+This method calculates if the given `position` (e.g., from a map tap event) falls within the
+tappable area of a nearby marker. The tappable area is determined by the marker's icon size, anchor
+point, and a system-defined tolerance, ensuring a user-friendly touch target.
 
 **Parameters**
 
-| Parameter  | Type                | Description                                                              |
-| :--------- | :------------------ | :----------------------------------------------------------------------- |
-| `position` | `GeoPointInterface` | The geographic coordinate to search for a marker, typically from a user tap. |
-
+- `position`
+    - Type: `GeoPointInterface`
+    - Description: The geographic coordinate to search for a marker, typically from a user tap.
 **Returns**
 
-A `MarkerEntityInterface<HereActualMarker>` representing the found marker, or `null` if no marker is found at the specified position.
+A `MarkerEntityInterface<HereActualMarker>` representing the found marker, or `null` if no marker is
+found at the specified position.
 
 **Example**
 ```kotlin
@@ -129,7 +148,8 @@ mapView.gestures.tapListener = TapListener { touchPoint ->
 
 ### add
 
-Adds a list of markers to the map. The controller will automatically decide whether to render them as individual objects or as part of a tiled layer for performance.
+Adds a list of markers to the map. The controller will automatically decide whether to render them
+as individual objects or as part of a tiled layer for performance.
 
 **Signature**
 ```kotlin
@@ -137,14 +157,15 @@ override suspend fun add(data: List<MarkerState>)
 ```
 
 **Description**
-This asynchronous method ingests a list of `MarkerState` objects. If tiling is enabled and the total marker count meets the threshold, markers that are not draggable and have no animations will be added to the tiled layer. Otherwise, they will be rendered as individual map markers.
+This asynchronous method ingests a list of `MarkerState` objects. If tiling is enabled and the total
+marker count meets the threshold, markers that are not draggable and have no animations will be
+added to the tiled layer. Otherwise, they will be rendered as individual map markers.
 
 **Parameters**
 
-| Parameter | Type                | Description                                                              |
-| :-------- | :------------------ | :----------------------------------------------------------------------- |
-| `data`    | `List<MarkerState>` | A list of `MarkerState` objects, each defining a marker to be added. |
-
+- `data`
+    - Type: `List<MarkerState>`
+    - Description: A list of `MarkerState` objects, each defining a marker to be added.
 **Returns**
 
 This is a `suspend` function and does not return a value.
@@ -173,14 +194,17 @@ override suspend fun update(state: MarkerState)
 ```
 
 **Description**
-This asynchronous method updates an existing marker identified by the `id` in the provided `MarkerState`. It efficiently handles changes to properties like position, icon, and visibility. It also manages the transition of a marker between being individually rendered and being part of a tiled layer. If no marker with the given ID exists, the operation is ignored.
+This asynchronous method updates an existing marker identified by the `id` in the provided
+`MarkerState`. It efficiently handles changes to properties like position, icon, and visibility. It
+also manages the transition of a marker between being individually rendered and being part of a
+tiled layer. If no marker with the given ID exists, the operation is ignored.
 
 **Parameters**
 
-| Parameter | Type          | Description                                                                                             |
-| :-------- | :------------ | :------------------------------------------------------------------------------------------------------ |
-| `state`   | `MarkerState` | The new state for the marker. The `id` field is used to identify which existing marker to update. |
-
+- `state`
+    - Type: `MarkerState`
+    - Description: The new state for the marker. The `id` field is used to identify which existing
+                   marker to update.
 **Returns**
 
 This is a `suspend` function and does not return a value.
@@ -210,7 +234,8 @@ override suspend fun clear()
 ```
 
 **Description**
-This asynchronous method removes all individually rendered markers and clears any active marker tile layers. It effectively resets the controller to an empty state.
+This asynchronous method removes all individually rendered markers and clears any active marker tile
+layers. It effectively resets the controller to an empty state.
 
 **Parameters**
 
@@ -240,14 +265,15 @@ override suspend fun onCameraChanged(mapCameraPosition: MapCameraPosition)
 ```
 
 **Description**
-This method is intended for internal use by the map integration layer. It listens to camera updates to track the current zoom level, which is crucial for determining which marker tiles to display. Developers typically do not need to call this method directly.
+This method is intended for internal use by the map integration layer. It listens to camera updates
+to track the current zoom level, which is crucial for determining which marker tiles to display.
+Developers typically do not need to call this method directly.
 
 **Parameters**
 
-| Parameter           | Type                | Description                               |
-| :------------------ | :------------------ | :---------------------------------------- |
-| `mapCameraPosition` | `MapCameraPosition` | The new state of the map camera. |
-
+- `mapCameraPosition`
+    - Type: `MapCameraPosition`
+    - Description: The new state of the map camera.
 **Returns**
 
 This is a `suspend` function and does not return a value.
@@ -264,7 +290,9 @@ override fun destroy()
 ```
 
 **Description**
-This method must be called to release resources when the controller is no longer needed (e.g., in `onDestroy` of an Activity or Fragment). It unregisters tile providers, clears internal references, and ensures no memory leaks occur.
+This method must be called to release resources when the controller is no longer needed (e.g., in
+`onDestroy` of an Activity or Fragment). It unregisters tile providers, clears internal references,
+and ensures no memory leaks occur.
 
 **Parameters**
 

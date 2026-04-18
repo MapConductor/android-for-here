@@ -1,12 +1,11 @@
-Of course! Here is the high-quality SDK documentation for the provided `HereMapViewController` code snippet.
-
----
-
 # HereMapViewController
 
 ## Class: HereMapViewController
 
-The `HereMapViewController` is a central controller for the HERE SDK map view. It manages the lifecycle and interactions of various map overlays such as markers, polylines, polygons, circles, and ground images. It also handles camera movements, user gestures (taps, long presses), and map styling. This class serves as the primary interface for developers to interact with the map.
+The `HereMapViewController` is a central controller for the HERE SDK map view. It manages the
+lifecycle and interactions of various map overlays such as markers, polylines, polygons, circles,
+and ground images. It also handles camera movements, user gestures (taps, long presses), and map
+styling. This class serves as the primary interface for developers to interact with the map.
 
 ### Signature
 
@@ -35,18 +34,33 @@ Initializes a new instance of the `HereMapViewController`.
 
 #### Parameters
 
-| Name                  | Type                      | Description                                                                    |
-| --------------------- | ------------------------- | ------------------------------------------------------------------------------ |
-| `markerController`    | `HereMarkerController`    | The controller responsible for managing marker overlays.                       |
-| `polylineController`  | `HerePolylineController`  | The controller responsible for managing polyline overlays.                     |
-| `polygonController`   | `HerePolygonController`   | The controller responsible for managing polygon overlays.                      |
-| `groundImageController`| `HereGroundImageController`| The controller responsible for managing ground image overlays.                 |
-| `circleController`    | `HereCircleController`    | The controller responsible for managing circle overlays.                       |
-| `rasterLayerController`| `HereRasterLayerController`| The controller responsible for managing raster layer overlays.                 |
-| `holder`              | `HereViewHolder`          | The view holder that contains the `MapView` instance.                          |
-| `coroutine`           | `CoroutineScope`          | The coroutine scope for main-thread operations. Defaults to `Dispatchers.Main`.|
-| `backCoroutine`       | `CoroutineScope`          | The coroutine scope for background operations. Defaults to `Dispatchers.Default`.|
-
+- `markerController`
+    - Type: `HereMarkerController`
+    - Description: The controller responsible for managing marker overlays.
+- `polylineController`
+    - Type: `HerePolylineController`
+    - Description: The controller responsible for managing polyline overlays.
+- `polygonController`
+    - Type: `HerePolygonController`
+    - Description: The controller responsible for managing polygon overlays.
+- `groundImageController`
+    - Type: `HereGroundImageController`
+    - Description: The controller responsible for managing ground image overlays.
+- `circleController`
+    - Type: `HereCircleController`
+    - Description: The controller responsible for managing circle overlays.
+- `rasterLayerController`
+    - Type: `HereRasterLayerController`
+    - Description: The controller responsible for managing raster layer overlays.
+- `holder`
+    - Type: `HereViewHolder`
+    - Description: The view holder that contains the `MapView` instance.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope for main-thread operations. Defaults to `Dispatchers.Main`.
+- `backCoroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope for background operations. Defaults to `Dispatchers.Default`.
 ---
 
 ## Overlay Management
@@ -75,10 +89,9 @@ override suspend fun compositionMarkers(data: List<MarkerState>)
 
 #### Parameters
 
-| Name   | Type                | Description                               |
-| ------ | ------------------- | ----------------------------------------- |
-| `data` | `List<MarkerState>` | A list of `MarkerState` objects to render. |
-
+- `data`
+    - Type: `List<MarkerState>`
+    - Description: A list of `MarkerState` objects to render.
 ---
 
 ### updateMarker
@@ -93,10 +106,9 @@ override suspend fun updateMarker(state: MarkerState)
 
 #### Parameters
 
-| Name    | Type          | Description                                  |
-| ------- | ------------- | -------------------------------------------- |
-| `state` | `MarkerState` | The new state for the marker to be updated. |
-
+- `state`
+    - Type: `MarkerState`
+    - Description: The new state for the marker to be updated.
 ---
 
 ### hasMarker
@@ -111,10 +123,9 @@ override fun hasMarker(state: MarkerState): Boolean
 
 #### Parameters
 
-| Name    | Type          | Description                               |
-| ------- | ------------- | ----------------------------------------- |
-| `state` | `MarkerState` | The state of the marker to check for. |
-
+- `state`
+    - Type: `MarkerState`
+    - Description: The state of the marker to check for.
 #### Returns
 
 `Boolean` - `true` if the marker exists, `false` otherwise.
@@ -133,10 +144,9 @@ override suspend fun compositionPolylines(data: List<PolylineState>)
 
 #### Parameters
 
-| Name   | Type                  | Description                                 |
-| ------ | --------------------- | ------------------------------------------- |
-| `data` | `List<PolylineState>` | A list of `PolylineState` objects to render. |
-
+- `data`
+    - Type: `List<PolylineState>`
+    - Description: A list of `PolylineState` objects to render.
 ---
 
 ### updatePolyline
@@ -151,10 +161,9 @@ override suspend fun updatePolyline(state: PolylineState)
 
 #### Parameters
 
-| Name    | Type            | Description                                    |
-| ------- | --------------- | ---------------------------------------------- |
-| `state` | `PolylineState` | The new state for the polyline to be updated. |
-
+- `state`
+    - Type: `PolylineState`
+    - Description: The new state for the polyline to be updated.
 ---
 
 ### hasPolyline
@@ -169,10 +178,9 @@ override fun hasPolyline(state: PolylineState): Boolean
 
 #### Parameters
 
-| Name    | Type            | Description                                 |
-| ------- | --------------- | ------------------------------------------- |
-| `state` | `PolylineState` | The state of the polyline to check for. |
-
+- `state`
+    - Type: `PolylineState`
+    - Description: The state of the polyline to check for.
 #### Returns
 
 `Boolean` - `true` if the polyline exists, `false` otherwise.
@@ -191,10 +199,9 @@ override suspend fun compositionPolygons(data: List<PolygonState>)
 
 #### Parameters
 
-| Name   | Type                 | Description                                |
-| ------ | -------------------- | ------------------------------------------ |
-| `data` | `List<PolygonState>` | A list of `PolygonState` objects to render. |
-
+- `data`
+    - Type: `List<PolygonState>`
+    - Description: A list of `PolygonState` objects to render.
 ---
 
 ### updatePolygon
@@ -209,10 +216,9 @@ override suspend fun updatePolygon(state: PolygonState)
 
 #### Parameters
 
-| Name    | Type           | Description                                   |
-| ------- | -------------- | --------------------------------------------- |
-| `state` | `PolygonState` | The new state for the polygon to be updated. |
-
+- `state`
+    - Type: `PolygonState`
+    - Description: The new state for the polygon to be updated.
 ---
 
 ### hasPolygon
@@ -227,10 +233,9 @@ override fun hasPolygon(state: PolygonState): Boolean
 
 #### Parameters
 
-| Name    | Type           | Description                                |
-| ------- | -------------- | ------------------------------------------ |
-| `state` | `PolygonState` | The state of the polygon to check for. |
-
+- `state`
+    - Type: `PolygonState`
+    - Description: The state of the polygon to check for.
 #### Returns
 
 `Boolean` - `true` if the polygon exists, `false` otherwise.
@@ -249,10 +254,9 @@ override suspend fun compositionCircles(data: List<CircleState>)
 
 #### Parameters
 
-| Name   | Type                | Description                               |
-| ------ | ------------------- | ----------------------------------------- |
-| `data` | `List<CircleState>` | A list of `CircleState` objects to render. |
-
+- `data`
+    - Type: `List<CircleState>`
+    - Description: A list of `CircleState` objects to render.
 ---
 
 ### updateCircle
@@ -267,10 +271,9 @@ override suspend fun updateCircle(state: CircleState)
 
 #### Parameters
 
-| Name    | Type          | Description                                  |
-| ------- | ------------- | -------------------------------------------- |
-| `state` | `CircleState` | The new state for the circle to be updated. |
-
+- `state`
+    - Type: `CircleState`
+    - Description: The new state for the circle to be updated.
 ---
 
 ### hasCircle
@@ -285,10 +288,9 @@ override fun hasCircle(state: CircleState): Boolean
 
 #### Parameters
 
-| Name    | Type          | Description                               |
-| ------- | ------------- | ----------------------------------------- |
-| `state` | `CircleState` | The state of the circle to check for. |
-
+- `state`
+    - Type: `CircleState`
+    - Description: The state of the circle to check for.
 #### Returns
 
 `Boolean` - `true` if the circle exists, `false` otherwise.
@@ -307,10 +309,9 @@ override suspend fun compositionGroundImages(data: List<GroundImageState>)
 
 #### Parameters
 
-| Name   | Type                     | Description                                      |
-| ------ | ------------------------ | ------------------------------------------------ |
-| `data` | `List<GroundImageState>` | A list of `GroundImageState` objects to render. |
-
+- `data`
+    - Type: `List<GroundImageState>`
+    - Description: A list of `GroundImageState` objects to render.
 ---
 
 ### updateGroundImage
@@ -325,10 +326,9 @@ override suspend fun updateGroundImage(state: GroundImageState)
 
 #### Parameters
 
-| Name    | Type               | Description                                        |
-| ------- | ------------------ | -------------------------------------------------- |
-| `state` | `GroundImageState` | The new state for the ground image to be updated. |
-
+- `state`
+    - Type: `GroundImageState`
+    - Description: The new state for the ground image to be updated.
 ---
 
 ### hasGroundImage
@@ -343,10 +343,9 @@ override fun hasGroundImage(state: GroundImageState): Boolean
 
 #### Parameters
 
-| Name    | Type               | Description                                    |
-| ------- | ------------------ | ---------------------------------------------- |
-| `state` | `GroundImageState` | The state of the ground image to check for. |
-
+- `state`
+    - Type: `GroundImageState`
+    - Description: The state of the ground image to check for.
 #### Returns
 
 `Boolean` - `true` if the ground image exists, `false` otherwise.
@@ -365,10 +364,9 @@ override suspend fun compositionRasterLayers(data: List<RasterLayerState>)
 
 #### Parameters
 
-| Name   | Type                     | Description                                      |
-| ------ | ------------------------ | ------------------------------------------------ |
-| `data` | `List<RasterLayerState>` | A list of `RasterLayerState` objects to render. |
-
+- `data`
+    - Type: `List<RasterLayerState>`
+    - Description: A list of `RasterLayerState` objects to render.
 ---
 
 ### updateRasterLayer
@@ -383,10 +381,9 @@ override suspend fun updateRasterLayer(state: RasterLayerState)
 
 #### Parameters
 
-| Name    | Type               | Description                                        |
-| ------- | ------------------ | -------------------------------------------------- |
-| `state` | `RasterLayerState` | The new state for the raster layer to be updated. |
-
+- `state`
+    - Type: `RasterLayerState`
+    - Description: The new state for the raster layer to be updated.
 ---
 
 ### hasRasterLayer
@@ -401,10 +398,9 @@ override fun hasRasterLayer(state: RasterLayerState): Boolean
 
 #### Parameters
 
-| Name    | Type               | Description                                    |
-| ------- | ------------------ | ---------------------------------------------- |
-| `state` | `RasterLayerState` | The state of the raster layer to check for. |
-
+- `state`
+    - Type: `RasterLayerState`
+    - Description: The state of the raster layer to check for.
 #### Returns
 
 `Boolean` - `true` if the raster layer exists, `false` otherwise.
@@ -425,10 +421,9 @@ override fun moveCamera(position: MapCameraPosition)
 
 #### Parameters
 
-| Name       | Type                | Description                               |
-| ---------- | ------------------- | ----------------------------------------- |
-| `position` | `MapCameraPosition` | The target position for the map camera. |
-
+- `position`
+    - Type: `MapCameraPosition`
+    - Description: The target position for the map camera.
 #### Example
 
 ```kotlin
@@ -458,11 +453,12 @@ override fun animateCamera(
 
 #### Parameters
 
-| Name       | Type                | Description                                                              |
-| ---------- | ------------------- | ------------------------------------------------------------------------ |
-| `position` | `MapCameraPosition` | The target position for the map camera.                                  |
-| `duration` | `Long`              | The duration of the animation in milliseconds.                           |
-
+- `position`
+    - Type: `MapCameraPosition`
+    - Description: The target position for the map camera.
+- `duration`
+    - Type: `Long`
+    - Description: The duration of the animation in milliseconds.
 #### Example
 
 ```kotlin
@@ -483,7 +479,8 @@ mapViewController.animateCamera(targetPosition, duration = 2000L) // 2-second an
 
 Sets a global listener for marker click events.
 
-> **Deprecated:** This method is deprecated. Use the `onClick` lambda on the `MarkerState` object for individual marker event handling.
+> **Deprecated:** This method is deprecated. Use the `onClick` lambda on the `MarkerState` object
+for individual marker event handling.
 
 #### Signature
 
@@ -494,17 +491,17 @@ override fun setOnMarkerClickListener(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Name       | Type                   | Description                               |
-| ---------- | ---------------------- | ----------------------------------------- |
-| `listener` | `OnMarkerEventHandler?` | The listener to be invoked on marker click. |
-
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The listener to be invoked on marker click.
 ---
 
 ### setOnMarkerDragStart
 
 Sets a global listener for marker drag start events.
 
-> **Deprecated:** This method is deprecated. Use the `onDragStart` lambda on the `MarkerState` object.
+> **Deprecated:** This method is deprecated. Use the `onDragStart` lambda on the `MarkerState`
+object.
 
 #### Signature
 
@@ -515,10 +512,9 @@ override fun setOnMarkerDragStart(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Name       | Type                   | Description                                     |
-| ---------- | ---------------------- | ----------------------------------------------- |
-| `listener` | `OnMarkerEventHandler?` | The listener to be invoked when a marker drag starts. |
-
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The listener to be invoked when a marker drag starts.
 ---
 
 ### setOnMarkerDrag
@@ -536,10 +532,9 @@ override fun setOnMarkerDrag(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Name       | Type                   | Description                                     |
-| ---------- | ---------------------- | ----------------------------------------------- |
-| `listener` | `OnMarkerEventHandler?` | The listener to be invoked during a marker drag. |
-
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The listener to be invoked during a marker drag.
 ---
 
 ### setOnMarkerDragEnd
@@ -557,10 +552,9 @@ override fun setOnMarkerDragEnd(listener: OnMarkerEventHandler?)
 
 #### Parameters
 
-| Name       | Type                   | Description                                   |
-| ---------- | ---------------------- | --------------------------------------------- |
-| `listener` | `OnMarkerEventHandler?` | The listener to be invoked when a marker drag ends. |
-
+- `listener`
+    - Type: `OnMarkerEventHandler?`
+    - Description: The listener to be invoked when a marker drag ends.
 ---
 
 ### setOnCircleClickListener
@@ -578,17 +572,17 @@ override fun setOnCircleClickListener(listener: OnCircleEventHandler?)
 
 #### Parameters
 
-| Name       | Type                  | Description                               |
-| ---------- | --------------------- | ----------------------------------------- |
-| `listener` | `OnCircleEventHandler?` | The listener to be invoked on circle click. |
-
+- `listener`
+    - Type: `OnCircleEventHandler?`
+    - Description: The listener to be invoked on circle click.
 ---
 
 ### setOnGroundImageClickListener
 
 Sets a global listener for ground image click events.
 
-> **Deprecated:** This method is deprecated. Use the `onClick` lambda on the `GroundImageState` object.
+> **Deprecated:** This method is deprecated. Use the `onClick` lambda on the `GroundImageState`
+object.
 
 #### Signature
 
@@ -599,10 +593,9 @@ override fun setOnGroundImageClickListener(listener: OnGroundImageEventHandler?)
 
 #### Parameters
 
-| Name       | Type                       | Description                                   |
-| ---------- | -------------------------- | --------------------------------------------- |
-| `listener` | `OnGroundImageEventHandler?` | The listener to be invoked on ground image click. |
-
+- `listener`
+    - Type: `OnGroundImageEventHandler?`
+    - Description: The listener to be invoked on ground image click.
 ---
 
 ### setOnPolylineClickListener
@@ -620,10 +613,9 @@ override fun setOnPolylineClickListener(listener: OnPolylineEventHandler?)
 
 #### Parameters
 
-| Name       | Type                    | Description                                 |
-| ---------- | ----------------------- | ------------------------------------------- |
-| `listener` | `OnPolylineEventHandler?` | The listener to be invoked on polyline click. |
-
+- `listener`
+    - Type: `OnPolylineEventHandler?`
+    - Description: The listener to be invoked on polyline click.
 ---
 
 ### setOnPolygonClickListener
@@ -641,17 +633,17 @@ override fun setOnPolygonClickListener(listener: OnPolygonEventHandler?)
 
 #### Parameters
 
-| Name       | Type                   | Description                                |
-| ---------- | ---------------------- | ------------------------------------------ |
-| `listener` | `OnPolygonEventHandler?` | The listener to be invoked on polygon click. |
-
+- `listener`
+    - Type: `OnPolygonEventHandler?`
+    - Description: The listener to be invoked on polygon click.
 ---
 
 ## Map Styling
 
 ### setMapDesignType
 
-Sets the visual style (theme) of the map, such as normal day, satellite, or night mode. This operation is asynchronous.
+Sets the visual style (theme) of the map, such as normal day, satellite, or night mode. This
+operation is asynchronous.
 
 #### Signature
 
@@ -661,10 +653,9 @@ override fun setMapDesignType(value: HereMapDesignType)
 
 #### Parameters
 
-| Name    | Type                | Description                                                              |
-| ------- | ------------------- | ------------------------------------------------------------------------ |
-| `value` | `HereMapDesignType` | The desired map design type (e.g., `HereMapDesign.NormalDay`). |
-
+- `value`
+    - Type: `HereMapDesignType`
+    - Description: The desired map design type (e.g., `HereMapDesign.NormalDay`).
 #### Example
 
 ```kotlin
@@ -676,7 +667,8 @@ mapViewController.setMapDesignType(HereMapDesign.Satellite)
 
 ### setMapDesignTypeChangeListener
 
-Registers a listener that is notified whenever the map's design type changes. The listener is immediately invoked with the current map design type upon registration.
+Registers a listener that is notified whenever the map's design type changes. The listener is
+immediately invoked with the current map design type upon registration.
 
 #### Signature
 
@@ -686,10 +678,9 @@ override fun setMapDesignTypeChangeListener(listener: HereMapDesignTypeChangeHan
 
 #### Parameters
 
-| Name       | Type                           | Description                                                              |
-| ---------- | ------------------------------ | ------------------------------------------------------------------------ |
-| `listener` | `HereMapDesignTypeChangeHandler` | A handler that receives the new `HereMapDesignType` when the style changes. |
-
+- `listener`
+    - Type: `HereMapDesignTypeChangeHandler`
+    - Description: A handler that receives the new `HereMapDesignType` when the style changes.
 #### Example
 
 ```kotlin
@@ -704,7 +695,8 @@ mapViewController.setMapDesignTypeChangeListener { newDesignType ->
 
 ### setupListeners
 
-Sets up or re-applies the internal listeners for camera updates and gesture handling on the `MapView`. This is typically called during initialization.
+Sets up or re-applies the internal listeners for camera updates and gesture handling on the
+`MapView`. This is typically called during initialization.
 
 #### Signature
 
@@ -728,10 +720,9 @@ fun createMarkerRenderer(
 
 #### Parameters
 
-| Name       | Type                                                   | Description                               |
-| ---------- | ------------------------------------------------------ | ----------------------------------------- |
-| `strategy` | `MarkerRenderingStrategyInterface<HereActualMarker>` | The strategy to use for rendering markers. |
-
+- `strategy`
+    - Type: `MarkerRenderingStrategyInterface<HereActualMarker>`
+    - Description: The strategy to use for rendering markers.
 #### Returns
 
 `MarkerOverlayRendererInterface<HereActualMarker>` - A new marker renderer instance.
@@ -753,11 +744,12 @@ fun createMarkerEventController(
 
 #### Parameters
 
-| Name         | Type                                             | Description                               |
-| ------------ | ------------------------------------------------ | ----------------------------------------- |
-| `controller` | `StrategyMarkerController<HereActualMarker>`   | The strategy controller for the markers.  |
-| `renderer`   | `MarkerOverlayRendererInterface<HereActualMarker>` | The renderer associated with the markers. |
-
+- `controller`
+    - Type: `StrategyMarkerController<HereActualMarker>`
+    - Description: The strategy controller for the markers.
+- `renderer`
+    - Type: `MarkerOverlayRendererInterface<HereActualMarker>`
+    - Description: The renderer associated with the markers.
 #### Returns
 
 `MarkerEventControllerInterface<HereActualMarker>` - A new marker event controller instance.
@@ -766,7 +758,8 @@ fun createMarkerEventController(
 
 ### registerMarkerEventController
 
-Registers a custom marker event controller to handle user interactions like clicks and drags for a specific set of markers.
+Registers a custom marker event controller to handle user interactions like clicks and drags for a
+specific set of markers.
 
 #### Signature
 
@@ -776,6 +769,7 @@ fun registerMarkerEventController(controller: MarkerEventControllerInterface<Her
 
 #### Parameters
 
-| Name         | Type                                           | Description                                                              |
-| ------------ | ---------------------------------------------- | ------------------------------------------------------------------------ |
-| `controller` | `MarkerEventControllerInterface<HereActualMarker>` | The event controller to register. It will be configured with any global listeners. |
+- `controller`
+    - Type: `MarkerEventControllerInterface<HereActualMarker>`
+    - Description: The event controller to register. It will be configured with any global
+                   listeners.

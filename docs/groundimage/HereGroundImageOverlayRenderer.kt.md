@@ -1,16 +1,17 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
----
-
 # HereGroundImageOverlayRenderer
 
 ## Class: `HereGroundImageOverlayRenderer`
 
 ### Description
 
-The `HereGroundImageOverlayRenderer` is a concrete implementation of `AbstractGroundImageOverlayRenderer` designed specifically for the HERE SDK. It manages the rendering and lifecycle of ground image overlays on a HERE map.
+The `HereGroundImageOverlayRenderer` is a concrete implementation of
+`AbstractGroundImageOverlayRenderer` designed specifically for the HERE SDK. It manages the
+rendering and lifecycle of ground image overlays on a HERE map.
 
-This class handles the creation, updating, and removal of ground images by interacting with a `LocalTileServer` to serve image tiles and with the HERE SDK's `MapLayer` and `RasterDataSource` components to display them. It is responsible for translating a platform-agnostic `GroundImageState` into a visible overlay on the map.
+This class handles the creation, updating, and removal of ground images by interacting with a
+`LocalTileServer` to serve image tiles and with the HERE SDK's `MapLayer` and `RasterDataSource`
+components to display them. It is responsible for translating a platform-agnostic `GroundImageState`
+into a visible overlay on the map.
 
 ### Constructor
 
@@ -30,12 +31,18 @@ Initializes a new instance of the `HereGroundImageOverlayRenderer`.
 
 #### Parameters
 
-| Parameter   | Type              | Description                                                                                             |
-| :---------- | :---------------- | :------------------------------------------------------------------------------------------------------ |
-| `holder`    | `HereViewHolder`  | The view holder containing the HERE `MapView` and `MapContext` where the overlays will be rendered.       |
-| `tileServer`| `LocalTileServer` | The local server instance responsible for generating and serving image tiles for the ground overlays.     |
-| `coroutine` | `CoroutineScope`  | The coroutine scope used for managing background tasks, such as creating and updating map layers. Defaults to `CoroutineScope(Dispatchers.Default)`. |
-
+- `holder`
+    - Type: `HereViewHolder`
+    - Description: The view holder containing the HERE `MapView` and `MapContext` where the overlays
+                   will be rendered.
+- `tileServer`
+    - Type: `LocalTileServer`
+    - Description: The local server instance responsible for generating and serving image tiles for
+                   the ground overlays.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope used for managing background tasks, such as creating and
+                   updating map layers. Defaults to `CoroutineScope(Dispatchers.Default)`.
 ---
 
 ## Methods
@@ -50,17 +57,20 @@ override suspend fun createGroundImage(state: GroundImageState): HereActualGroun
 
 #### Description
 
-Creates and displays a new ground image overlay on the map based on the provided state. This method sets up a `GroundImageTileProvider`, registers it with the `LocalTileServer`, and then configures the necessary HERE SDK `RasterDataSource` and `MapLayer` to render the image.
+Creates and displays a new ground image overlay on the map based on the provided state. This method
+sets up a `GroundImageTileProvider`, registers it with the `LocalTileServer`, and then configures
+the necessary HERE SDK `RasterDataSource` and `MapLayer` to render the image.
 
 #### Parameters
 
-| Parameter | Type             | Description                                                                                             |
-| :-------- | :--------------- | :------------------------------------------------------------------------------------------------------ |
-| `state`   | `GroundImageState` | An object defining the properties of the ground image, such as the image bitmap, geographic bounds, and opacity. |
-
+- `state`
+    - Type: `GroundImageState`
+    - Description: An object defining the properties of the ground image, such as the image bitmap,
+                   geographic bounds, and opacity.
 #### Returns
 
-A `HereActualGroundImage` handle to the newly created map objects on success, or `null` if the layer could not be created.
+A `HereActualGroundImage` handle to the newly created map objects on success, or `null` if the layer
+could not be created.
 
 ---
 
@@ -78,19 +88,27 @@ override suspend fun updateGroundImageProperties(
 
 #### Description
 
-Updates an existing ground image overlay with new properties. The method efficiently determines if a visual refresh is needed by comparing the fingerprints of the current and previous states. If properties such as the image, bounds, opacity, or tile size have changed, it rebuilds the underlying map layer and data source to reflect the updates.
+Updates an existing ground image overlay with new properties. The method efficiently determines if a
+visual refresh is needed by comparing the fingerprints of the current and previous states. If
+properties such as the image, bounds, opacity, or tile size have changed, it rebuilds the underlying
+map layer and data source to reflect the updates.
 
 #### Parameters
 
-| Parameter     | Type                                          | Description                                                              |
-| :------------ | :-------------------------------------------- | :----------------------------------------------------------------------- |
-| `groundImage` | `HereActualGroundImage`                       | The existing ground image handle to be updated.                          |
-| `current`     | `GroundImageEntityInterface<HereActualGroundImage>` | The entity wrapper containing the new state for the ground image.        |
-| `prev`        | `GroundImageEntityInterface<HereActualGroundImage>` | The entity wrapper containing the previous state for comparison purposes. |
-
+- `groundImage`
+    - Type: `HereActualGroundImage`
+    - Description: The existing ground image handle to be updated.
+- `current`
+    - Type: `GroundImageEntityInterface<HereActualGroundImage>`
+    - Description: The entity wrapper containing the new state for the ground image.
+- `prev`
+    - Type: `GroundImageEntityInterface<HereActualGroundImage>`
+    - Description: The entity wrapper containing the previous state for comparison purposes.
 #### Returns
 
-The updated `HereActualGroundImage` handle. This may be a new handle if the underlying map objects were recreated, or the original handle if no visual update was necessary. Returns `null` if the update fails.
+The updated `HereActualGroundImage` handle. This may be a new handle if the underlying map objects
+were recreated, or the original handle if no visual update was necessary. Returns `null` if the
+update fails.
 
 ---
 
@@ -104,14 +122,15 @@ override suspend fun removeGroundImage(entity: GroundImageEntityInterface<HereAc
 
 #### Description
 
-Removes a ground image overlay from the map and cleans up all associated resources. This function destroys the HERE SDK `MapLayer` and `RasterDataSource` and unregisters the corresponding tile provider from the `LocalTileServer`.
+Removes a ground image overlay from the map and cleans up all associated resources. This function
+destroys the HERE SDK `MapLayer` and `RasterDataSource` and unregisters the corresponding tile
+provider from the `LocalTileServer`.
 
 #### Parameters
 
-| Parameter | Type                                          | Description                                                              |
-| :-------- | :-------------------------------------------- | :----------------------------------------------------------------------- |
-| `entity`  | `GroundImageEntityInterface<HereActualGroundImage>` | The entity wrapper for the ground image to be removed from the map.      |
-
+- `entity`
+    - Type: `GroundImageEntityInterface<HereActualGroundImage>`
+    - Description: The entity wrapper for the ground image to be removed from the map.
 #### Returns
 
 This is a suspending function and does not return a value.
@@ -120,7 +139,8 @@ This is a suspending function and does not return a value.
 
 ### Example
 
-The following example demonstrates how to initialize the `HereGroundImageOverlayRenderer` and use it to add, update, and remove a ground image overlay.
+The following example demonstrates how to initialize the `HereGroundImageOverlayRenderer` and use it
+to add, update, and remove a ground image overlay.
 
 ```kotlin
 import com.here.sdk.core.GeoCoordinates
@@ -175,7 +195,7 @@ CoroutineScope(Dispatchers.Main).launch {
             current = updatedEntity,
             prev = groundImageEntity
         )
-        
+
         if (updatedHandle != null) {
             updatedEntity.groundImage = updatedHandle
             println("Ground image updated successfully.")

@@ -1,10 +1,12 @@
-Of course! Here is a high-quality SDK document for the provided code snippet, formatted in Markdown.
-
 # HereCircleOverlayRenderer
 
-The `HereCircleOverlayRenderer` is a concrete implementation of `AbstractCircleOverlayRenderer` for the HERE SDK. It is responsible for managing the lifecycle of circle overlays on a HERE map, including their creation, removal, and property updates.
+The `HereCircleOverlayRenderer` is a concrete implementation of `AbstractCircleOverlayRenderer` for
+the HERE SDK. It is responsible for managing the lifecycle of circle overlays on a HERE map,
+including their creation, removal, and property updates.
 
-This renderer draws circles as `MapPolygon` objects. It supports both native geodesic circles and non-geodesic circles approximated by a series of points. All map operations are performed asynchronously using a provided `CoroutineScope`.
+This renderer draws circles as `MapPolygon` objects. It supports both native geodesic circles and
+non-geodesic circles approximated by a series of points. All map operations are performed
+asynchronously using a provided `CoroutineScope`.
 
 ```kotlin
 class HereCircleOverlayRenderer(
@@ -19,7 +21,7 @@ class HereCircleOverlayRenderer(
 
 ```kotlin
 HereCircleOverlayRenderer(
-    holder: HereViewHolder, 
+    holder: HereViewHolder,
     coroutine: CoroutineScope = CoroutineScope(Dispatchers.Default)
 )
 ```
@@ -30,11 +32,14 @@ Creates a new instance of the `HereCircleOverlayRenderer`.
 
 ### Parameters
 
-| Parameter   | Type              | Description                                                                                             |
-|-------------|-------------------|---------------------------------------------------------------------------------------------------------|
-| `holder`    | `HereViewHolder`  | The view holder that contains the active HERE `MapView` instance where circles will be rendered.        |
-| `coroutine` | `CoroutineScope`  | The coroutine scope used to execute asynchronous map operations. Defaults to `CoroutineScope(Dispatchers.Default)`. |
-
+- `holder`
+    - Type: `HereViewHolder`
+    - Description: The view holder that contains the active HERE `MapView` instance where circles
+                   will be rendered.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The coroutine scope used to execute asynchronous map operations. Defaults to
+                   `CoroutineScope(Dispatchers.Default)`.
 ---
 
 ## Methods
@@ -49,14 +54,17 @@ override suspend fun createCircle(state: CircleState): HereActualCircle?
 
 #### Description
 
-Asynchronously creates a new circle polygon on the map based on the provided state. It constructs a `MapPolygon` and adds it to the map scene. The method can create either a native geodesic circle or a planar circle approximated with a high number of vertices, depending on the `geodesic` flag in the `CircleState`.
+Asynchronously creates a new circle polygon on the map based on the provided state. It constructs a
+`MapPolygon` and adds it to the map scene. The method can create either a native geodesic circle or
+a planar circle approximated with a high number of vertices, depending on the `geodesic` flag in the
+`CircleState`.
 
 #### Parameters
 
-| Parameter | Type          | Description                                                                                                                            |
-|-----------|---------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| `state`   | `CircleState` | An object containing all configuration for the circle, including its center, radius, colors, stroke width, z-index, and geodesic flag. |
-
+- `state`
+    - Type: `CircleState`
+    - Description: An object containing all configuration for the circle, including its center,
+                   radius, colors, stroke width, z-index, and geodesic flag.
 #### Returns
 
 A `HereActualCircle` (type alias for `MapPolygon`) representing the newly created circle on the map.
@@ -77,10 +85,9 @@ Asynchronously removes a specified circle from the map.
 
 #### Parameters
 
-| Parameter | Type                                     | Description                                                              |
-|-----------|------------------------------------------|--------------------------------------------------------------------------|
-| `entity`  | `CircleEntityInterface<HereActualCircle>` | The circle entity wrapper that contains the native `MapPolygon` to remove. |
-
+- `entity`
+    - Type: `CircleEntityInterface<HereActualCircle>`
+    - Description: The circle entity wrapper that contains the native `MapPolygon` to remove.
 ---
 
 ### updateCircleProperties
@@ -97,16 +104,23 @@ override suspend fun updateCircleProperties(
 
 #### Description
 
-Asynchronously updates the properties of an existing circle on the map. It performs an efficient update by comparing the `fingerPrint` of the `current` and `prev` states. Only the properties that have changed (e.g., geometry, color, stroke width, z-index) are applied to the native `MapPolygon` object.
+Asynchronously updates the properties of an existing circle on the map. It performs an efficient
+update by comparing the `fingerPrint` of the `current` and `prev` states. Only the properties that
+have changed (e.g., geometry, color, stroke width, z-index) are applied to the native `MapPolygon`
+object.
 
 #### Parameters
 
-| Parameter | Type                                     | Description                                                                                             |
-|-----------|------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| `circle`  | `HereActualCircle`                       | The native `MapPolygon` object that needs to be updated.                                                |
-| `current` | `CircleEntityInterface<HereActualCircle>` | The entity representing the new, updated state of the circle.                                           |
-| `prev`    | `CircleEntityInterface<HereActualCircle>` | The entity representing the previous state of the circle, used for detecting which properties have changed. |
-
+- `circle`
+    - Type: `HereActualCircle`
+    - Description: The native `MapPolygon` object that needs to be updated.
+- `current`
+    - Type: `CircleEntityInterface<HereActualCircle>`
+    - Description: The entity representing the new, updated state of the circle.
+- `prev`
+    - Type: `CircleEntityInterface<HereActualCircle>`
+    - Description: The entity representing the previous state of the circle, used for detecting
+                   which properties have changed.
 #### Returns
 
 The updated `HereActualCircle` instance.

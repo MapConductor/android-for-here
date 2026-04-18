@@ -1,12 +1,11 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
-***
-
 # Class `HereViewHolder`
 
-A container class that holds instances of the HERE SDK's `MapView` and `MapScene`. It implements the `MapViewHolderInterface` to provide a standardized way of interacting with the map, specifically for converting between geographical coordinates and screen coordinates.
+A container class that holds instances of the HERE SDK's `MapView` and `MapScene`. It implements the
+`MapViewHolderInterface` to provide a standardized way of interacting with the map, specifically for
+converting between geographical coordinates and screen coordinates.
 
-This class acts as a bridge between the generic `MapViewHolderInterface` and the specific implementation details of the HERE Maps SDK.
+This class acts as a bridge between the generic `MapViewHolderInterface` and the specific
+implementation details of the HERE Maps SDK.
 
 ## Signature
 
@@ -19,18 +18,20 @@ class HereViewHolder(
 
 ## Parameters
 
-| Parameter | Type      | Description                               |
-| :-------- | :-------- | :---------------------------------------- |
-| `mapView` | `MapView` | The HERE SDK `MapView` instance.          |
-| `map`     | `MapScene`  | The HERE SDK `MapScene` instance for the map. |
-
+- `mapView`
+    - Type: `MapView`
+    - Description: The HERE SDK `MapView` instance.
+- `map`
+    - Type: `MapScene`
+    - Description: The HERE SDK `MapScene` instance for the map.
 ---
 
 ## Methods
 
 ### `toScreenOffset`
 
-Converts a geographical coordinate (`GeoPointInterface`) into a screen coordinate (`Offset`) relative to the `MapView`.
+Converts a geographical coordinate (`GeoPointInterface`) into a screen coordinate (`Offset`)
+relative to the `MapView`.
 
 #### Signature
 
@@ -40,17 +41,19 @@ override fun toScreenOffset(position: GeoPointInterface): Offset?
 
 #### Description
 
-This function takes a geographical point and calculates its corresponding pixel offset on the screen. If the provided geographical point is not currently visible on the map view, this function will return `null`.
+This function takes a geographical point and calculates its corresponding pixel offset on the
+screen. If the provided geographical point is not currently visible on the map view, this function
+will return `null`.
 
 #### Parameters
 
-| Parameter  | Type                | Description                                  |
-| :--------- | :------------------ | :------------------------------------------- |
-| `position` | `GeoPointInterface` | The geographical coordinate to be converted. |
-
+- `position`
+    - Type: `GeoPointInterface`
+    - Description: The geographical coordinate to be converted.
 #### Returns
 
-**`Offset?`**: An `Offset` object containing the x and y screen coordinates, or `null` if the geographical point is outside the visible map area.
+**`Offset?`**: An `Offset` object containing the x and y screen coordinates, or `null` if the
+geographical point is outside the visible map area.
 
 #### Example
 
@@ -79,17 +82,19 @@ override suspend fun fromScreenOffset(offset: Offset): GeoPoint?
 
 #### Description
 
-This suspend function takes a pixel offset from the screen and converts it into the corresponding geographical coordinate on the map. Since this is a `suspend` function, it should be called from a coroutine or another suspend function.
+This suspend function takes a pixel offset from the screen and converts it into the corresponding
+geographical coordinate on the map. Since this is a `suspend` function, it should be called from a
+coroutine or another suspend function.
 
 #### Parameters
 
-| Parameter | Type     | Description                                       |
-| :-------- | :------- | :------------------------------------------------ |
-| `offset`  | `Offset` | The screen coordinate (`x`, `y`) to be converted. |
-
+- `offset`
+    - Type: `Offset`
+    - Description: The screen coordinate (`x`, `y`) to be converted.
 #### Returns
 
-**`GeoPoint?`**: A `GeoPoint` object representing the geographical coordinate, or `null` if the conversion is not possible (e.g., the offset is outside the map view).
+**`GeoPoint?`**: A `GeoPoint` object representing the geographical coordinate, or `null` if the
+conversion is not possible (e.g., the offset is outside the map view).
 
 #### Example
 
@@ -122,17 +127,19 @@ override fun fromScreenOffsetSync(offset: Offset): GeoPoint?
 
 #### Description
 
-This function takes a pixel offset from the screen and converts it into the corresponding geographical coordinate on the map. Unlike `fromScreenOffset`, this operation is performed synchronously.
+This function takes a pixel offset from the screen and converts it into the corresponding
+geographical coordinate on the map. Unlike `fromScreenOffset`, this operation is performed
+synchronously.
 
 #### Parameters
 
-| Parameter | Type     | Description                                       |
-| :-------- | :------- | :------------------------------------------------ |
-| `offset`  | `Offset` | The screen coordinate (`x`, `y`) to be converted. |
-
+- `offset`
+    - Type: `Offset`
+    - Description: The screen coordinate (`x`, `y`) to be converted.
 #### Returns
 
-**`GeoPoint?`**: A `GeoPoint` object representing the geographical coordinate, or `null` if the conversion is not possible.
+**`GeoPoint?`**: A `GeoPoint` object representing the geographical coordinate, or `null` if the
+conversion is not possible.
 
 #### Example
 

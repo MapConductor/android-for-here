@@ -1,14 +1,16 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
 # HERE SDK Interoperability Extensions
 
-This document details a set of Kotlin extension functions designed to facilitate seamless conversion between the custom `GeoPoint` type and the HERE SDK's `GeoCoordinates` and `GeoOrientation` classes. These utilities simplify the process of passing data between your application's data models and the HERE SDK.
+This document details a set of Kotlin extension functions designed to facilitate seamless conversion
+between the custom `GeoPoint` type and the HERE SDK's `GeoCoordinates` and `GeoOrientation` classes.
+These utilities simplify the process of passing data between your application's data models and the
+HERE SDK.
 
 ---
 
 ### `GeoPoint.toGeoCoordinates()`
 
-Converts an instance of `GeoPoint` into a HERE SDK `GeoCoordinates` object. This is useful for passing a custom `GeoPoint` to HERE SDK APIs that require a `GeoCoordinates` parameter.
+Converts an instance of `GeoPoint` into a HERE SDK `GeoCoordinates` object. This is useful for
+passing a custom `GeoPoint` to HERE SDK APIs that require a `GeoCoordinates` parameter.
 
 **Signature**
 ```kotlin
@@ -16,10 +18,10 @@ fun GeoPoint.toGeoCoordinates(): GeoCoordinates
 ```
 
 **Returns**
-| Type | Description |
-|---|---|
-| `GeoCoordinates` | A new `GeoCoordinates` object with the same latitude and longitude as the source `GeoPoint`. |
-
+- `GeoCoordinates`
+    - Type: `GeoCoordinates`
+    - Description: A new `GeoCoordinates` object with the same latitude and longitude as the source
+                   `GeoPoint`.
 **Example**
 ```kotlin
 import com.mapconductor.core.features.GeoPoint
@@ -39,7 +41,8 @@ println("Latitude: ${hereGeoCoordinates.latitude}, Longitude: ${hereGeoCoordinat
 
 ### `GeoPoint.Companion.from()`
 
-A factory function on the `GeoPoint` companion object that creates a new `GeoPoint` instance from a HERE SDK `GeoCoordinates` object.
+A factory function on the `GeoPoint` companion object that creates a new `GeoPoint` instance from a
+HERE SDK `GeoCoordinates` object.
 
 **Signature**
 ```kotlin
@@ -47,15 +50,14 @@ fun GeoPoint.Companion.from(geoCoordinates: GeoCoordinates): GeoPoint
 ```
 
 **Parameters**
-| Parameter | Type | Description |
-|---|---|---|
-| `geoCoordinates` | `GeoCoordinates` | The HERE SDK `GeoCoordinates` object to convert. |
-
+- `geoCoordinates`
+    - Type: `GeoCoordinates`
+    - Description: The HERE SDK `GeoCoordinates` object to convert.
 **Returns**
-| Type | Description |
-|---|---|
-| `GeoPoint` | A new `GeoPoint` instance with latitude and longitude values from the provided `GeoCoordinates`. |
-
+- `GeoPoint`
+    - Type: `GeoPoint`
+    - Description: A new `GeoPoint` instance with latitude and longitude values from the provided
+                   `GeoCoordinates`.
 **Example**
 ```kotlin
 import com.here.sdk.core.GeoCoordinates
@@ -75,7 +77,8 @@ println("Latitude: ${myGeoPoint.latitude}, Longitude: ${myGeoPoint.longitude}")
 
 ### `GeoCoordinates.toGeoPoint()`
 
-Converts a HERE SDK `GeoCoordinates` object into a `GeoPoint` object. This is useful for converting results from the HERE SDK into the application's custom `GeoPoint` type.
+Converts a HERE SDK `GeoCoordinates` object into a `GeoPoint` object. This is useful for converting
+results from the HERE SDK into the application's custom `GeoPoint` type.
 
 **Signature**
 ```kotlin
@@ -83,10 +86,10 @@ fun GeoCoordinates.toGeoPoint(): GeoPoint
 ```
 
 **Returns**
-| Type | Description |
-|---|---|
-| `GeoPoint` | A new `GeoPoint` object with the same latitude and longitude as the source `GeoCoordinates`. |
-
+- `GeoPoint`
+    - Type: `GeoPoint`
+    - Description: A new `GeoPoint` object with the same latitude and longitude as the source
+                   `GeoCoordinates`.
 **Example**
 ```kotlin
 import com.here.sdk.core.GeoCoordinates
@@ -105,7 +108,8 @@ println("Latitude: ${myGeoPoint.latitude}, Longitude: ${myGeoPoint.longitude}")
 
 ### `GeoCoordinates.toUpdate()`
 
-Creates a `GeoCoordinatesUpdate` from a `GeoCoordinates` instance. This is a convenience function for APIs that require updates, such as animating map camera properties.
+Creates a `GeoCoordinatesUpdate` from a `GeoCoordinates` instance. This is a convenience function
+for APIs that require updates, such as animating map camera properties.
 
 **Signature**
 ```kotlin
@@ -113,10 +117,9 @@ fun GeoCoordinates.toUpdate(): GeoCoordinatesUpdate
 ```
 
 **Returns**
-| Type | Description |
-|---|---|
-| `GeoCoordinatesUpdate` | A new `GeoCoordinatesUpdate` object containing the source `GeoCoordinates`. |
-
+- `GeoCoordinatesUpdate`
+    - Type: `GeoCoordinatesUpdate`
+    - Description: A new `GeoCoordinatesUpdate` object containing the source `GeoCoordinates`.
 **Example**
 ```kotlin
 import com.here.sdk.core.GeoCoordinates
@@ -135,7 +138,8 @@ val coordinateUpdate = targetCoordinates.toUpdate()
 
 ### `GeoOrientation.toUpdate()`
 
-Creates a `GeoOrientationUpdate` from a `GeoOrientation` instance. This is a convenience function for APIs that require orientation updates, such as changing the map camera's bearing or tilt.
+Creates a `GeoOrientationUpdate` from a `GeoOrientation` instance. This is a convenience function
+for APIs that require orientation updates, such as changing the map camera's bearing or tilt.
 
 **Signature**
 ```kotlin
@@ -143,10 +147,9 @@ fun GeoOrientation.toUpdate(): GeoOrientationUpdate
 ```
 
 **Returns**
-| Type | Description |
-|---|---|
-| `GeoOrientationUpdate` | A new `GeoOrientationUpdate` object containing the source `GeoOrientation`. |
-
+- `GeoOrientationUpdate`
+    - Type: `GeoOrientationUpdate`
+    - Description: A new `GeoOrientationUpdate` object containing the source `GeoOrientation`.
 **Example**
 ```kotlin
 import com.here.sdk.core.GeoOrientation

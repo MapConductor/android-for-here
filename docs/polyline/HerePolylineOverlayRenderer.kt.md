@@ -1,10 +1,11 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
 # Class: `HerePolylineOverlayRenderer`
 
-Manages the rendering and lifecycle of polyline overlays on a HERE map. This class acts as a concrete implementation of `AbstractPolylineOverlayRenderer` for the HERE SDK, bridging the gap between a generic `PolylineState` and the platform-specific `MapPolyline`.
+Manages the rendering and lifecycle of polyline overlays on a HERE map. This class acts as a
+concrete implementation of `AbstractPolylineOverlayRenderer` for the HERE SDK, bridging the gap
+between a generic `PolylineState` and the platform-specific `MapPolyline`.
 
-It handles the creation, property updates, and removal of polylines on the map. All map-related operations are performed asynchronously using a provided `CoroutineScope`.
+It handles the creation, property updates, and removal of polylines on the map. All map-related
+operations are performed asynchronously using a provided `CoroutineScope`.
 
 ```kotlin
 class HerePolylineOverlayRenderer(
@@ -19,7 +20,7 @@ class HerePolylineOverlayRenderer(
 
 ```kotlin
 HerePolylineOverlayRenderer(
-    holder: HereViewHolder, 
+    holder: HereViewHolder,
     coroutine: CoroutineScope = CoroutineScope(Dispatchers.Default)
 )
 ```
@@ -30,11 +31,14 @@ Creates an instance of the `HerePolylineOverlayRenderer`.
 
 ### Parameters
 
-| Parameter   | Type              | Description                                                                                             |
-|-------------|-------------------|---------------------------------------------------------------------------------------------------------|
-| `holder`    | `HereViewHolder`  | The view holder that contains the HERE `MapView` instance where polylines will be rendered.             |
-| `coroutine` | `CoroutineScope`  | The scope used to launch asynchronous map operations. Defaults to a scope on `Dispatchers.Default`. |
-
+- `holder`
+    - Type: `HereViewHolder`
+    - Description: The view holder that contains the HERE `MapView` instance where polylines will be
+                   rendered.
+- `coroutine`
+    - Type: `CoroutineScope`
+    - Description: The scope used to launch asynchronous map operations. Defaults to a scope on
+                   `Dispatchers.Default`.
 ---
 
 ## Methods
@@ -49,20 +53,23 @@ suspend fun createPolyline(state: PolylineState): HereActualPolyline?
 
 #### Description
 
-Creates a new `MapPolyline` from a given `PolylineState` and adds it to the map. This method constructs the polyline's geometry, handling both geodesic and linear interpolation, and sets its visual representation (e.g., color, width, z-index). The created polyline is then added to the map asynchronously.
+Creates a new `MapPolyline` from a given `PolylineState` and adds it to the map. This method
+constructs the polyline's geometry, handling both geodesic and linear interpolation, and sets its
+visual representation (e.g., color, width, z-index). The created polyline is then added to the map
+asynchronously.
 
 #### Parameters
 
-| Parameter | Type            | Description                                                                                                                            |
-|-----------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| `state`   | `PolylineState` | An object containing all the configuration for the polyline, including its geographical points, color, width, z-index, and geodesic flag. |
-
+- `state`
+    - Type: `PolylineState`
+    - Description: An object containing all the configuration for the polyline, including its
+                   geographical points, color, width, z-index, and geodesic flag.
 #### Returns
 
-| Type                 | Description                                                                                                                            |
-|----------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| `HereActualPolyline?` | The newly created `MapPolyline` instance that was added to the map. `HereActualPolyline` is a type alias for `com.here.sdk.mapview.MapPolyline`. |
-
+- `HereActualPolyline?`
+    - Type: `HereActualPolyline?`
+    - Description: The newly created `MapPolyline` instance that was added to the map.
+                   `HereActualPolyline` is a type alias for `com.here.sdk.mapview.MapPolyline`.
 ---
 
 ### `updatePolylineProperties`
@@ -79,22 +86,28 @@ suspend fun updatePolylineProperties(
 
 #### Description
 
-Updates the properties of an existing `MapPolyline` on the map. This method performs an efficient update by comparing the properties of the `current` and `prev` states. Only the properties that have changed (e.g., points, color, width, z-index) are applied to the native `MapPolyline` object. If necessary, the polyline is removed and re-added to the map to ensure visual correctness.
+Updates the properties of an existing `MapPolyline` on the map. This method performs an efficient
+update by comparing the properties of the `current` and `prev` states. Only the properties that have
+changed (e.g., points, color, width, z-index) are applied to the native `MapPolyline` object. If
+necessary, the polyline is removed and re-added to the map to ensure visual correctness.
 
 #### Parameters
 
-| Parameter  | Type                                        | Description                                                              |
-|------------|---------------------------------------------|--------------------------------------------------------------------------|
-| `polyline` | `HereActualPolyline`                        | The existing `MapPolyline` object to be updated.                         |
-| `current`  | `PolylineEntityInterface<HereActualPolyline>` | The entity wrapper containing the new, updated `PolylineState`.          |
-| `prev`     | `PolylineEntityInterface<HereActualPolyline>` | The entity wrapper containing the previous `PolylineState` for comparison. |
-
+- `polyline`
+    - Type: `HereActualPolyline`
+    - Description: The existing `MapPolyline` object to be updated.
+- `current`
+    - Type: `PolylineEntityInterface<HereActualPolyline>`
+    - Description: The entity wrapper containing the new, updated `PolylineState`.
+- `prev`
+    - Type: `PolylineEntityInterface<HereActualPolyline>`
+    - Description: The entity wrapper containing the previous `PolylineState` for comparison.
 #### Returns
 
-| Type                 | Description                                                                                                                            |
-|----------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| `HereActualPolyline?` | The updated `MapPolyline` instance. `HereActualPolyline` is a type alias for `com.here.sdk.mapview.MapPolyline`. |
-
+- `HereActualPolyline?`
+    - Type: `HereActualPolyline?`
+    - Description: The updated `MapPolyline` instance. `HereActualPolyline` is a type alias for
+                   `com.here.sdk.mapview.MapPolyline`.
 ---
 
 ### `removePolyline`
@@ -111,15 +124,15 @@ Asynchronously removes a specified `MapPolyline` from the map.
 
 #### Parameters
 
-| Parameter | Type                                        | Description                                                              |
-|-----------|---------------------------------------------|--------------------------------------------------------------------------|
-| `entity`  | `PolylineEntityInterface<HereActualPolyline>` | The entity wrapper containing the `MapPolyline` instance to be removed. |
-
+- `entity`
+    - Type: `PolylineEntityInterface<HereActualPolyline>`
+    - Description: The entity wrapper containing the `MapPolyline` instance to be removed.
 ---
 
 ## Example
 
-The following example demonstrates the complete lifecycle of a polyline using `HerePolylineOverlayRenderer`: creating it, updating its color, and finally removing it.
+The following example demonstrates the complete lifecycle of a polyline using
+`HerePolylineOverlayRenderer`: creating it, updating its color, and finally removing it.
 
 ```kotlin
 import com.mapconductor.core.features.GeoPoint
@@ -160,13 +173,13 @@ fun managePolylineLifecycle() = CoroutineScope(Dispatchers.Main).launch {
     // 3. Create the polyline and add it to the map
     println("Creating polyline...")
     val mapPolyline = renderer.createPolyline(initialState)
-    
+
     // Create an entity to hold the state and the actual polyline object
     var polylineEntity = PolylineEntity(initialState, mapPolyline!!)
     println("Polyline created.")
 
     // (Wait for some time or user action)
-    
+
     // 4. Define an updated state for the polyline (e.g., change color)
     val updatedState = initialState.copy(strokeColor = Color.Red)
     val updatedEntity = polylineEntity.copy(state = updatedState)

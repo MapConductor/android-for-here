@@ -1,12 +1,9 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
+# `HereViewHolderInterface`
 
-***
+A type alias for `MapViewHolderInterface` specialized for the HERE SDK. It simplifies type
+declarations for view holders that manage a HERE `MapView` and its `MapScene`.
 
-## `HereViewHolderInterface`
-
-A type alias for `MapViewHolderInterface` specialized for the HERE SDK. It simplifies type declarations for view holders that manage a HERE `MapView` and its `MapScene`.
-
-### Signature
+## Signature
 
 ```kotlin
 typealias HereViewHolderInterface = MapViewHolderInterface<MapView, MapScene>
@@ -14,41 +11,46 @@ typealias HereViewHolderInterface = MapViewHolderInterface<MapView, MapScene>
 
 ---
 
-## `HereMapViewControllerStore`
+# `HereMapViewControllerStore`
 
-A singleton object that manages `HereMapViewController` instances and controls the global initialization of the HERE SDK.
+A singleton object that manages `HereMapViewController` instances and controls the global
+initialization of the HERE SDK.
 
-### `initSDK(context: Context)`
+## `initSDK(context: Context)`
 
-Initializes the HERE SDK engine using credentials provided in the application's manifest. This method must be called once before any map-related components are used.
+Initializes the HERE SDK engine using credentials provided in the application's manifest. This
+method must be called once before any map-related components are used.
 
-It is safe to call this function multiple times, as the underlying initialization will only occur on the first call. The recommended practice is to call this method in your `Application.onCreate()` to ensure the SDK is ready before any activity or view requires it.
+It is safe to call this function multiple times, as the underlying initialization will only occur on
+the first call. The recommended practice is to call this method in your `Application.onCreate()` to
+ensure the SDK is ready before any activity or view requires it.
 
-#### Signature
+### Signature
 
 ```kotlin
 fun initSDK(context: Context)
 ```
 
-#### Parameters
+### Parameters
 
-| Parameter | Type      | Description                                                                                                                                                           |
-| :-------- | :-------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `context` | `Context` | The application context used to access application metadata for credentials and to initialize the SDK. The function internally uses the `applicationContext` to avoid memory leaks. |
-
-#### Returns
+- `context`
+    - Type: `Context`
+    - Description: The application context used to access application metadata for credentials and
+                   to initialize the SDK. The function internally uses the `applicationContext` to
+                   avoid memory leaks.
+### Returns
 
 `Unit` - This function does not return a value.
 
-#### Throws
+### Throws
 
-| Exception   | Description                                                                                                                            |
-| :---------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| `Exception` | Thrown if the `<meta-data>` tag for `HERE_ACCESS_KEY_ID` or `HERE_ACCESS_KEY_SECRET` is not found in the `AndroidManifest.xml` file. |
+- `Exception`
+    - Description: Thrown if the `<meta-data>` tag for `HERE_ACCESS_KEY_ID` or
+                   `HERE_ACCESS_KEY_SECRET` is not found in the `AndroidManifest.xml` file.
+### Example
 
-#### Example
-
-To use this function, you must first add your HERE SDK credentials to your `AndroidManifest.xml` file and then call `initSDK()` from your custom `Application` class.
+To use this function, you must first add your HERE SDK credentials to your `AndroidManifest.xml`
+file and then call `initSDK()` from your custom `Application` class.
 
 1.  **Add credentials to `AndroidManifest.xml`**
 
@@ -57,7 +59,7 @@ To use this function, you must first add your HERE SDK credentials to your `Andr
     ```xml
     <manifest ...>
         <application ...>
-            
+
             <!-- Other application components -->
 
             <meta-data
@@ -82,7 +84,7 @@ To use this function, you must first add your HERE SDK credentials to your `Andr
     class MainApplication : Application() {
         override fun onCreate() {
             super.onCreate()
-            
+
             // Initialize the HERE SDK on application startup
             HereMapViewControllerStore.initSDK(this)
         }

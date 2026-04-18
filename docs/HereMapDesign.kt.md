@@ -1,36 +1,46 @@
-Of course! Here is a high-quality SDK document for the provided Kotlin code snippet.
-
----
-
 # HereMapDesign
 
 ## `HereMapDesign`
 
-A sealed class that encapsulates the various map visual styles (schemes) available in the HERE SDK. Each object within this class represents a specific `MapScheme` and provides a type-safe way to manage and apply map designs.
+A sealed class that encapsulates the various map visual styles (schemes) available in the HERE SDK.
+Each object within this class represents a specific `MapScheme` and provides a type-safe way to
+manage and apply map designs.
 
-This class implements the `HereMapDesignType` interface, which standardizes the handling of map designs.
+This class implements the `HereMapDesignType` interface, which standardizes the handling of map
+designs.
 
 ### Available Map Designs
 
 The following singleton objects represent the available map designs.
 
-| Object              | Corresponding `MapScheme`     | Description                                                              |
-| ------------------- | ----------------------------- | ------------------------------------------------------------------------ |
-| `NormalDay`         | `MapScheme.NORMAL_DAY`        | The standard map style for daytime viewing.                              |
-| `NormalNight`       | `MapScheme.NORMAL_NIGHT`      | The standard map style for nighttime viewing.                            |
-| `Satellite`         | `MapScheme.SATELLITE`         | A map style that displays satellite imagery.                             |
-| `HybridDay`         | `MapScheme.HYBRID_DAY`        | Combines satellite imagery with road network and label overlays for daytime. |
-| `HybridNight`       | `MapScheme.HYBRID_NIGHT`      | Combines satellite imagery with road network and label overlays for nighttime. |
-| `LiteDay`           | `MapScheme.LITE_DAY`          | A lightweight, performance-optimized map style for daytime.              |
-| `LiteNight`         | `MapScheme.LITE_NIGHT`        | A lightweight, performance-optimized map style for nighttime.            |
-| `LiteHybridDay`     | `MapScheme.LITE_HYBRID_DAY`   | A lightweight hybrid map style for daytime.                              |
-| `LiteHybridNight`   | `MapScheme.LITE_HYBRID_NIGHT` | A lightweight hybrid map style for nighttime.                            |
-| `LogisticsDay`      | `MapScheme.LOGISTICS_DAY`     | A map style optimized for logistics and trucking applications for daytime. |
-| `LogisticsNight`    | `MapScheme.LOGISTICS_NIGHT`   | A map style optimized for logistics and trucking applications for nighttime. |
-| `LogisticsHybridDay`| `MapScheme.LOGISTICS_HYBRID_DAY`| A hybrid map style optimized for logistics applications for daytime.     |
-| `RoadNetworkDay`    | `MapScheme.ROAD_NETWORK_DAY`  | A map style that displays only the road network for daytime.             |
-| `RoadNetworkNight`  | `MapScheme.ROAD_NETWORK_NIGHT`| A map style that displays only the road network for nighttime.           |
-
+- `NormalDay`
+    - Description: The standard map style for daytime viewing.
+- `NormalNight`
+    - Description: The standard map style for nighttime viewing.
+- `Satellite`
+    - Description: A map style that displays satellite imagery.
+- `HybridDay`
+    - Description: Combines satellite imagery with road network and label overlays for daytime.
+- `HybridNight`
+    - Description: Combines satellite imagery with road network and label overlays for nighttime.
+- `LiteDay`
+    - Description: A lightweight, performance-optimized map style for daytime.
+- `LiteNight`
+    - Description: A lightweight, performance-optimized map style for nighttime.
+- `LiteHybridDay`
+    - Description: A lightweight hybrid map style for daytime.
+- `LiteHybridNight`
+    - Description: A lightweight hybrid map style for nighttime.
+- `LogisticsDay`
+    - Description: A map style optimized for logistics and trucking applications for daytime.
+- `LogisticsNight`
+    - Description: A map style optimized for logistics and trucking applications for nighttime.
+- `LogisticsHybridDay`
+    - Description: A hybrid map style optimized for logistics applications for daytime.
+- `RoadNetworkDay`
+    - Description: A map style that displays only the road network for daytime.
+- `RoadNetworkNight`
+    - Description: A map style that displays only the road network for nighttime.
 ### Methods
 
 #### `getValue()`
@@ -43,10 +53,9 @@ fun getValue(): MapScheme
 ```
 
 **Returns**
-| Type        | Description                               |
-| ----------- | ----------------------------------------- |
-| `MapScheme` | The corresponding `MapScheme` enum value. |
-
+- `MapScheme`
+    - Type: `MapScheme`
+    - Description: The corresponding `MapScheme` enum value.
 ---
 
 ## Companion Object
@@ -63,20 +72,15 @@ fun CreateById(id: Int): HereMapDesign
 ```
 
 **Parameters**
-| Parameter | Type  | Description                                                              |
-| --------- | ----- | ------------------------------------------------------------------------ |
-| `id`      | `Int` | The integer identifier of the map scheme, corresponding to `MapScheme.value`. |
-
+- `id`
+    - Type: `Int`
+    - Description: The integer identifier of the map scheme, corresponding to `MapScheme.value`.
 **Returns**
-| Type            | Description                                                                                             |
-| --------------- | ------------------------------------------------------------------------------------------------------- |
-| `HereMapDesign` | The `HereMapDesign` object that corresponds to the given ID.                                            |
-
+- `HereMapDesign`
+    - Type: `HereMapDesign`
+    - Description: The `HereMapDesign` object that corresponds to the given ID.
 **Throws**
-| Exception                  | Condition                                          |
-| -------------------------- | -------------------------------------------------- |
-| `IllegalArgumentException` | If the provided `id` does not match any supported map scheme. |
-
+- `IllegalArgumentException`
 ### `Create()`
 
 Creates a `HereMapDesign` instance from a `MapScheme` enum value.
@@ -87,20 +91,15 @@ fun Create(id: MapScheme): HereMapDesign
 ```
 
 **Parameters**
-| Parameter | Type        | Description                        |
-| --------- | ----------- | ---------------------------------- |
-| `id`      | `MapScheme` | The `MapScheme` enum value to use. |
-
+- `id`
+    - Type: `MapScheme`
+    - Description: The `MapScheme` enum value to use.
 **Returns**
-| Type            | Description                                                                                             |
-| --------------- | ------------------------------------------------------------------------------------------------------- |
-| `HereMapDesign` | The `HereMapDesign` object that corresponds to the given `MapScheme`.                                   |
-
+- `HereMapDesign`
+    - Type: `HereMapDesign`
+    - Description: The `HereMapDesign` object that corresponds to the given `MapScheme`.
 **Throws**
-| Exception                  | Condition                                          |
-| -------------------------- | -------------------------------------------------- |
-| `IllegalArgumentException` | If the provided `MapScheme` is not supported.      |
-
+- `IllegalArgumentException`
 ---
 
 ## `HereMapDesignType`
@@ -113,7 +112,8 @@ typealias HereMapDesignType = MapDesignTypeInterface<MapScheme>
 ```
 
 **Description**
-This alias simplifies the use of `MapDesignTypeInterface` by fixing its generic type to `MapScheme`, making it specific to the HERE map implementation.
+This alias simplifies the use of `MapDesignTypeInterface` by fixing its generic type to `MapScheme`,
+making it specific to the HERE map implementation.
 
 ---
 

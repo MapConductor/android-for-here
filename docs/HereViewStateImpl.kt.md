@@ -1,12 +1,8 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet, formatted in Markdown.
-
----
-
-## `rememberHereMapViewState`
+# `rememberHereMapViewState`
 
 A Jetpack Compose composable function that creates and remembers an instance of `HereViewState`.
 
-### Signature
+## Signature
 
 ```kotlin
 @Composable
@@ -16,26 +12,34 @@ fun rememberHereMapViewState(
 ): HereViewState
 ```
 
-### Description
+## Description
 
-This function is the recommended way to create and manage the state of a HERE map within a composable UI. It automatically handles the persistence of the map's state (including camera position and map style) across recompositions and configuration changes, such as screen rotation. The returned `HereViewState` object serves as the single source of truth and the primary interface for controlling the map programmatically.
+This function is the recommended way to create and manage the state of a HERE map within a
+composable UI. It automatically handles the persistence of the map's state (including camera
+position and map style) across recompositions and configuration changes, such as screen rotation.
+The returned `HereViewState` object serves as the single source of truth and the primary interface
+for controlling the map programmatically.
 
-### Parameters
+## Parameters
 
-| Parameter | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `mapDesign` | `HereMapDesign` | The initial visual style and design of the map. | `HereMapDesign.NormalDay` |
-| `cameraPosition` | `MapCameraPositionInterface` | The initial camera position, including target coordinates, zoom, tilt, and bearing. | `MapCameraPosition.Default` |
+- `mapDesign`
+    - Type: `HereMapDesign`
+    - Default: `HereMapDesign.NormalDay`
+    - Description: The initial visual style and design of the map.
+- `cameraPosition`
+    - Type: `MapCameraPositionInterface`
+    - Default: `MapCameraPosition.Default`
+    - Description: The initial camera position, including target coordinates, zoom, tilt, and
+                   bearing.
+## Returns
 
-### Returns
+- `HereViewState`
+    - Type: `HereViewState`
+    - Description: A remembered `HereViewState` instance that can be used to control the map.
+## Example
 
-| Type | Description |
-| :--- | :--- |
-| `HereViewState` | A remembered `HereViewState` instance that can be used to control the map. |
-
-### Example
-
-The following example demonstrates how to create a `HereViewState` and use it to animate the map camera to a new location when a button is clicked.
+The following example demonstrates how to create a `HereViewState` and use it to animate the map
+camera to a new location when a button is clicked.
 
 ```kotlin
 import androidx.compose.runtime.Composable
@@ -58,7 +62,7 @@ fun MyMapScreen() {
         // The HereMapView composable would take the state as a parameter
         // HereMapView(
         //     modifier = Modifier.weight(1f),
-        //     viewState = mapViewState
+        //     state = mapViewState
         // )
 
         Button(onClick = {
@@ -79,27 +83,36 @@ fun MyMapScreen() {
 
 ---
 
-## `HereViewState`
+# `HereViewState`
 
 A state-holder class that manages the state and programmatic control of a HERE map view.
 
-### Description
+## Description
 
-An instance of `HereViewState` represents the current state of the map, including its camera position and design. It provides methods to manipulate the map's camera and properties to observe its state. You typically obtain an instance of this class by calling the `rememberHereMapViewState` composable.
+An instance of `HereViewState` represents the current state of the map, including its camera
+position and design. It provides methods to manipulate the map's camera and properties to observe
+its state. You typically obtain an instance of this class by calling the `rememberHereMapViewState`
+composable.
 
-### Properties
+## Properties
 
-| Property | Type | Description |
-| :--- | :--- | :--- |
-| `id` | `String` | A unique, stable identifier for the map state instance. |
-| `cameraPosition` | `MapCameraPosition` | (Read-only) The current position of the map's camera. This property is updated automatically as the user interacts with the map. |
-| `mapDesignType` | `HereMapDesignType` | The current visual style of the map. Setting this property will update the map's appearance in real-time. |
+- `id`
+    - Type: `String`
+    - Description: A unique, stable identifier for the map state instance.
+- `cameraPosition`
+    - Type: `MapCameraPosition`
+    - Description: (Read-only) The current position of the map's camera. This property is updated
+                   automatically as the user interacts with the map.
+- `mapDesignType`
+    - Type: `HereMapDesignType`
+    - Description: The current visual style of the map. Setting this property will update the map's
+                   appearance in real-time.
+## Methods
 
-### Methods
+### `moveCameraTo(position: GeoPoint, ...)`
 
-#### `moveCameraTo(position: GeoPoint, ...)`
-
-Moves the map camera to a new geographical coordinate, preserving the current zoom, tilt, and bearing.
+Moves the map camera to a new geographical coordinate, preserving the current zoom, tilt, and
+bearing.
 
 **Signature**
 ```kotlin
@@ -110,16 +123,20 @@ fun moveCameraTo(
 ```
 
 **Parameters**
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `position` | `GeoPoint` | The target geographical coordinate (`latitude`, `longitude`) to center the map on. |
-| `durationMillis` | `Long?` | The duration of the camera animation in milliseconds. If `null` or `0`, the camera moves instantly. |
-
+- `position`
+    - Type: `GeoPoint`
+    - Description: The target geographical coordinate (`latitude`, `longitude`) to center the map
+                   on.
+- `durationMillis`
+    - Type: `Long?`
+    - Description: The duration of the camera animation in milliseconds. If `null` or `0`, the
+                   camera moves instantly.
 ---
 
-#### `moveCameraTo(cameraPosition: MapCameraPosition, ...)`
+### `moveCameraTo(cameraPosition: MapCameraPosition, ...)`
 
-Moves the map camera to a new, fully specified camera position, including target, zoom, tilt, and bearing.
+Moves the map camera to a new, fully specified camera position, including target, zoom, tilt, and
+bearing.
 
 **Signature**
 ```kotlin
@@ -130,7 +147,10 @@ fun moveCameraTo(
 ```
 
 **Parameters**
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `cameraPosition` | `MapCameraPosition` | The complete target camera position. |
-| `durationMillis` | `Long?` | The duration of the camera animation in milliseconds. If `null` or `0`, the camera moves instantly. |
+- `cameraPosition`
+    - Type: `MapCameraPosition`
+    - Description: The complete target camera position.
+- `durationMillis`
+    - Type: `Long?`
+    - Description: The duration of the camera animation in milliseconds. If `null` or `0`, the
+                   camera moves instantly.

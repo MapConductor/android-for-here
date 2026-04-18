@@ -1,16 +1,17 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
-
----
-
 # Map Camera Extensions
 
-This document provides detailed documentation for a set of Kotlin extension functions designed to facilitate conversion between the HERE SDK's map camera representations (`MapCameraUpdate`, `MapCamera.State`) and a custom, platform-agnostic `MapCameraPosition` class. These utilities are essential for creating a consistent camera control abstraction layer in a multi-map environment.
+This document provides detailed documentation for a set of Kotlin extension functions designed to
+facilitate conversion between the HERE SDK's map camera representations (`MapCameraUpdate`,
+`MapCamera.State`) and a custom, platform-agnostic `MapCameraPosition` class. These utilities are
+essential for creating a consistent camera control abstraction layer in a multi-map environment.
 
 ## toMapCameraUpdate
 
-Converts a platform-agnostic `MapCameraPosition` object into a `MapCameraUpdate` object, which can be used to programmatically update the camera of a HERE `MapView`.
+Converts a platform-agnostic `MapCameraPosition` object into a `MapCameraUpdate` object, which can
+be used to programmatically update the camera of a HERE `MapView`.
 
-This function handles the necessary transformations, including converting the zoom level from a generic representation to the specific altitude-based zoom level used by the HERE SDK.
+This function handles the necessary transformations, including converting the zoom level from a
+generic representation to the specific altitude-based zoom level used by the HERE SDK.
 
 ### Signature
 
@@ -20,14 +21,16 @@ fun MapCameraPosition.toMapCameraUpdate(): MapCameraUpdate
 
 ### Description
 
-This extension function is called on a `MapCameraPosition` instance. It creates a `MapCameraUpdate` that instructs the map to look at the specified target coordinates (`position`), with the given orientation (`bearing` and `tilt`), and from a calculated distance (zoom level).
+This extension function is called on a `MapCameraPosition` instance. It creates a `MapCameraUpdate`
+that instructs the map to look at the specified target coordinates (`position`), with the given
+orientation (`bearing` and `tilt`), and from a calculated distance (zoom level).
 
 ### Returns
 
-| Type | Description |
-| :--- | :--- |
-| `MapCameraUpdate` | An object ready to be applied to the HERE `MapView` camera to change its position, orientation, and zoom. |
-
+- `MapCameraUpdate`
+    - Type: `MapCameraUpdate`
+    - Description: An object ready to be applied to the HERE `MapView` camera to change its
+                   position, orientation, and zoom.
 ### Example
 
 ```kotlin
@@ -55,7 +58,8 @@ mapView.camera.applyUpdate(cameraUpdate)
 
 ## MapCameraPosition.Companion.from
 
-A factory function that creates a `MapCameraPosition` instance from any object implementing the `MapCameraPositionInterface`.
+A factory function that creates a `MapCameraPosition` instance from any object implementing the
+`MapCameraPositionInterface`.
 
 ### Signature
 
@@ -65,20 +69,22 @@ fun MapCameraPosition.Companion.from(position: MapCameraPositionInterface): MapC
 
 ### Description
 
-This companion object extension function serves as a convenient constructor. It takes an object that conforms to the `MapCameraPositionInterface` and converts it into a concrete `MapCameraPosition` instance. If the provided object is already a `MapCameraPosition`, it is returned directly to avoid unnecessary object creation.
+This companion object extension function serves as a convenient constructor. It takes an object that
+conforms to the `MapCameraPositionInterface` and converts it into a concrete `MapCameraPosition`
+instance. If the provided object is already a `MapCameraPosition`, it is returned directly to avoid
+unnecessary object creation.
 
 ### Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `position` | `MapCameraPositionInterface` | An object containing camera position data (position, zoom, bearing, tilt, etc.). |
-
+- `position`
+    - Type: `MapCameraPositionInterface`
+    - Description: An object containing camera position data (position, zoom, bearing, tilt, etc.).
 ### Returns
 
-| Type | Description |
-| :--- | :--- |
-| `MapCameraPosition` | A new `MapCameraPosition` instance based on the data from the `position` parameter. |
-
+- `MapCameraPosition`
+    - Type: `MapCameraPosition`
+    - Description: A new `MapCameraPosition` instance based on the data from the `position`
+                   parameter.
 ### Example
 
 ```kotlin
@@ -114,7 +120,8 @@ println("Converted zoom: ${mapCameraPosition.zoom}") // Outputs: Converted zoom:
 
 ## toMapCameraPosition
 
-Converts a HERE SDK `MapCamera.State` object into the platform-agnostic `MapCameraPosition` representation.
+Converts a HERE SDK `MapCamera.State` object into the platform-agnostic `MapCameraPosition`
+representation.
 
 ### Signature
 
@@ -124,14 +131,19 @@ fun MapCamera.State.toMapCameraPosition(): MapCameraPosition
 
 ### Description
 
-This extension function is called on a `MapCamera.State` instance, which represents the current state of the HERE map camera. It extracts the target coordinates, orientation, and zoom level, converting them into a `MapCameraPosition` object. This is particularly useful for saving the current camera state or synchronizing it with other application components that use the abstract `MapCameraPosition` type. The function also handles the conversion from the HERE SDK's zoom level to the generic zoom representation.
+This extension function is called on a `MapCamera.State` instance, which represents the current
+state of the HERE map camera. It extracts the target coordinates, orientation, and zoom level,
+converting them into a `MapCameraPosition` object. This is particularly useful for saving the
+current camera state or synchronizing it with other application components that use the abstract
+`MapCameraPosition` type. The function also handles the conversion from the HERE SDK's zoom level to
+the generic zoom representation.
 
 ### Returns
 
-| Type | Description |
-| :--- | :--- |
-| `MapCameraPosition` | A `MapCameraPosition` object representing the current state of the HERE map camera. |
-
+- `MapCameraPosition`
+    - Type: `MapCameraPosition`
+    - Description: A `MapCameraPosition` object representing the current state of the HERE map
+                   camera.
 ### Example
 
 ```kotlin

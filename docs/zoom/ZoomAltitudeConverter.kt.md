@@ -1,12 +1,17 @@
-# SDK Documentation: ZoomAltitudeConverter
+# ZoomAltitudeConverter
 
-This document provides a detailed reference for the `ZoomAltitudeConverter` class and its associated functions, designed for converting between map zoom levels and camera altitudes within the HERE Maps SDK context.
+This document provides a detailed reference for the `ZoomAltitudeConverter` class and its associated
+functions, designed for converting between map zoom levels and camera altitudes within the HERE Maps
+SDK context.
 
 ## `ZoomAltitudeConverter`
 
 ### Description
 
-The `ZoomAltitudeConverter` class provides a concrete implementation for converting between camera altitude and map zoom level, specifically tailored for the HERE Maps SDK. It extends `AbstractZoomAltitudeConverter` and factors in variables like latitude and camera tilt to provide accurate conversions, accounting for the map's projection.
+The `ZoomAltitudeConverter` class provides a concrete implementation for converting between camera
+altitude and map zoom level, specifically tailored for the HERE Maps SDK. It extends
+`AbstractZoomAltitudeConverter` and factors in variables like latitude and camera tilt to provide
+accurate conversions, accounting for the map's projection.
 
 ### Constructor
 
@@ -24,10 +29,10 @@ Creates an instance of the `ZoomAltitudeConverter`.
 
 #### Parameters
 
-| Parameter       | Type   | Description                                                                                             |
-| :-------------- | :----- | :------------------------------------------------------------------------------------------------------ |
-| `zoom0Altitude` | Double | Optional. The camera altitude in meters that corresponds to zoom level 0 at the equator. Defaults to `DEFAULT_ZOOM0_ALTITUDE`. |
-
+- `zoom0Altitude`
+    - Type: `Double`
+    - Description: Optional. The camera altitude in meters that corresponds to zoom level 0 at the
+                   equator. Defaults to `DEFAULT_ZOOM0_ALTITUDE`.
 ---
 
 ## Methods
@@ -46,16 +51,20 @@ override fun zoomLevelToAltitude(
 
 #### Description
 
-Calculates the camera altitude in meters required to display a specific map zoom level. The calculation is sensitive to the current latitude and camera tilt angle.
+Calculates the camera altitude in meters required to display a specific map zoom level. The
+calculation is sensitive to the current latitude and camera tilt angle.
 
 #### Parameters
 
-| Parameter   | Type   | Description                                                              |
-| :---------- | :----- | :----------------------------------------------------------------------- |
-| `zoomLevel` | Double | The target HERE Maps zoom level.                                         |
-| `latitude`  | Double | The current latitude of the map's center, in degrees.                    |
-| `tilt`      | Double | The current camera tilt angle in degrees, where 0 is looking straight down. |
-
+- `zoomLevel`
+    - Type: `Double`
+    - Description: The target HERE Maps zoom level.
+- `latitude`
+    - Type: `Double`
+    - Description: The current latitude of the map's center, in degrees.
+- `tilt`
+    - Type: `Double`
+    - Description: The current camera tilt angle in degrees, where 0 is looking straight down.
 #### Returns
 
 `Double` - The calculated camera altitude in meters, clamped within a valid range.
@@ -89,16 +98,20 @@ override fun altitudeToZoomLevel(
 
 #### Description
 
-Calculates the map zoom level that corresponds to a given camera altitude. This is the inverse operation of `zoomLevelToAltitude`.
+Calculates the map zoom level that corresponds to a given camera altitude. This is the inverse
+operation of `zoomLevelToAltitude`.
 
 #### Parameters
 
-| Parameter  | Type   | Description                                                              |
-| :--------- | :----- | :----------------------------------------------------------------------- |
-| `altitude` | Double | The current camera altitude above the map, in meters.                    |
-| `latitude` | Double | The current latitude of the map's center, in degrees.                    |
-| `tilt`     | Double | The current camera tilt angle in degrees, where 0 is looking straight down. |
-
+- `altitude`
+    - Type: `Double`
+    - Description: The current camera altitude above the map, in meters.
+- `latitude`
+    - Type: `Double`
+    - Description: The current latitude of the map's center, in degrees.
+- `tilt`
+    - Type: `Double`
+    - Description: The current camera tilt angle in degrees, where 0 is looking straight down.
 #### Returns
 
 `Double` - The calculated HERE Maps zoom level, clamped within a valid range.
@@ -120,7 +133,8 @@ println("At an altitude of $currentAltitude meters, the zoom level is approximat
 
 ## Companion Object
 
-The `ZoomAltitudeConverter` class contains a companion object with utility functions and constants for zoom level conversions between different map provider standards.
+The `ZoomAltitudeConverter` class contains a companion object with utility functions and constants
+for zoom level conversions between different map provider standards.
 
 ### Companion Object Functions
 
@@ -137,15 +151,18 @@ fun hereZoomToGoogleZoom(
 
 ##### Description
 
-Converts a HERE Maps zoom level to an equivalent "Google-like" (Web Mercator) zoom level. The conversion is latitude-dependent to account for differences in map projection scaling between the two systems.
+Converts a HERE Maps zoom level to an equivalent "Google-like" (Web Mercator) zoom level. The
+conversion is latitude-dependent to account for differences in map projection scaling between the
+two systems.
 
 ##### Parameters
 
-| Parameter  | Type   | Description                                           |
-| :--------- | :----- | :---------------------------------------------------- |
-| `hereZoom` | Double | The zoom level from the HERE Maps SDK.                |
-| `latitude` | Double | The current latitude of the map's center, in degrees. |
-
+- `hereZoom`
+    - Type: `Double`
+    - Description: The zoom level from the HERE Maps SDK.
+- `latitude`
+    - Type: `Double`
+    - Description: The current latitude of the map's center, in degrees.
 ##### Returns
 
 `Double` - The equivalent Google-like zoom level.
@@ -175,15 +192,17 @@ fun googleZoomToHereZoom(
 
 ##### Description
 
-Converts a "Google-like" (Web Mercator) zoom level to an equivalent HERE Maps zoom level. This is the inverse operation of `hereZoomToGoogleZoom`.
+Converts a "Google-like" (Web Mercator) zoom level to an equivalent HERE Maps zoom level. This is
+the inverse operation of `hereZoomToGoogleZoom`.
 
 ##### Parameters
 
-| Parameter    | Type   | Description                                           |
-| :----------- | :----- | :---------------------------------------------------- |
-| `googleZoom` | Double | The Google-like (Web Mercator) zoom level.            |
-| `latitude`   | Double | The current latitude of the map's center, in degrees. |
-
+- `googleZoom`
+    - Type: `Double`
+    - Description: The Google-like (Web Mercator) zoom level.
+- `latitude`
+    - Type: `Double`
+    - Description: The current latitude of the map's center, in degrees.
 ##### Returns
 
 `Double` - The equivalent HERE Maps zoom level.
@@ -212,5 +231,6 @@ const val HERE_ZOOM_TO_GOOGLE_ZOOM_AT_EQUATOR: Double
 
 ##### Description
 
-An empirical constant representing the offset between HERE Maps zoom and "Google-like" zoom at the equator (latitude ≈ 0). The relationship is approximately:
+An empirical constant representing the offset between HERE Maps zoom and "Google-like" zoom at the
+equator (latitude ≈ 0). The relationship is approximately:
 `GoogleZoom ≈ HereZoom + HERE_ZOOM_TO_GOOGLE_ZOOM_AT_EQUATOR`

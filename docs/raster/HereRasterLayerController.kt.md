@@ -1,30 +1,31 @@
-Of course! Here is the high-quality SDK documentation for the provided code snippet.
+# `warmupNetworkIfNeeded(holder: HereViewHolder)`
 
----
-
-### `warmupNetworkIfNeeded(holder: HereViewHolder)`
-
-#### Signature
+## Signature
 ```kotlin
 fun warmupNetworkIfNeeded(holder: HereViewHolder)
 ```
 
-#### Description
-Pre-warms the HERE SDK's network stack to reduce initial latency when raster layers are first added to the map.
+## Description
+Pre-warms the HERE SDK's network stack to reduce initial latency when raster layers are first added
+to the map.
 
-This method works by creating and immediately destroying a temporary `RasterDataSource`. This process triggers the HERE SDK's internal network initialization and reachability checks ahead of time. The operation is designed to run only once during the application's lifecycle, controlled by an internal flag. If the warmup process fails, the flag is reset, allowing for a subsequent attempt.
+This method works by creating and immediately destroying a temporary `RasterDataSource`. This
+process triggers the HERE SDK's internal network initialization and reachability checks ahead of
+time. The operation is designed to run only once during the application's lifecycle, controlled by
+an internal flag. If the warmup process fails, the flag is reset, allowing for a subsequent attempt.
 
-It is recommended to call this function early in your application's startup sequence, for example, after the `MapView` has been initialized.
+It is recommended to call this function early in your application's startup sequence, for example,
+after the `MapView` has been initialized.
 
-#### Parameters
-| Parameter | Type             | Description                                                                                                                            |
-| :-------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| `holder`  | `HereViewHolder` | The view holder containing the `MapView` instance. It provides the necessary `mapContext` and `applicationContext` for the operation. |
-
-#### Returns
+## Parameters
+- `holder`
+    - Type: `HereViewHolder`
+    - Description: The view holder containing the `MapView` instance. It provides the necessary
+                   `mapContext` and `applicationContext` for the operation.
+## Returns
 This function does not return a value.
 
-#### Example
+## Example
 Here's how you might call `warmupNetworkIfNeeded` after initializing your map view and controller.
 
 ```kotlin

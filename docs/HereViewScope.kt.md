@@ -1,37 +1,33 @@
 # HereViewScope
 
-### Signature
+## Signature
+
 ```kotlin
 class HereViewScope : MapViewScope()
 ```
 
-### Description
-The `HereViewScope` class provides a specific receiver scope for the `hereMap` builder function. It establishes a context dedicated to configuring a HERE Map instance.
+## Description
 
-This class inherits from `MapViewScope`, making all common map configuration functions available within its scope. Its primary purpose is to enable HERE Maps-specific extensions and ensure type-safe construction of the map UI, preventing the mixing of components from different map providers.
+`HereViewScope` is a specialized scope class for the HERE Maps implementation within the
+MapConductor framework. It extends the base `MapViewScope`, inheriting all common map
+functionalities.
 
-You will typically interact with this class implicitly when using the `hereMap` builder lambda.
+This scope is the context for map configuration and control when using HERE Maps as the provider.
+It is provided as the receiver within the `content` lambda of `HereMapView`, where overlay
+composables are called.
 
-### Example
-The following example demonstrates how `HereViewScope` is used as the receiver in the `hereMap` builder to configure a map.
+## Example
+
+`HereViewScope` is provided as the receiver within the `content` lambda of `HereMapView`.
+Overlay composables are called within this scope.
 
 ```kotlin
-// A hypothetical MapConductor composable
-@Composable
-fun MyMapScreen() {
-    // The lambda block for hereMap operates within the HereViewScope
-    hereMap(
-        modifier = Modifier.fillMaxSize(),
-        // `this` inside the lambda is an instance of HereViewScope
-    ) {
-        // Functions from the parent MapViewScope are available
-        addMarker(
-            position = GeoPosition(52.5200, 13.4050),
-            title = "Berlin"
-        )
-
-        // You can also use HERE Maps-specific extensions (if available)
-        // enableTrafficFlow(true) 
-    }
+HereMapView(
+    state = mapState,
+    modifier = Modifier.fillMaxSize(),
+) {
+    // 'this' is HereViewScope
+    // Add overlays using composables from MapViewScope here.
+    Marker(state = MarkerState(id = "marker-1", position = GeoPoint(35.681236, 139.767125)))
 }
 ```
