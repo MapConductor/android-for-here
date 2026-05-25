@@ -13,7 +13,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.here.sdk.mapview.MapRenderMode
 import com.here.sdk.mapview.MapView
 import com.here.sdk.mapview.MapViewOptions
-import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapViewBase
@@ -27,10 +26,7 @@ import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
 import com.mapconductor.core.marker.MarkerRenderingSupport
 import com.mapconductor.core.marker.MarkerRenderingSupportKey
 import com.mapconductor.core.marker.MarkerTilingOptions
-import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
-import com.mapconductor.core.polygon.OnPolygonEventHandler
-import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.here.circle.HereCircleController
 import com.mapconductor.here.circle.HereCircleOverlayRenderer
@@ -207,7 +203,7 @@ fun HereMapView(
         registry = registry,
         serviceRegistry = serviceRegistry,
         onMapLoaded = onMapLoaded,
-        customDisposableEffect = { initState, holderRef ->
+        customDisposableEffect = { _, holderRef ->
 
             // HERE specific DisposableEffect logic
             DisposableEffect(lifecycle) {

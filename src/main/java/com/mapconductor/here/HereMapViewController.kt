@@ -257,7 +257,7 @@ class HereMapViewController(
         lastRequestedCameraPosition = position
         cameraRequestGeneration.incrementAndGet()
         val camera = this.holder.mapView.camera
-        val update = position.toMapCameraUpdate()
+//        val update = position.toMapCameraUpdate()
 
         val hereCameraZoom = position.zoom
 
