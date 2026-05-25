@@ -27,6 +27,7 @@ import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapPaddingsInterface
+import com.mapconductor.core.map.OnMapInitializedHandler
 import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -132,6 +133,10 @@ class HereMapViewController(
 
     override fun hasRasterLayer(state: RasterLayerState): Boolean =
         this.rasterLayerController.rasterLayerManager.hasEntity(state.id)
+
+    override fun setMapInitializedListener(listener: OnMapInitializedHandler?) {
+        mapInitializedCallback = listener
+    }
 
     @Deprecated("Use MarkerState.onDragStart instead.")
     override fun setOnMarkerDragStart(listener: OnMarkerEventHandler?) {
@@ -485,8 +490,8 @@ class HereMapViewController(
                     holder.mapView.post { moveCamera(cameraPosition) }
                 }
 
-                mapLoadedCallback?.invoke()
-                mapLoadedCallback = null
+                mapInitializedCallback?.invoke()
+                mapInitializedCallback = null
 
                 mapDesignTypeChangeListener?.invoke(value)
             }
