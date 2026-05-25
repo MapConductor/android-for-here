@@ -13,7 +13,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.here.sdk.mapview.MapRenderMode
 import com.here.sdk.mapview.MapView
 import com.here.sdk.mapview.MapViewOptions
-import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapViewBase
@@ -27,10 +26,7 @@ import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
 import com.mapconductor.core.marker.MarkerRenderingSupport
 import com.mapconductor.core.marker.MarkerRenderingSupportKey
 import com.mapconductor.core.marker.MarkerTilingOptions
-import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
-import com.mapconductor.core.polygon.OnPolygonEventHandler
-import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.here.circle.HereCircleController
 import com.mapconductor.here.circle.HereCircleOverlayRenderer
@@ -49,47 +45,8 @@ import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-@OptIn(ExperimentalCoroutinesApi::class)
-@Composable
-fun HereMapView(
-    state: HereViewState,
-    modifier: Modifier = Modifier,
-    markerTiling: MarkerTilingOptions? = null,
-    sdkInitialize: (suspend (android.content.Context) -> Boolean)? = null,
-    onMapLoaded: OnMapLoadedHandler? = null,
-    onMapClick: OnMapEventHandler? = null,
-    onCameraMoveStart: OnCameraMoveHandler? = null,
-    onCameraMove: OnCameraMoveHandler? = null,
-    onCameraMoveEnd: OnCameraMoveHandler? = null,
-    content: (@Composable HereViewScope.() -> Unit)? = null,
-) {
-    @Suppress("DEPRECATION")
-    HereMapView(
-        state = state,
-        markerTiling = markerTiling,
-        modifier = modifier,
-        sdkInitialize = sdkInitialize,
-        onMapLoaded = onMapLoaded,
-        onMapClick = onMapClick,
-        onCameraMoveStart = onCameraMoveStart,
-        onCameraMove = onCameraMove,
-        onCameraMoveEnd = onCameraMoveEnd,
-        onMarkerClick = null,
-        onMarkerDragStart = null,
-        onMarkerDrag = null,
-        onMarkerDragEnd = null,
-        onMarkerAnimateStart = null,
-        onMarkerAnimateEnd = null,
-        onCircleClick = null,
-        onPolylineClick = null,
-        onPolygonClick = null,
-        content = content,
-    )
-}
-
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalCoroutinesApi::class)
-@Deprecated("Use CircleState/PolylineState/PolygonState onClick instead.")
 @Composable
 fun HereMapView(
     state: HereViewState,
@@ -98,18 +55,10 @@ fun HereMapView(
     sdkInitialize: (suspend (android.content.Context) -> Boolean)? = null,
     onMapLoaded: OnMapLoadedHandler? = null,
     onMapClick: OnMapEventHandler? = null,
+    onMapLongClick: OnMapEventHandler? = null,
     onCameraMoveStart: OnCameraMoveHandler? = null,
     onCameraMove: OnCameraMoveHandler? = null,
     onCameraMoveEnd: OnCameraMoveHandler? = null,
-    onMarkerClick: OnMarkerEventHandler?,
-    onMarkerDragStart: OnMarkerEventHandler? = null,
-    onMarkerDrag: OnMarkerEventHandler? = null,
-    onMarkerDragEnd: OnMarkerEventHandler? = null,
-    onMarkerAnimateStart: OnMarkerEventHandler? = null,
-    onMarkerAnimateEnd: OnMarkerEventHandler? = null,
-    onCircleClick: OnCircleEventHandler? = null,
-    onPolylineClick: OnPolylineEventHandler? = null,
-    onPolygonClick: OnPolygonEventHandler? = null,
     content: (@Composable HereViewScope.() -> Unit)? = null,
 ) {
     // Warmup the tile server early to reduce latency for raster layers
@@ -180,15 +129,7 @@ fun HereMapView(
                     rasterLayerController = rasterLayerController,
                 )
             controller.setMapClickListener(onMapClick)
-            controller.setOnMarkerClickListener(onMarkerClick)
-            controller.setOnMarkerDragStart(onMarkerDragStart)
-            controller.setOnMarkerDrag(onMarkerDrag)
-            controller.setOnMarkerDragEnd(onMarkerDragEnd)
-            controller.setOnMarkerAnimateStart(onMarkerAnimateStart)
-            controller.setOnMarkerAnimateEnd(onMarkerAnimateEnd)
-            controller.setOnCircleClickListener(onCircleClick)
-            controller.setOnPolylineClickListener(onPolylineClick)
-            controller.setOnPolygonClickListener(onPolygonClick)
+            controller.setMapLongClickListener(onMapLongClick)
             state.setController(controller)
             controller.setMapDesignTypeChangeListener(state::onMapDesignTypeChange)
 
@@ -248,7 +189,7 @@ fun HereMapView(
                         onCameraMoveEnd?.invoke(it)
                     }
 
-                    // loadScene can reset the camera; re-apply the desired initial camera afterwards.
+                    // loadScene can reset the camera; re-apply the desired initial camera after wards.
                     controller.holder.mapView.post {
                         controller.moveCamera(MapCameraPosition.from(initialCameraPosition))
                         if (resumed.compareAndSet(false, true)) {
@@ -262,7 +203,7 @@ fun HereMapView(
         registry = registry,
         serviceRegistry = serviceRegistry,
         onMapLoaded = onMapLoaded,
-        customDisposableEffect = { initState, holderRef ->
+        customDisposableEffect = { _, holderRef ->
 
             // HERE specific DisposableEffect logic
             DisposableEffect(lifecycle) {
