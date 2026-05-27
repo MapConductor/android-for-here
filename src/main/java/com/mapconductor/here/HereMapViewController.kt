@@ -301,6 +301,12 @@ class HereMapViewController(
     override fun onMapCameraUpdated(cameraState: MapCamera.State) {
         // Must run on main thread: HERE MapView coordinate conversion APIs are not thread-safe.
         coroutine.launch {
+
+            mapInitializedCallback?.let {
+                it.invoke()
+                mapInitializedCallback = null
+            }
+
             val mapCameraPosition = getMapCameraPosition(cameraState) ?: return@launch
             lastCameraPosition = mapCameraPosition
 
@@ -489,9 +495,6 @@ class HereMapViewController(
                 lastRequestedCameraPosition?.let { cameraPosition ->
                     holder.mapView.post { moveCamera(cameraPosition) }
                 }
-
-                mapInitializedCallback?.invoke()
-                mapInitializedCallback = null
 
                 mapDesignTypeChangeListener?.invoke(value)
             }
