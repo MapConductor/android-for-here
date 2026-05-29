@@ -257,9 +257,7 @@ class HereMapViewController(
         lastRequestedCameraPosition = position
         cameraRequestGeneration.incrementAndGet()
         val camera = this.holder.mapView.camera
-//        val update = position.toMapCameraUpdate()
-
-        val hereCameraZoom = position.zoom
+        val cameraParameters = position.toHereCameraParameters()
 
 //      bowFactor > 0: 最初にズームアウト → 到達時にズームイン
 //      bowFactor < 0: 最初にズームイン → 到達時にズームアウト（ややレア）
@@ -267,9 +265,9 @@ class HereMapViewController(
         val bowFactor = 1.0
         val animation =
             MapCameraAnimationFactory.flyTo(
-                GeoPoint.from(position.position).toGeoCoordinates().toUpdate(),
-                GeoOrientation(position.bearing, position.tilt).toUpdate(),
-                MapMeasure(MapMeasure.Kind.ZOOM_LEVEL, hereCameraZoom),
+                cameraParameters.target.toGeoCoordinates().toUpdate(),
+                cameraParameters.orientation.toUpdate(),
+                MapMeasure(MapMeasure.Kind.ZOOM_LEVEL, cameraParameters.hereZoom),
                 bowFactor,
                 Duration.ofMillis(duration),
             )
