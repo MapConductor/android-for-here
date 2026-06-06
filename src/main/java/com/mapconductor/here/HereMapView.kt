@@ -100,8 +100,8 @@ fun HereMapView(
             }
         },
         holderProvider = { mapView ->
-            val lookAt = state.cameraPosition.toMapCameraUpdate()
-            mapView.camera.applyUpdate(lookAt)
+//            val lookAt = state.cameraPosition.toMapCameraUpdate()
+//            mapView.camera.applyUpdate(lookAt)
             HereViewHolder(mapView, mapView.mapScene)
         },
         controllerProvider = { holder ->
