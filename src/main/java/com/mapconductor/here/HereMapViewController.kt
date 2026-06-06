@@ -20,13 +20,10 @@ import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.features.GeoPoint
-import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.MapCameraPosition
-import com.mapconductor.core.map.MapCameraPositionInterface
-import com.mapconductor.core.map.MapPaddingsInterface
 import com.mapconductor.core.map.OnMapInitializedHandler
 import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
@@ -257,9 +254,8 @@ class HereMapViewController(
         lastRequestedCameraPosition = position
         cameraRequestGeneration.incrementAndGet()
         val camera = this.holder.mapView.camera
-//        val update = position.toMapCameraUpdate()
 
-        val hereCameraZoom = position.zoom
+        val display = position.toHereDisplayCamera()
 
 //      bowFactor > 0: 最初にズームアウト → 到達時にズームイン
 //      bowFactor < 0: 最初にズームイン → 到達時にズームアウト（ややレア）
@@ -267,9 +263,9 @@ class HereMapViewController(
         val bowFactor = 1.0
         val animation =
             MapCameraAnimationFactory.flyTo(
-                GeoPoint.from(position.position).toGeoCoordinates().toUpdate(),
-                GeoOrientation(position.bearing, position.tilt).toUpdate(),
-                MapMeasure(MapMeasure.Kind.ZOOM_LEVEL, hereCameraZoom),
+                display.target.toGeoCoordinates().toUpdate(),
+                GeoOrientation(display.bearing, display.tiltDeg).toUpdate(),
+                MapMeasure(MapMeasure.Kind.ZOOM_LEVEL, display.hereZoomLevel),
                 bowFactor,
                 Duration.ofMillis(duration),
             )
@@ -330,32 +326,18 @@ class HereMapViewController(
         return holder.mapView.camera.boundingBox?.let { boundingBox ->
             val mapWidth = holder.mapView.width.toFloat()
             val mapHeight = holder.mapView.height.toFloat()
-            val leftTop = Offset(0.0f, 0.0f)
-            val rightTop = Offset(mapWidth, 0.0f)
-            val leftBottom = Offset(0.0f, holder.mapView.height.toFloat())
-            val rightBottom = Offset(mapWidth, mapHeight)
             val bounds = boundingBox.toGeoRectBounds()
             val visibleRegion =
                 VisibleRegion(
                     bounds = bounds,
-                    nearLeft = holder.fromScreenOffsetSync(leftBottom),
-                    nearRight = holder.fromScreenOffsetSync(rightBottom),
-                    farLeft = holder.fromScreenOffsetSync(leftTop),
-                    farRight = holder.fromScreenOffsetSync(rightTop),
+                    nearLeft = holder.fromScreenOffsetSync(Offset(0.0f, mapHeight)),
+                    nearRight = holder.fromScreenOffsetSync(Offset(mapWidth, mapHeight)),
+                    farLeft = holder.fromScreenOffsetSync(Offset(0.0f, 0.0f)),
+                    farRight = holder.fromScreenOffsetSync(Offset(mapWidth, 0.0f)),
                 )
-
-            val cameraPosition =
-                MapCameraPosition.from(
-                    object : MapCameraPositionInterface {
-                        override val position: GeoPointInterface = cameraState.targetCoordinates.toGeoPoint()
-                        override val zoom: Double = cameraState.toMapCameraPosition().zoom
-                        override val bearing: Double = cameraState.orientationAtTarget.bearing
-                        override val tilt: Double = cameraState.orientationAtTarget.tilt
-                        override val paddings: MapPaddingsInterface? = null
-                        override val visibleRegion: VisibleRegion? = visibleRegion
-                    },
-                )
-            return@let cameraPosition
+            val logicalCamera =
+                HereCameraStateSnapshot(cameraState, lastRequestedCameraPosition?.tilt).toMapCameraPosition()
+            return@let logicalCamera.copy(visibleRegion = visibleRegion)
         }
     }
 
