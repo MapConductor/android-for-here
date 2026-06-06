@@ -12,51 +12,51 @@ import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.spherical.Spherical
 import com.mapconductor.here.zoom.ZoomAltitudeConverter
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter()
-private const val MAX_HERE_TILT = 90.0
 
-internal data class HereCameraParameters(
+internal data class HereDisplayCamera(
     val target: GeoPoint,
-    val orientation: GeoOrientation,
-    val hereZoom: Double,
+    val tiltDeg: Double,
+    val hereZoomLevel: Double,
+    val bearing: Double,
 )
 
-@Keep
-fun MapCameraPosition.toMapCameraUpdate(): MapCameraUpdate {
-    val cameraParameters = toHereCameraParameters()
-    return MapCameraUpdateFactory.lookAt(
-        cameraParameters.target.toGeoCoordinates().toUpdate(),
-        cameraParameters.orientation.toUpdate(),
-        MapMeasure(
-            MapMeasure.Kind.ZOOM_LEVEL,
-            cameraParameters.hereZoom,
-        ),
+internal fun MapCameraPosition.toHereDisplayCamera(): HereDisplayCamera {
+    if (tilt >= 0) {
+        return HereDisplayCamera(
+            target = GeoPoint.from(position),
+            tiltDeg = tilt,
+            hereZoomLevel = ZoomAltitudeConverter.googleZoomToHereZoom(zoom, position.latitude),
+            bearing = bearing,
+        )
+    }
+    // tilt < 0: HERE cannot represent upward pitch directly.
+    // Keep the virtual eye direction by moving the ground target forward and rendering with abs(tilt).
+    val tiltAbsDeg = abs(tilt).coerceIn(0.0, 90.0)
+    val tiltAbsRad = Math.toRadians(tiltAbsDeg)
+    val hereZoomOrig = ZoomAltitudeConverter.googleZoomToHereZoom(zoom, position.latitude)
+    val altitude = converter.zoomLevelToAltitude(hereZoomOrig, position.latitude, 0.0)
+    val distanceForward = altitude * tan(tiltAbsRad)
+    val target = Spherical.computeOffset(position, distanceForward, bearing)
+    val adjustedHereZoom = converter.altitudeToZoomLevel(altitude / cos(tiltAbsRad), target.latitude, 0.0)
+    return HereDisplayCamera(
+        target = target,
+        tiltDeg = tiltAbsDeg,
+        hereZoomLevel = adjustedHereZoom,
+        bearing = bearing,
     )
 }
 
-internal fun MapCameraPosition.toHereCameraParameters(): HereCameraParameters {
-    if (tilt >= 0) {
-        return HereCameraParameters(
-            target = GeoPoint.from(position),
-            orientation = GeoOrientation(bearing, tilt),
-            hereZoom = ZoomAltitudeConverter.googleZoomToHereZoom(zoom, position.latitude),
-        )
-    }
-
-    // tilt < 0: ArcGIS の仕様に合わせ、カメラ位置と高度を固定したまま前方を見る。
-    // HERE は viewport center を指定するため、中心 target を pitch に応じて前方へ移動する。
-    val tiltAbsDeg = abs(tilt).coerceIn(0.0, MAX_HERE_TILT)
-    val tiltAbsRad = Math.toRadians(tiltAbsDeg)
-    val distance = converter.zoomLevelToAltitude(zoom, position.latitude, 0.0)
-    val distanceForward = distance * tan(tiltAbsRad)
-    val target = Spherical.computeOffset(position, distanceForward, bearing)
-
-    return HereCameraParameters(
-        target = target,
-        orientation = GeoOrientation(bearing, tiltAbsDeg),
-        hereZoom = ZoomAltitudeConverter.googleZoomToHereZoom(zoom, position.latitude),
+@Keep
+fun MapCameraPosition.toMapCameraUpdate(): MapCameraUpdate {
+    val display = toHereDisplayCamera()
+    return MapCameraUpdateFactory.lookAt(
+        display.target.toGeoCoordinates().toUpdate(),
+        GeoOrientation(display.bearing, display.tiltDeg).toUpdate(),
+        MapMeasure(MapMeasure.Kind.ZOOM_LEVEL, display.hereZoomLevel),
     )
 }
 
@@ -74,14 +74,48 @@ fun MapCameraPosition.Companion.from(position: MapCameraPositionInterface): MapC
             )
     }
 
-fun MapCamera.State.toMapCameraPosition(): MapCameraPosition {
-    val position = targetCoordinates.toGeoPoint()
-    val ourZoom = ZoomAltitudeConverter.hereZoomToGoogleZoom(zoomLevel, position.latitude)
+fun MapCamera.State.toMapCameraPosition(): MapCameraPosition = toMapCameraPosition(logicalTiltHint = null)
+
+internal data class HereCameraStateSnapshot(
+    val cameraState: MapCamera.State,
+    val logicalTiltHint: Double?,
+) {
+    fun toMapCameraPosition(): MapCameraPosition = cameraState.toMapCameraPosition(logicalTiltHint)
+}
+
+internal fun MapCamera.State.toMapCameraPosition(logicalTiltHint: Double?): MapCameraPosition {
+    val pitch = orientationAtTarget.tilt
+    val pitchAbsDeg = abs(pitch).coerceIn(0.0, 90.0)
+
+    if (logicalTiltHint == null || logicalTiltHint >= 0.0 || pitchAbsDeg == 0.0) {
+        val position = targetCoordinates.toGeoPoint()
+        val ourZoom = ZoomAltitudeConverter.hereZoomToGoogleZoom(zoomLevel, position.latitude)
+        return MapCameraPosition(
+            position = position,
+            zoom = ourZoom,
+            bearing = orientationAtTarget.bearing,
+            tilt = pitch,
+            visibleRegion = null,
+        )
+    }
+
+    // Recover original position and zoom from shifted camera state (tilt < 0 case)
+    val pitchAbsRad = Math.toRadians(pitchAbsDeg)
+    val shiftedCenter = targetCoordinates.toGeoPoint()
+    val bear = orientationAtTarget.bearing
+
+    val adjustedAltitude = converter.zoomLevelToAltitude(zoomLevel, shiftedCenter.latitude, 0.0)
+    val originalAltitude = adjustedAltitude * cos(pitchAbsRad)
+    val distanceBackward = originalAltitude * tan(pitchAbsRad)
+    val originalCenter = Spherical.computeOffset(shiftedCenter, distanceBackward, bear + 180.0)
+    val originalHereZoom = converter.altitudeToZoomLevel(originalAltitude, originalCenter.latitude, 0.0)
+    val originalGoogleZoom = ZoomAltitudeConverter.hereZoomToGoogleZoom(originalHereZoom, originalCenter.latitude)
+
     return MapCameraPosition(
-        position = position,
-        zoom = ourZoom,
-        bearing = this.orientationAtTarget.bearing,
-        tilt = this.orientationAtTarget.tilt,
+        position = originalCenter,
+        zoom = originalGoogleZoom,
+        bearing = bear,
+        tilt = -pitchAbsDeg,
         visibleRegion = null,
     )
 }
