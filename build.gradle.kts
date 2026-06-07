@@ -90,9 +90,9 @@ dependencies {
         ),
     )
     if (findProject(":android-sdk-core") != null) {
-        implementation(project(":android-sdk-core"))
+        api(project(":android-sdk-core"))
     } else {
-        implementation("com.mapconductor:core:$libraryVersion")
+        api("com.mapconductor:core:$libraryVersion")
     }
     implementation(libs.jts.core)
 
