@@ -288,7 +288,8 @@ class HereMarkerController private constructor(
         val groupId = UUID.randomUUID().toString()
         markerTileGroupId = groupId
 
-        val outputTileSize = ResourceProvider.getOptimalTileSize().coerceAtLeast(256)
+        val tileScale = 2.0
+        val outputTileSize = (512 * tileScale).toInt()
 
         cacheVersion = (cacheVersion + 1) and 0x7fffffff
         val tileRenderer =
@@ -299,6 +300,7 @@ class HereMarkerController private constructor(
                 debugTileOverlay = markerTiling.debugTileOverlay,
                 iconScaleCallback = markerTiling.iconScaleCallback,
                 wasmEngine = TileRenderWasmEngine.createOrNull(ResourceProvider.getAppContext(), markerTiling.enableWasmAcceleration),
+                extraIconScale = tileScale,
             )
         markerTileRenderer = tileRenderer
 
