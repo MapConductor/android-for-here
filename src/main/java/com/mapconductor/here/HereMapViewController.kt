@@ -297,7 +297,6 @@ class HereMapViewController(
     override fun onMapCameraUpdated(cameraState: MapCamera.State) {
         // Must run on main thread: HERE MapView coordinate conversion APIs are not thread-safe.
         coroutine.launch {
-
             mapInitializedCallback?.let {
                 it.invoke()
                 mapInitializedCallback = null

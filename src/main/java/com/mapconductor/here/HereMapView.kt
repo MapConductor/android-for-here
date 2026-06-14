@@ -300,9 +300,11 @@ private fun getPolygonController(
 }
 
 private fun getRasterLayerController(holder: HereViewHolder): HereRasterLayerController {
+    val tileServer = TileServerRegistry.get(forceNoStoreCache = true)
     val renderer =
         HereRasterLayerOverlayRenderer(
             holder = holder,
+            tileServer = tileServer,
         )
     return HereRasterLayerController(
         renderer = renderer,

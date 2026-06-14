@@ -133,8 +133,9 @@ class HerePolygonOverlayRenderer(
                     finger.geodesic != prevFinger.geodesic
 
             if (geometryChanged) {
+                val newPolygons = createPolygon(current.state)
                 coroutine.launch { polygon.forEach { holder.map.removeMapPolygon(it) } }
-                return@withContext createPolygon(current.state)
+                return@withContext newPolygons
             }
 
             if (current.state.holes.isNotEmpty()) {

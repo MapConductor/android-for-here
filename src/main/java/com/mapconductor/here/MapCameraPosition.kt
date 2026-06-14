@@ -35,7 +35,7 @@ internal fun MapCameraPosition.toHereDisplayCamera(): HereDisplayCamera {
     }
     // tilt < 0: HERE cannot represent upward pitch directly.
     // Keep the virtual eye direction by moving the ground target forward and rendering with abs(tilt).
-    val tiltAbsDeg = abs(tilt).coerceIn(0.0, 90.0)
+    val tiltAbsDeg = abs(tilt).coerceIn(0.0, 60.0)
     val tiltAbsRad = Math.toRadians(tiltAbsDeg)
     val hereZoomOrig = ZoomAltitudeConverter.googleZoomToHereZoom(zoom, position.latitude)
     val altitude = converter.zoomLevelToAltitude(hereZoomOrig, position.latitude, 0.0)
