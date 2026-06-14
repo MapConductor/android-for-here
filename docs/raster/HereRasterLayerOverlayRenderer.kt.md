@@ -11,6 +11,7 @@ services. It manages the underlying `RasterDataSource` and `MapLayer` objects fr
 ```kotlin
 class HereRasterLayerOverlayRenderer(
     private val holder: HereViewHolder,
+    private val tileServer: LocalTileServer,
     override val coroutine: CoroutineScope = CoroutineScope(Dispatchers.Default),
 ) : RasterLayerOverlayRendererInterface<HereRasterLayerHandle>
 ```
@@ -22,6 +23,7 @@ class HereRasterLayerOverlayRenderer(
 ```kotlin
 HereRasterLayerOverlayRenderer(
     holder: HereViewHolder,
+    tileServer: LocalTileServer,
     coroutine: CoroutineScope = CoroutineScope(Dispatchers.Default)
 )
 ```
@@ -35,6 +37,10 @@ Creates a new instance of the `HereRasterLayerOverlayRenderer`.
 - `holder`
     - Type: `HereViewHolder`
     - Description: The view holder that provides access to the `MapView` and `HereMap` instances.
+- `tileServer`
+    - Type: `LocalTileServer`
+    - Description: Local tile server used when raster tiles need to be proxied, such as when
+                   applying opacity for HERE SDK raster layers.
 - `coroutine`
     - Type: `CoroutineScope`
     - Description: The coroutine scope used for executing asynchronous operations. Defaults to
@@ -80,9 +86,9 @@ override suspend fun onChange(
 
 #### Description
 
-Processes updates for existing raster layers. If the underlying `source` of a layer has changed, the
-old layer is destroyed and a new one is created. If only other properties like visibility have
-changed, the existing `MapLayer` is updated in place.
+Processes updates for existing raster layers. If the underlying `source` or `opacity` of a layer has
+changed, the old layer is destroyed and a new one is created. If only other properties like
+visibility have changed, the existing `MapLayer` is updated in place.
 
 #### Parameters
 
@@ -146,6 +152,7 @@ data class HereRasterLayerHandle(
     val layer: MapLayer,
     val sourceName: String,
     val layerName: String,
+    val routeId: String?,
 )
 ```
 
@@ -163,6 +170,21 @@ data class HereRasterLayerHandle(
 - `layerName`
     - Type: `String`
     - Description: The unique name assigned to the map layer.
+- `routeId`
+    - Type: `String?`
+    - Description: Local tile server route used by the opacity proxy, or `null` when the native
+                   raster source can be used directly.
+
+## Opacity proxy
+
+HERE SDK raster layers are backed by `RasterDataSource` URL providers. When `RasterLayerState`
+opacity is below `1.0f`, the renderer registers a local tile proxy route and points HERE at that
+local URL. The proxy fetches the original tile, applies the requested alpha to the bitmap, and
+returns a PNG tile to the SDK.
+
+Fetched source tiles are stored in an in-memory LRU cache keyed by URL before opacity is applied.
+The default cache size is 16 MiB. This avoids repeated network fetches when HERE requests the same
+tile again for the current proxied layer.
 ## Example
 
 The following example demonstrates how to instantiate the `HereRasterLayerOverlayRenderer` and use
@@ -183,7 +205,7 @@ import kotlinx.coroutines.launch
 val hereViewHolder: HereViewHolder = /* ... */
 
 // 1. Instantiate the renderer
-val rasterRenderer = HereRasterLayerOverlayRenderer(hereViewHolder)
+val rasterRenderer = HereRasterLayerOverlayRenderer(hereViewHolder, localTileServer)
 
 // 2. Define the state for the new raster layer
 val openStreetMapLayerState = RasterLayerState(
