@@ -21,7 +21,7 @@ dependencyResolutionManagement {
         if (!System.getenv("GPR_USER").isNullOrEmpty() && !System.getenv("GPR_TOKEN").isNullOrEmpty()) {
             maven {
                 name = "GithubPackages"
-                url = uri("https://maven.pkg.github.com/mapconductor/android-sdk")
+                url = uri("https://maven.pkg.github.com/mapconductor/android-for-here")
                 credentials {
                     username = System.getenv("GPR_USER") ?: ""
                     password = System.getenv("GPR_TOKEN") ?: ""
