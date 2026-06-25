@@ -1,5 +1,6 @@
 package com.mapconductor.here.polygon
 
+import android.util.Log
 import androidx.compose.ui.graphics.toArgb
 import com.here.sdk.core.Color
 import com.here.sdk.core.GeoCoordinates
@@ -22,10 +23,8 @@ import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.here.HereActualPolygon
 import com.mapconductor.here.HereViewHolder
 import com.mapconductor.here.raster.HereRasterLayerController
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val TAG = "HerePolygonRaster"
@@ -60,61 +59,14 @@ class HerePolygonOverlayRenderer(
     private val masks = HashMap<String, MaskHandle>()
 
     override suspend fun removePolygon(entity: PolygonEntityInterface<HereActualPolygon>) {
-        coroutine.launch {
-            entity.polygon.forEach { holder.map.removeMapPolygon(it) }
-        }
+        removeMapPolygons(entity.polygon)
         removeMaskLayer(entity.state.id)
     }
 
     override suspend fun createPolygon(state: PolygonState): HereActualPolygon? {
         Log.d(TAG, "createPolygon: id=${state.id}, holes=${state.holes.size}, points=${state.points.size}")
-        val polygons =
-            if (state.holes.isEmpty()) {
-                Log.d(TAG, "No holes, using simple polygon")
-                removeMaskLayer(state.id)
-                listOf(createMapPolygon(state, GeoPolygon(toRing(state.points, state.geodesic))))
-            } else {
-                Log.d(TAG, "Has holes, using raster layer for mask")
-                ensureMaskLayer(state, forceRecreate = true)
-                // Create stroke-only polygons: outer boundary + each hole boundary
-                val strokeColor = Color.valueOf(state.strokeColor.toArgb())
-                val strokeWidth = ResourceProvider.dpToPx(state.strokeWidth.value.toDouble())
-                val transparentFill = Color.valueOf(0f, 0f, 0f, 0f)
-
-                buildList {
-                    // Outer boundary stroke (transparent fill)
-                    add(
-                        createMapPolygon(
-                            state.copy(holes = emptyList()),
-                            GeoPolygon(toRing(state.points, state.geodesic)),
-                        ).apply {
-                            fillColor = transparentFill
-                            outlineColor = strokeColor
-                            outlineWidth = strokeWidth
-                        },
-                    )
-                    // Hole boundary strokes (transparent fill)
-                    state.holes.forEach { hole ->
-                        val holeRing = toRing(hole, state.geodesic)
-                        if (holeRing.size >= 3) {
-                            add(
-                                MapPolygon(
-                                    GeoPolygon(holeRing),
-                                    transparentFill,
-                                    strokeColor,
-                                    strokeWidth,
-                                ).apply {
-                                    drawOrder = state.zIndex
-                                },
-                            )
-                        }
-                    }
-                }
-            }
-
-        coroutine.launch {
-            polygons.forEach { holder.map.addMapPolygon(it) }
-        }
+        val polygons = buildMapPolygons(state)
+        addMapPolygons(polygons)
         return polygons
     }
 
@@ -133,9 +85,20 @@ class HerePolygonOverlayRenderer(
                     finger.geodesic != prevFinger.geodesic
 
             if (geometryChanged) {
-                val newPolygons = createPolygon(current.state)
-                coroutine.launch { polygon.forEach { holder.map.removeMapPolygon(it) } }
-                return@withContext newPolygons
+                if (current.state.holes.isEmpty() && prev.state.holes.isEmpty() && polygon.size == 1) {
+                    val geometry = GeoPolygon(toRing(current.state.points, current.state.geodesic))
+                    removeMaskLayer(current.state.id)
+                    withContext(Dispatchers.Main) {
+                        polygon.first().geometry = geometry
+                    }
+                } else {
+                    val newPolygons = buildMapPolygons(current.state)
+                    withContext(Dispatchers.Main) {
+                        polygon.forEach { holder.map.removeMapPolygon(it) }
+                        newPolygons.forEach { holder.map.addMapPolygon(it) }
+                    }
+                    return@withContext newPolygons
+                }
             }
 
             if (current.state.holes.isNotEmpty()) {
@@ -173,6 +136,62 @@ class HerePolygonOverlayRenderer(
 
             polygon
         }
+
+    private suspend fun buildMapPolygons(state: PolygonState): HereActualPolygon =
+        if (state.holes.isEmpty()) {
+            Log.d(TAG, "No holes, using simple polygon")
+            removeMaskLayer(state.id)
+            listOf(createMapPolygon(state, GeoPolygon(toRing(state.points, state.geodesic))))
+        } else {
+            Log.d(TAG, "Has holes, using raster layer for mask")
+            ensureMaskLayer(state, forceRecreate = true)
+            // Create stroke-only polygons: outer boundary + each hole boundary
+            val strokeColor = Color.valueOf(state.strokeColor.toArgb())
+            val strokeWidth = ResourceProvider.dpToPx(state.strokeWidth.value.toDouble())
+            val transparentFill = Color.valueOf(0f, 0f, 0f, 0f)
+
+            buildList {
+                // Outer boundary stroke (transparent fill)
+                add(
+                    createMapPolygon(
+                        state.copy(holes = emptyList()),
+                        GeoPolygon(toRing(state.points, state.geodesic)),
+                    ).apply {
+                        fillColor = transparentFill
+                        outlineColor = strokeColor
+                        outlineWidth = strokeWidth
+                    },
+                )
+                // Hole boundary strokes (transparent fill)
+                state.holes.forEach { hole ->
+                    val holeRing = toRing(hole, state.geodesic)
+                    if (holeRing.size >= 3) {
+                        add(
+                            MapPolygon(
+                                GeoPolygon(holeRing),
+                                transparentFill,
+                                strokeColor,
+                                strokeWidth,
+                            ).apply {
+                                drawOrder = state.zIndex
+                            },
+                        )
+                    }
+                }
+            }
+        }
+
+    private suspend fun addMapPolygons(polygons: HereActualPolygon) {
+        withContext(Dispatchers.Main) {
+            polygons.forEach { holder.map.addMapPolygon(it) }
+        }
+    }
+
+    private suspend fun removeMapPolygons(polygons: HereActualPolygon) {
+        withContext(Dispatchers.Main) {
+            polygons.forEach { holder.map.removeMapPolygon(it) }
+        }
+    }
 
     private fun createMapPolygon(
         state: PolygonState,
