@@ -20,6 +20,7 @@ import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
@@ -289,6 +290,24 @@ class HereMapViewController(
                             cameraMoveEndCallback?.invoke(it)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    override fun fitBounds(
+        bounds: GeoRectBounds,
+        padding: Int,
+    ) {
+        val geoBox = bounds.toGeoBox() ?: return
+        val camera = holder.mapView.camera
+        val request = cameraRequestGeneration.incrementAndGet()
+        val cameraUpdate = com.here.sdk.mapview.MapCameraUpdateFactory.lookAt(geoBox)
+        camera.applyUpdate(cameraUpdate)
+        if (holder.mapView.width == 0 || holder.mapView.height == 0) {
+            holder.mapView.post {
+                if (cameraRequestGeneration.get() == request) {
+                    camera.applyUpdate(cameraUpdate)
                 }
             }
         }
