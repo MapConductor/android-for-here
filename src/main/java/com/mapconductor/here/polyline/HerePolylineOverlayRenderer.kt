@@ -32,7 +32,7 @@ class HerePolylineOverlayRenderer(
         val representation = createRepresentation(state)
         val mapPolyline =
             MapPolyline(geoPolyline, representation).apply {
-                drawOrder = state.zIndex
+                drawOrder = (state.zIndex + 512).coerceIn(512, 1023)
             }
 
         coroutine.launch {
@@ -66,7 +66,7 @@ class HerePolylineOverlayRenderer(
             }
 
             if (finger.zIndex != prevFinger.zIndex) {
-                polyline.drawOrder = current.state.zIndex
+                polyline.drawOrder = (current.state.zIndex + 512).coerceIn(512, 1023)
                 needsReAdd = true
             }
 

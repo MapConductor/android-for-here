@@ -131,7 +131,7 @@ class HerePolygonOverlayRenderer(
                 }
             }
             if (finger.zIndex != prevFinger.zIndex) {
-                polygon.forEach { it.drawOrder = current.state.zIndex }
+                polygon.forEach { it.drawOrder = current.state.zIndex.coerceIn(0, 511) }
             }
 
             polygon
@@ -173,7 +173,7 @@ class HerePolygonOverlayRenderer(
                                 strokeColor,
                                 strokeWidth,
                             ).apply {
-                                drawOrder = state.zIndex
+                                drawOrder = state.zIndex.coerceIn(0, 511)
                             },
                         )
                     }
@@ -203,7 +203,7 @@ class HerePolygonOverlayRenderer(
             Color.valueOf(state.fillColor.toArgb()),
             Color.valueOf(state.strokeColor.toArgb()),
             outlineWidth,
-        ).apply { drawOrder = state.zIndex }
+        ).apply { drawOrder = state.zIndex.coerceIn(0, 511) }
     }
 
     private fun toRing(
