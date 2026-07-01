@@ -2,7 +2,7 @@ package com.mapconductor.here
 
 import HereMapDesignTypeChangeHandler
 import HereMapViewControllerInterface
-import androidx.compose.ui.geometry.Offset
+import android.graphics.PointF
 import com.here.sdk.animation.AnimationState
 import com.here.sdk.core.GeoOrientation
 import com.here.sdk.core.Point2D
@@ -354,10 +354,10 @@ class HereMapViewController(
             val visibleRegion =
                 VisibleRegion(
                     bounds = bounds,
-                    nearLeft = holder.fromScreenOffsetSync(Offset(0.0f, mapHeight)),
-                    nearRight = holder.fromScreenOffsetSync(Offset(mapWidth, mapHeight)),
-                    farLeft = holder.fromScreenOffsetSync(Offset(0.0f, 0.0f)),
-                    farRight = holder.fromScreenOffsetSync(Offset(mapWidth, 0.0f)),
+                    nearLeft = holder.fromScreenOffsetSync(PointF(0.0f, mapHeight)),
+                    nearRight = holder.fromScreenOffsetSync(PointF(mapWidth, mapHeight)),
+                    farLeft = holder.fromScreenOffsetSync(PointF(0.0f, 0.0f)),
+                    farRight = holder.fromScreenOffsetSync(PointF(mapWidth, 0.0f)),
                 )
             val logicalCamera =
                 HereCameraStateSnapshot(cameraState, lastRequestedCameraPosition?.tilt).toMapCameraPosition()

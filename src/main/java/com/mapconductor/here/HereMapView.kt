@@ -15,7 +15,7 @@ import com.here.sdk.mapview.MapView
 import com.here.sdk.mapview.MapViewOptions
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
-import com.mapconductor.core.map.MapViewBase
+import com.mapconductor.compose.MapViewBase
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.map.OnCameraMoveHandler
 import com.mapconductor.core.map.OnMapEventHandler

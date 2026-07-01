@@ -1,7 +1,6 @@
 package com.mapconductor.here.polygon
 
 import android.util.Log
-import androidx.compose.ui.graphics.toArgb
 import com.here.sdk.core.Color
 import com.here.sdk.core.GeoCoordinates
 import com.here.sdk.core.GeoPolygon
@@ -105,28 +104,28 @@ class HerePolygonOverlayRenderer(
                 ensureMaskLayer(current.state, forceRecreate = true)
                 polygon.forEach {
                     it.fillColor = Color.valueOf(0f, 0f, 0f, 0f)
-                    it.outlineColor = Color.valueOf(current.state.strokeColor.toArgb())
+                    it.outlineColor = Color.valueOf(current.state.strokeColor)
                     it.outlineWidth =
                         ResourceProvider.dpToPx(
-                            current.state.strokeWidth.value
+                            current.state.strokeWidth
                                 .toDouble(),
                         )
                 }
             } else {
                 if (finger.strokeColor != prevFinger.strokeColor) {
-                    val stroke = Color.valueOf(current.state.strokeColor.toArgb())
+                    val stroke = Color.valueOf(current.state.strokeColor)
                     polygon.forEach { it.outlineColor = stroke }
                 }
                 if (finger.strokeWidth != prevFinger.strokeWidth) {
                     val width =
                         ResourceProvider.dpToPx(
-                            current.state.strokeWidth.value
+                            current.state.strokeWidth
                                 .toDouble(),
                         )
                     polygon.forEach { it.outlineWidth = width }
                 }
                 if (finger.fillColor != prevFinger.fillColor) {
-                    val fill = Color.valueOf(current.state.fillColor.toArgb())
+                    val fill = Color.valueOf(current.state.fillColor)
                     polygon.forEach { it.fillColor = fill }
                 }
             }
@@ -146,8 +145,8 @@ class HerePolygonOverlayRenderer(
             Log.d(TAG, "Has holes, using raster layer for mask")
             ensureMaskLayer(state, forceRecreate = true)
             // Create stroke-only polygons: outer boundary + each hole boundary
-            val strokeColor = Color.valueOf(state.strokeColor.toArgb())
-            val strokeWidth = ResourceProvider.dpToPx(state.strokeWidth.value.toDouble())
+            val strokeColor = Color.valueOf(state.strokeColor)
+            val strokeWidth = ResourceProvider.dpToPx(state.strokeWidth.toDouble())
             val transparentFill = Color.valueOf(0f, 0f, 0f, 0f)
 
             buildList {
@@ -197,11 +196,11 @@ class HerePolygonOverlayRenderer(
         state: PolygonState,
         geoPolygon: GeoPolygon,
     ): MapPolygon {
-        val outlineWidth = ResourceProvider.dpToPx(state.strokeWidth.value.toDouble())
+        val outlineWidth = ResourceProvider.dpToPx(state.strokeWidth.toDouble())
         return MapPolygon(
             geoPolygon,
-            Color.valueOf(state.fillColor.toArgb()),
-            Color.valueOf(state.strokeColor.toArgb()),
+            Color.valueOf(state.fillColor),
+            Color.valueOf(state.strokeColor),
             outlineWidth,
         ).apply { drawOrder = state.zIndex.coerceIn(0, 511) }
     }
@@ -311,7 +310,7 @@ class HerePolygonOverlayRenderer(
     ) {
         provider.points = state.points
         provider.holes = state.holes
-        provider.fillColor = state.fillColor.toArgb()
+        provider.fillColor = state.fillColor
         provider.strokeColor = android.graphics.Color.TRANSPARENT
         provider.strokeWidthPx = 0f
         provider.geodesic = state.geodesic
