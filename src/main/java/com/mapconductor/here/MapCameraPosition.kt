@@ -85,7 +85,7 @@ internal data class HereCameraStateSnapshot(
 
 internal fun MapCamera.State.toMapCameraPosition(logicalTiltHint: Double?): MapCameraPosition {
     val pitch = orientationAtTarget.tilt
-    val pitchAbsDeg = abs(pitch).coerceIn(0.0, 90.0)
+    val pitchAbsDeg = abs(pitch).coerceIn(0.0, 60.0)
 
     if (logicalTiltHint == null || logicalTiltHint >= 0.0 || pitchAbsDeg == 0.0) {
         val position = targetCoordinates.toGeoPoint()
