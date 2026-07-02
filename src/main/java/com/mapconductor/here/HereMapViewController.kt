@@ -14,6 +14,7 @@ import com.here.sdk.mapview.MapCameraAnimationFactory
 import com.here.sdk.mapview.MapCameraListener
 import com.here.sdk.mapview.MapMeasure
 import com.here.time.Duration
+import com.mapconductor.core.OnMapInitializedHandler
 import com.mapconductor.core.circle.CircleCapableInterface
 import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.circle.CircleState
@@ -25,7 +26,6 @@ import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.MapCameraPosition
-import com.mapconductor.core.map.OnMapInitializedHandler
 import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface

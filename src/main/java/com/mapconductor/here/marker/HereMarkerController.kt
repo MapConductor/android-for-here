@@ -84,7 +84,7 @@ class HereMarkerController private constructor(
 
         val icon = nearest.state.icon ?: DefaultMarkerIcon()
 
-        val baseSizePx = ResourceProvider.dpToPxForBitmap(icon.iconSize).toDouble()
+        val baseSizePx = ResourceProvider.dpToPxForBitmap(icon.iconSize)
         val iconWidthPx = baseSizePx * icon.scale.toDouble()
         val iconHeightPx = baseSizePx * icon.scale.toDouble()
 
