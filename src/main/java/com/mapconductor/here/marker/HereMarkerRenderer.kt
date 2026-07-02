@@ -28,7 +28,7 @@ class HereMarkerRenderer(
         coroutine = coroutine,
     ) {
     private fun resolveDrawOrder(state: com.mapconductor.core.marker.MarkerState): Int =
-        (state.zIndex ?: calculateZIndex(state.position)).toInt()
+        state.zIndex ?: calculateZIndex(state.position)
 
     override fun setMarkerPosition(
         markerEntity: MarkerEntityInterface<HereActualMarker>,

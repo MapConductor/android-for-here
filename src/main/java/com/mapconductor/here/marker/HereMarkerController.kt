@@ -35,9 +35,9 @@ class HereMarkerController private constructor(
     override val renderer: HereMarkerRenderer,
     private val markerTiling: MarkerTilingOptions,
 ) : AbstractMarkerController<HereActualMarker>(
-        markerManager = markerManager,
-        renderer = renderer,
-    ) {
+    markerManager = markerManager,
+    renderer = renderer,
+) {
     private var internalSelectedMarker: MarkerEntityInterface<HereActualMarker>? = null
 
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
@@ -78,7 +78,7 @@ class HereMarkerController private constructor(
         val markerScreen = renderer.holder.toScreenOffset(nearest.state.position) ?: return null
 
         val tolerancePx =
-            Settings.Default.tapTolerance
+            Settings.Default.tapTolerance.value
                 .toDouble() *
                 ResourceProvider.getDensity().toDouble()
 

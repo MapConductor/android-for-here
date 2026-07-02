@@ -1,6 +1,6 @@
 package com.mapconductor.here
 
-import android.graphics.PointF
+import androidx.compose.ui.geometry.Offset
 import com.here.sdk.core.Point2D
 import com.here.sdk.mapview.MapScene
 import com.here.sdk.mapview.MapView
@@ -12,22 +12,25 @@ class HereViewHolder(
     override val mapView: MapView,
     override val map: MapScene,
 ) : MapViewHolderInterface<MapView, MapScene> {
-    override fun toScreenOffset(position: GeoPointInterface): PointF? {
+    override fun toScreenOffset(position: GeoPointInterface): Offset? {
         val result =
             mapView.geoToViewCoordinates(
                 GeoPoint.from(position).toGeoCoordinates(),
             ) ?: return null
 
-        return PointF(result.x.toFloat(), result.y.toFloat())
+        return Offset(
+            x = result.x.toFloat(),
+            y = result.y.toFloat(),
+        )
     }
 
-    override suspend fun fromScreenOffset(offset: PointF): GeoPoint? =
+    override suspend fun fromScreenOffset(offset: Offset): GeoPoint? =
         mapView
             .viewToGeoCoordinates(
                 Point2D(offset.x.toDouble(), offset.y.toDouble()),
             )?.toGeoPoint()
 
-    override fun fromScreenOffsetSync(offset: PointF): GeoPoint? =
+    override fun fromScreenOffsetSync(offset: Offset): GeoPoint? =
         mapView
             .viewToGeoCoordinates(
                 Point2D(offset.x.toDouble(), offset.y.toDouble()),

@@ -1,5 +1,6 @@
 package com.mapconductor.here.circle
 
+import androidx.compose.ui.graphics.toArgb
 import com.here.sdk.core.Color
 import com.here.sdk.core.GeoCircle
 import com.here.sdk.core.GeoCoordinates
@@ -26,12 +27,12 @@ class HereCircleOverlayRenderer(
 ) : AbstractCircleOverlayRenderer<HereActualCircle>() {
     override suspend fun createCircle(state: CircleState): HereActualCircle? {
         val geoCircle = createCirclePolygon(state)
-        val lineWidth = ResourceProvider.dpToPx(state.strokeWidth.toDouble())
+        val lineWidth = ResourceProvider.dpToPx(state.strokeWidth.value.toDouble())
         val mapCircle =
             MapPolygon(
                 geoCircle,
-                Color.valueOf(state.fillColor),
-                Color.valueOf(state.strokeColor),
+                Color.valueOf(state.fillColor.toArgb()),
+                Color.valueOf(state.strokeColor.toArgb()),
                 lineWidth,
             ).apply {
                 drawOrder = (state.zIndex ?: 0).coerceIn(0, 511)
@@ -70,7 +71,8 @@ class HereCircleOverlayRenderer(
             if (finger.strokeColor != prevFinger.strokeColor) {
                 current.circle.outlineColor =
                     Color.valueOf(
-                        current.state.strokeColor,
+                        current.state.strokeColor
+                            .toArgb(),
                     )
             }
 
@@ -78,7 +80,7 @@ class HereCircleOverlayRenderer(
             if (finger.strokeWidth != prevFinger.strokeWidth) {
                 val lineWidth =
                     ResourceProvider.dpToPx(
-                        current.state.strokeWidth
+                        current.state.strokeWidth.value
                             .toDouble(),
                     )
                 current.circle.outlineWidth = lineWidth
@@ -88,14 +90,15 @@ class HereCircleOverlayRenderer(
             if (finger.fillColor != prevFinger.fillColor) {
                 current.circle.fillColor =
                     Color.valueOf(
-                        current.state.fillColor,
+                        current.state.fillColor
+                            .toArgb(),
                     )
             }
             if (finger.zIndex != prevFinger.zIndex) {
                 current.circle.drawOrder = (current.state.zIndex ?: 0).coerceIn(0, 511)
             }
             current.circle.outlineWidth =
-                current.state.strokeWidth
+                current.state.strokeWidth.value
                     .toDouble()
 
             circle

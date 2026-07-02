@@ -1,5 +1,6 @@
 package com.mapconductor.here.polyline
 
+import androidx.compose.ui.graphics.toArgb
 import com.here.sdk.core.Color
 import com.here.sdk.core.GeoPolyline
 import com.here.sdk.mapview.LineCap
@@ -99,9 +100,9 @@ class HerePolylineOverlayRenderer(
         val lineWidth =
             MapMeasureDependentRenderSize(
                 RenderSize.Unit.PIXELS,
-                ResourceProvider.dpToPx(state.strokeWidth.toDouble()),
+                ResourceProvider.dpToPx(state.strokeWidth),
             )
-        val lineColor = Color.valueOf(state.strokeColor)
+        val lineColor = Color.valueOf(state.strokeColor.toArgb())
         val lineCap = LineCap.SQUARE
         return MapPolyline.SolidRepresentation(lineWidth, lineColor, lineCap)
     }

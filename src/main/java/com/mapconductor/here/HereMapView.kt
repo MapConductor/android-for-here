@@ -13,9 +13,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.here.sdk.mapview.MapRenderMode
 import com.here.sdk.mapview.MapView
 import com.here.sdk.mapview.MapViewOptions
+import com.mapconductor.compose.map.MapViewBase
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
-import com.mapconductor.compose.MapViewBase
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.map.OnCameraMoveHandler
 import com.mapconductor.core.map.OnMapEventHandler
@@ -193,7 +193,7 @@ fun HereMapView(
                     controller.holder.mapView.post {
                         controller.moveCamera(MapCameraPosition.from(initialCameraPosition))
                         if (resumed.compareAndSet(false, true)) {
-                            cont.resume(controller, onCancellation = {})
+                            cont.resume(controller) { cause, _, _ -> }
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 package com.mapconductor.here.zoom
 
 import com.mapconductor.core.zoom.AbstractZoomAltitudeConverter
+import com.mapconductor.here.zoom.ZoomAltitudeConverter.Companion.HERE_ZOOM_TO_GOOGLE_ZOOM_AT_EQUATOR
 import kotlin.math.cos
 import kotlin.math.log2
 import kotlin.math.max
