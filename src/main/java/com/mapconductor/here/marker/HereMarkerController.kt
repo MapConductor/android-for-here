@@ -46,7 +46,7 @@ class HereMarkerController private constructor(
     @Volatile
     private var lastKnownZoom: Double = 0.0
 
-    private val tileServer = TileServerRegistry.get(forceNoStoreCache = true)
+    private val tileServer = TileServerRegistry.get()
     private var markerTileRenderer: MarkerTileRenderer<HereActualMarker>? = null
     private var markerTileGroupId: String? = null
     private var markerTileRasterLayerState: RasterLayerState? = null
@@ -228,6 +228,10 @@ class HereMarkerController private constructor(
     }
 
     override fun destroy() {
+        // Clean up tile server registration
+        // Unregister this map's route only. Never stop the server here: it is
+        // a process-wide singleton shared by all map controllers and overlay
+        // modules; stopping it breaks tile loading for every other live map.
         markerTileGroupId?.let { groupId ->
             tileServer.unregister(groupId)
         }
@@ -287,8 +291,12 @@ class HereMarkerController private constructor(
         val groupId = UUID.randomUUID().toString()
         markerTileGroupId = groupId
 
-        val tileScale = 2.0
-        val outputTileSize = (512 * tileScale).toInt()
+        // HERE displays one raster tile over 512 logical px, so render tiles at
+        // 512 with no extra icon scale: icons match regular MapMarker size 1:1.
+        // (256 gets upscaled 2x -> icons appear double size; 1024 doubles the
+        // render/PNG-encode cost for no visible gain.)
+        val tileScale = 1.0
+        val outputTileSize = 512
 
         cacheVersion = (cacheVersion + 1) and 0x7fffffff
         val tileRenderer =

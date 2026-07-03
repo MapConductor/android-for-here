@@ -230,6 +230,9 @@ fun HereMapView(
                                     // Ensure these calls are safe if mapView might be null or already destroyed
                                     currentHolder.mapView.onPause()
                                     currentHolder.mapView.onDestroy()
+                                    // Real teardown: free overlay controllers (tile-server
+                                    // routes, marker managers) and cancel the controller scope.
+                                    HereMapViewControllerStore.get(stateId)?.destroy()
                                     HereMapViewControllerStore.remove(stateId) // Clean up from your store
                                 }
                             }

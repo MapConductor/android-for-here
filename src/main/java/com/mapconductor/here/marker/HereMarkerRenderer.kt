@@ -30,6 +30,23 @@ class HereMarkerRenderer(
     private fun resolveDrawOrder(state: com.mapconductor.core.marker.MarkerState): Int =
         state.zIndex ?: calculateZIndex(state.position)
 
+    override val supportsAnimationOverlay: Boolean = true
+
+    override fun setMarkerVisible(
+        markerEntity: MarkerEntityInterface<HereActualMarker>,
+        visible: Boolean,
+    ) {
+        // HERE MapMarker has no visibility property; remove/re-add on the scene.
+        coroutine.launch {
+            val marker = markerEntity.marker ?: return@launch
+            if (visible) {
+                holder.mapView.mapScene.addMapMarkers(listOf(marker))
+            } else {
+                holder.mapView.mapScene.removeMapMarkers(listOf(marker))
+            }
+        }
+    }
+
     override fun setMarkerPosition(
         markerEntity: MarkerEntityInterface<HereActualMarker>,
         position: GeoPoint,
