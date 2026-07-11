@@ -3,14 +3,9 @@
 import com.here.sdk.core.engine.AuthenticationMode
 import com.here.sdk.core.engine.SDKNativeEngine
 import com.here.sdk.core.engine.SDKOptions
-import com.here.sdk.mapview.MapScene
-import com.here.sdk.mapview.MapView
-import com.mapconductor.core.map.MapViewHolderInterface
 import com.mapconductor.core.map.StaticHolder
 import android.content.Context
 import android.content.pm.PackageManager
-
-typealias HereViewHolderInterface = MapViewHolderInterface<MapView, MapScene>
 
 object HereMapViewControllerStore : StaticHolder<HereMapViewController>() {
     private var mapCount: Int = 0

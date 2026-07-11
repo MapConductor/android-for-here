@@ -39,7 +39,7 @@ sealed class HereMapDesign(
     override fun getValue(): MapScheme = id
 
     companion object {
-        fun CreateById(id: Int): HereMapDesign =
+        fun create(id: Int): HereMapDesign =
             when (id) {
                 NormalDay.id.value -> NormalDay
                 NormalNight.id.value -> NormalNight
@@ -55,25 +55,6 @@ sealed class HereMapDesign(
                 LogisticsHybridDay.id.value -> LogisticsHybridDay
                 RoadNetworkDay.id.value -> RoadNetworkDay
                 RoadNetworkNight.id.value -> RoadNetworkNight
-                else -> throw IllegalArgumentException("Unsupported MapScene : $id")
-            }
-
-        fun Create(id: MapScheme): HereMapDesign =
-            when (id) {
-                NormalDay.id -> NormalDay
-                NormalNight.id -> NormalNight
-                Satellite.id -> Satellite
-                HybridDay.id -> HybridDay
-                HybridNight.id -> HybridNight
-                LiteDay.id -> LiteDay
-                LiteNight.id -> LiteNight
-                LiteHybridDay.id -> LiteHybridDay
-                LiteHybridNight.id -> LiteHybridNight
-                LogisticsDay.id -> LogisticsDay
-                LogisticsNight.id -> LogisticsNight
-                LogisticsHybridDay.id -> LogisticsHybridDay
-                RoadNetworkDay.id -> RoadNetworkDay
-                RoadNetworkNight.id -> RoadNetworkNight
                 else -> throw IllegalArgumentException("Unsupported MapScene : $id")
             }
     }

@@ -143,13 +143,13 @@ fun HereMapView(
                 object : MarkerRenderingSupport<HereActualMarker> {
                     override fun createMarkerRenderer(
                         strategy: MarkerRenderingStrategyInterface<HereActualMarker>,
-                    ): MarkerOverlayRendererInterface<HereActualMarker> = controller.createMarkerRenderer(strategy)
+                    ): MarkerOverlayRendererInterface<HereActualMarker> = controller.createMarkerRenderer()
 
                     override fun createMarkerEventController(
                         controller: StrategyMarkerController<HereActualMarker>,
                         renderer: MarkerOverlayRendererInterface<HereActualMarker>,
                     ): MarkerEventControllerInterface<HereActualMarker> =
-                        mapController.createMarkerEventController(controller, renderer)
+                        mapController.createMarkerEventController(controller)
 
                     override fun registerMarkerEventController(
                         controller: MarkerEventControllerInterface<HereActualMarker>,

@@ -14,12 +14,12 @@ import com.here.sdk.mapview.MapCameraAnimationFactory
 import com.here.sdk.mapview.MapCameraListener
 import com.here.sdk.mapview.MapMeasure
 import com.here.time.Duration
-import com.mapconductor.core.OnMapInitializedHandler
 import com.mapconductor.core.circle.CircleCapableInterface
 import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
+import com.mapconductor.core.controller.OverlayControllerInterface
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageEvent
@@ -29,7 +29,6 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.VisibleRegion
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
-import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.MarkerTileRasterLayerCallback
@@ -52,8 +51,8 @@ import com.mapconductor.here.marker.StrategyHereMarkerEventController
 import com.mapconductor.here.polygon.HerePolygonController
 import com.mapconductor.here.polyline.HerePolylineController
 import com.mapconductor.here.raster.HereRasterLayerController
-import com.mapconductor.here.zoom.ZoomAltitudeConverter
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -68,15 +67,14 @@ class HereMapViewController(
     private val circleController: HereCircleController,
     private val rasterLayerController: HereRasterLayerController,
     override val holder: HereViewHolder,
-    override val coroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    val backCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Default),
+    override val defaultCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Default),
+    override val mainCoroutine: CoroutineScope = CoroutineScope(Dispatchers.Main),
 ) : BaseMapViewController(),
     CircleCapableInterface,
     HereMapViewControllerInterface,
     MapCameraListener,
     TapListener,
     LongPressListener {
-    private val zoomConverter = ZoomAltitudeConverter()
 
     private val markerEventControllers = mutableListOf<HereMarkerEventControllerInterface>()
     private var activeDragController: HereMarkerEventControllerInterface? = null
@@ -112,7 +110,7 @@ class HereMapViewController(
     override suspend fun compositionMarkers(data: List<MarkerState>) = markerController.add(data)
 
     override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {
-        markerController.renderer.animationOverlayHost = host
+        (markerController.renderer as HereMarkerRenderer).animationOverlayHost = host
     }
 
     override suspend fun updateMarker(state: MarkerState) = markerController.update(state)
@@ -136,10 +134,6 @@ class HereMapViewController(
 
     override fun hasRasterLayer(state: RasterLayerState): Boolean =
         this.rasterLayerController.rasterLayerManager.hasEntity(state.id)
-
-    override fun setMapInitializedListener(listener: OnMapInitializedHandler?) {
-        mapInitializedCallback = listener
-    }
 
     @Deprecated("Use MarkerState.onDragStart instead.")
     override fun setOnMarkerDragStart(listener: OnMarkerEventHandler?) {
@@ -205,12 +199,12 @@ class HereMapViewController(
 
     init {
         setupListeners()
-        registerController(markerController)
-        registerController(polygonController)
-        registerController(polylineController)
-        registerController(groundImageController)
-        registerController(circleController)
-        registerController(rasterLayerController)
+        registerOverlayController(markerController)
+        registerOverlayController(polygonController)
+        registerOverlayController(polylineController)
+        registerOverlayController(groundImageController)
+        registerOverlayController(circleController)
+        registerOverlayController(rasterLayerController)
         registerMarkerEventController(DefaultHereMarkerEventController(markerController))
 
         markerController.setRasterLayerCallback(
@@ -275,7 +269,7 @@ class HereMapViewController(
                 bowFactor,
                 Duration.ofMillis(duration),
             )
-        coroutine.launch {
+        mainCoroutine.launch {
             isAnimatingCamera = true
             camera.startAnimation(animation) { animState ->
                 when (animState) {
@@ -318,9 +312,18 @@ class HereMapViewController(
         }
     }
 
+    override fun getControllers(): List<OverlayControllerInterface<*, *, *>> = listOf(
+        markerController,
+        polylineController,
+        polygonController,
+        circleController,
+        groundImageController,
+        rasterLayerController,
+    )
+
     override fun onMapCameraUpdated(cameraState: MapCamera.State) {
         // Must run on main thread: HERE MapView coordinate conversion APIs are not thread-safe.
-        coroutine.launch {
+        mainCoroutine.launch {
             mapInitializedCallback?.let {
                 it.invoke()
                 mapInitializedCallback = null
@@ -342,8 +345,8 @@ class HereMapViewController(
 
             cameraMoveEndJob?.cancel()
             cameraMoveEndJob =
-                coroutine.launch {
-                    delay(CAMERA_MOVE_END_IDLE_MS)
+                mainCoroutine.launch {
+                    delay(CAMERA_MOVE_END_IDLE_MS.milliseconds)
                     val last = lastCameraPosition ?: return@launch
                     cameraMoveInProgress = false
                     cameraMoveEndCallback?.invoke(last)
@@ -406,7 +409,7 @@ class HereMapViewController(
                     state = hitResult.entity.state,
                     clicked = hitResult.closestPoint,
                 )
-            coroutine.launch {
+            mainCoroutine.launch {
                 polylineController.dispatchClick(event)
             }
             return
@@ -418,7 +421,7 @@ class HereMapViewController(
                     state = entity.state,
                     clicked = touchPosition,
                 )
-            coroutine.launch {
+            mainCoroutine.launch {
                 polygonController.dispatchClick(event)
             }
             return
@@ -492,7 +495,7 @@ class HereMapViewController(
 
     override fun setMapDesignType(value: HereMapDesignType) {
         val scene = value.getValue()
-        coroutine.launch {
+        mainCoroutine.launch {
             holder.mapView.mapScene.loadScene(scene) {
                 mapDesignType = value
 
@@ -522,13 +525,10 @@ class HereMapViewController(
         controller.setAnimateEndListener(markerAnimateEndListener)
     }
 
-    fun createMarkerRenderer(
-        strategy: MarkerRenderingStrategyInterface<HereActualMarker>,
-    ): MarkerOverlayRendererInterface<HereActualMarker> = HereMarkerRenderer(holder = holder)
+    fun createMarkerRenderer(): MarkerOverlayRendererInterface<HereActualMarker> = HereMarkerRenderer(holder = holder)
 
     fun createMarkerEventController(
         controller: StrategyMarkerController<HereActualMarker>,
-        renderer: MarkerOverlayRendererInterface<HereActualMarker>,
     ): MarkerEventControllerInterface<HereActualMarker> = StrategyHereMarkerEventController(controller)
 
     fun registerMarkerEventController(controller: MarkerEventControllerInterface<HereActualMarker>) {
