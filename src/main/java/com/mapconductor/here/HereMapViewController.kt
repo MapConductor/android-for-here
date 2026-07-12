@@ -312,13 +312,13 @@ class HereMapViewController(
         }
     }
 
-    override fun getControllers(): List<OverlayControllerInterface<*, *, *>> = listOf(
-        markerController,
-        polylineController,
-        polygonController,
-        circleController,
-        groundImageController,
-        rasterLayerController,
+    override fun getControllers(): Map<String, OverlayControllerInterface<*, *>> = mapOf(
+        "marker" to markerController,
+        "polyline" to polylineController,
+        "polygon" to polygonController,
+        "circle" to circleController,
+        "ground_image" to groundImageController,
+        "raster_layer" to rasterLayerController,
     )
 
     override fun onMapCameraUpdated(cameraState: MapCamera.State) {

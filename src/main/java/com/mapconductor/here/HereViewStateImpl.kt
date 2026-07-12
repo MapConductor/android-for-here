@@ -57,7 +57,7 @@ class HereViewState(
 
     @Suppress("UNCHECKED_CAST")
     override fun getMapViewHolder(): HereViewHolder? = controller?.holder as? HereViewHolder
-    override fun getControllers(): List<OverlayControllerInterface<*, *, *>>? = controller?.getControllers()
+    override fun getControllers() = controller?.getControllers()
 
     override fun moveCameraTo(
         cameraPosition: MapCameraPosition,
