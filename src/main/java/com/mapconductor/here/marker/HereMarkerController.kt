@@ -25,10 +25,8 @@ import com.mapconductor.here.HereViewHolder
 import com.mapconductor.settings.Settings
 import java.util.UUID
 import android.os.SystemClock
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withPermit
-import kotlinx.coroutines.withContext
 
 class HereMarkerController private constructor(
     markerManager: MarkerManager<HereActualMarker>,
@@ -107,17 +105,15 @@ class HereMarkerController private constructor(
             val tilingEnabled =
                 markerTiling.enabled && data.size >= markerManager.minMarkerCount
             val result =
-                withContext(Dispatchers.Default) {
-                    MarkerIngestionEngine.ingest(
-                        data = data,
-                        markerManager = markerManager,
-                        renderer = renderer,
-                        defaultMarkerIcon = defaultMarkerIcon,
-                        tilingEnabled = tilingEnabled,
-                        tiledMarkerIds = tiledMarkerIds,
-                        shouldTile = { state -> !state.draggable && state.getAnimation() == null },
-                    )
-                }
+                MarkerIngestionEngine.ingest(
+                    data = data,
+                    markerManager = markerManager,
+                    renderer = renderer,
+                    defaultMarkerIcon = defaultMarkerIcon,
+                    tilingEnabled = tilingEnabled,
+                    tiledMarkerIds = tiledMarkerIds,
+                    shouldTile = { state -> !state.draggable && state.getAnimation() == null },
+                )
 
             if (result.tiledDataChanged) {
                 syncTiledOverlay()
