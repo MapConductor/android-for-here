@@ -1,12 +1,14 @@
 package com.mapconductor.here
 
 import com.here.sdk.mapview.MapScheme
+import com.mapconductor.core.map.AttributionRule
 import com.mapconductor.core.map.MapDesignTypeInterface
 
 typealias HereMapDesignType = MapDesignTypeInterface<MapScheme>
 
 sealed class HereMapDesign(
     override val id: MapScheme,
+    override val attributionRules: List<AttributionRule> = emptyList(),
 ) : HereMapDesignType {
     object NormalDay : HereMapDesign(MapScheme.NORMAL_DAY) // 通常の昼モード
 
@@ -35,6 +37,11 @@ sealed class HereMapDesign(
     object RoadNetworkDay : HereMapDesign(MapScheme.ROAD_NETWORK_DAY)
 
     object RoadNetworkNight : HereMapDesign(MapScheme.ROAD_NETWORK_NIGHT)
+
+    class Custom(
+        id: MapScheme,
+        attributionRules: List<AttributionRule> = emptyList(),
+    ) : HereMapDesign(id, attributionRules)
 
     override fun getValue(): MapScheme = id
 

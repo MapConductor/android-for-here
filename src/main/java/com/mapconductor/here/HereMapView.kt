@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.here.sdk.mapview.MapProjection as HereMapProjection
 import com.here.sdk.mapview.MapRenderMode
 import com.here.sdk.mapview.MapView
 import com.here.sdk.mapview.MapViewOptions
@@ -19,6 +20,7 @@ import com.mapconductor.core.OnMapEventHandler
 import com.mapconductor.core.OnMapLoadedHandler
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
+import com.mapconductor.core.map.MapProjection
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -59,6 +61,7 @@ fun HereMapView(
     onCameraMoveStart: OnCameraMoveHandler? = null,
     onCameraMove: OnCameraMoveHandler? = null,
     onCameraMoveEnd: OnCameraMoveHandler? = null,
+    projection: MapProjection = MapProjection.Globe,
     content: (@Composable HereViewScope.() -> Unit)? = null,
 ) {
     // Warmup the tile server early to reduce latency for raster layers
@@ -91,6 +94,11 @@ fun HereMapView(
             // TEXTUREモードにしないとデバイスが回転したときに再描画を適切に行わない
             val viewOptions =
                 MapViewOptions().also {
+                    it.projection =
+                        when (projection) {
+                            MapProjection.Mercator -> HereMapProjection.WEB_MERCATOR
+                            MapProjection.Globe -> HereMapProjection.GLOBE
+                        }
                     it.renderMode = MapRenderMode.TEXTURE
                 }
 
