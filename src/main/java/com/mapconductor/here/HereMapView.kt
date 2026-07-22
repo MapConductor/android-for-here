@@ -120,7 +120,7 @@ fun HereMapView(
                     markerTiling = markerTiling ?: MarkerTilingOptions.Default,
                 )
             val polylineController = getPolylineController(holder)
-            val polygonController = getPolygonController(holder, rasterLayerController)
+            val polygonController = getPolygonController(holder)
             val groundImageController = getGroundImageController(holder)
             val circleController = getHereCircleController(holder)
 
@@ -293,14 +293,10 @@ private fun getHereCircleController(holder: HereViewHolder): HereCircleControlle
     return controller
 }
 
-private fun getPolygonController(
-    holder: HereViewHolder,
-    rasterLayerController: HereRasterLayerController,
-): HerePolygonController {
+private fun getPolygonController(holder: HereViewHolder): HerePolygonController {
     val renderer =
         HerePolygonOverlayRenderer(
             holder = holder,
-            rasterLayerController = rasterLayerController,
         )
 
     val controller =
