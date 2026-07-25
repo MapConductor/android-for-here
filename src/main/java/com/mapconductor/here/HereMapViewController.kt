@@ -348,6 +348,12 @@ class HereMapViewController(
                 mainCoroutine.launch {
                     delay(CAMERA_MOVE_END_IDLE_MS.milliseconds)
                     val last = lastCameraPosition ?: return@launch
+                    // 範囲・ズーム制限に違反していれば矩形内へ引き戻す（HERE はネイティブの範囲制限 API が無いため）。
+                    // 再適用すると onMapCameraUpdated が再発火し、そこでは補正不要になり通常フローへ進む。
+                    cameraRestrictionCorrection(last)?.let { corrected ->
+                        moveCamera(corrected)
+                        return@launch
+                    }
                     cameraMoveInProgress = false
                     cameraMoveEndCallback?.invoke(last)
                 }

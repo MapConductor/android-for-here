@@ -18,6 +18,7 @@ import com.mapconductor.compose.map.MapViewBase
 import com.mapconductor.core.OnCameraMoveHandler
 import com.mapconductor.core.OnMapEventHandler
 import com.mapconductor.core.OnMapLoadedHandler
+import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapProjection
@@ -54,6 +55,7 @@ fun HereMapView(
     state: HereViewState,
     modifier: Modifier = Modifier,
     markerTiling: MarkerTilingOptions? = null,
+    cameraRestriction: CameraRestriction? = null,
     sdkInitialize: (suspend (android.content.Context) -> Boolean)? = null,
     onMapLoaded: OnMapLoadedHandler? = null,
     onMapClick: OnMapEventHandler? = null,
@@ -120,7 +122,7 @@ fun HereMapView(
                     markerTiling = markerTiling ?: MarkerTilingOptions.Default,
                 )
             val polylineController = getPolylineController(holder)
-            val polygonController = getPolygonController(holder)
+            val polygonController = getPolygonController(holder, rasterLayerController)
             val groundImageController = getGroundImageController(holder)
             val circleController = getHereCircleController(holder)
 
@@ -140,6 +142,7 @@ fun HereMapView(
             controller.setMapLongClickListener(onMapLongClick)
             state.setController(controller)
             controller.setMapDesignTypeChangeListener(state::onMapDesignTypeChange)
+            cameraRestriction?.let { controller.setCameraRestriction(it) }
 
             holderRef.value = controller.holder
             controllerRef.value = controller
@@ -293,10 +296,14 @@ private fun getHereCircleController(holder: HereViewHolder): HereCircleControlle
     return controller
 }
 
-private fun getPolygonController(holder: HereViewHolder): HerePolygonController {
+private fun getPolygonController(
+    holder: HereViewHolder,
+    rasterLayerController: HereRasterLayerController,
+): HerePolygonController {
     val renderer =
         HerePolygonOverlayRenderer(
             holder = holder,
+            rasterLayerController = rasterLayerController,
         )
 
     val controller =
