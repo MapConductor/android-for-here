@@ -91,7 +91,6 @@ dependencies {
     } else {
         api("com.mapconductor:compose:$libraryVersion")
     }
-    implementation(libs.jts.core)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

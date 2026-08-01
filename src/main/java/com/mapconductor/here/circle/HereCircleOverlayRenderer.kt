@@ -11,11 +11,12 @@ import com.mapconductor.core.circle.AbstractCircleOverlayRenderer
 import com.mapconductor.core.circle.CircleEntityInterface
 import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.features.normalize
+import com.mapconductor.core.geometry.circleToRing
+import com.mapconductor.core.geometry.closeRing
 import com.mapconductor.here.HereActualCircle
 import com.mapconductor.here.HereViewHolder
 import com.mapconductor.here.toGeoCoordinates
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -97,9 +98,6 @@ class HereCircleOverlayRenderer(
             if (finger.zIndex != prevFinger.zIndex) {
                 current.circle.drawOrder = (current.state.zIndex ?: 0).coerceIn(0, 511)
             }
-            current.circle.outlineWidth =
-                current.state.strokeWidth.value
-                    .toDouble()
 
             circle
         }
@@ -113,40 +111,12 @@ class HereCircleOverlayRenderer(
             // Native geodesic circle
             val geoCircle = GeoCircle(center, state.radiusMeters)
             return GeoPolygon(geoCircle)
-        } else {
-            // Approximate planar circle by sampling points
-            val segments = 128
-            val pts = ArrayList<GeoCoordinates>(segments + 1)
-            val twoPi = kotlin.math.PI * 2.0
-            for (i in 0 until segments) {
-                val angle = twoPi * i / segments
-                pts.add(calculateCirclePoint(center, state.radiusMeters, angle))
-            }
-            if (pts.isNotEmpty()) pts.add(pts.first())
-            return GeoPolygon(pts)
         }
-    }
-
-    /**
-     * Calculate a point on a circle given center, radius and angle
-     * Uses approximate conversion from meters to degrees for small circles
-     */
-    private fun calculateCirclePoint(
-        center: GeoCoordinates,
-        radiusMeters: Double,
-        angleRadians: Double,
-    ): GeoCoordinates {
-        // Approximate conversion: 1 degree latitude ≈ 111,320 meters
-        // Longitude conversion varies by latitude, use cosine correction
-        val latDegrees = radiusMeters / 111320.0
-        val lonDegrees = radiusMeters / (111320.0 * cos(Math.toRadians(center.latitude)))
-
-        val deltaLat = latDegrees * cos(angleRadians)
-        val deltaLon = lonDegrees * sin(angleRadians)
-
-        return GeoCoordinates(
-            center.latitude + deltaLat,
-            center.longitude + deltaLon,
-        )
+        // 非 geodesic はコア共通の circleToRing（局所平面近似・unwrap 座標）でリングを
+        // 生成し、HERE の座標範囲に収まるよう正規化する。
+        val pts: List<GeoCoordinates> =
+            closeRing(circleToRing(state.center, state.radiusMeters, geodesic = false).map { it.normalize() })
+                .map { GeoPoint.from(it).toGeoCoordinates() }
+        return GeoPolygon(pts)
     }
 }
