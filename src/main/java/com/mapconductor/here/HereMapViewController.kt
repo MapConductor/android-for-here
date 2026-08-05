@@ -6,7 +6,10 @@ import androidx.compose.ui.geometry.Offset
 import com.here.sdk.animation.AnimationState
 import com.here.sdk.core.GeoOrientation
 import com.here.sdk.core.Point2D
+import com.here.sdk.core.Rectangle2D
+import com.here.sdk.core.Size2D
 import com.here.sdk.gestures.GestureState
+import com.here.sdk.gestures.GestureType
 import com.here.sdk.gestures.LongPressListener
 import com.here.sdk.gestures.TapListener
 import com.here.sdk.mapview.MapCamera
@@ -26,10 +29,13 @@ import com.mapconductor.core.groundimage.GroundImageEvent
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.MapCameraPosition
+import com.mapconductor.core.map.MapGesture
+import com.mapconductor.core.map.MapUISettings
+import com.mapconductor.core.map.MapUISettingsDiagnostics
 import com.mapconductor.core.map.VisibleRegion
+import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
-import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.MarkerTileRasterLayerCallback
 import com.mapconductor.core.marker.OnMarkerEventHandler
@@ -301,12 +307,33 @@ class HereMapViewController(
         val geoBox = bounds.toGeoBox() ?: return
         val camera = holder.mapView.camera
         val request = cameraRequestGeneration.incrementAndGet()
-        val cameraUpdate = com.here.sdk.mapview.MapCameraUpdateFactory.lookAt(geoBox)
-        camera.applyUpdate(cameraUpdate)
+
+        // padding(px) は表示ビューポートを四辺インセットした矩形（Rectangle2D）として反映する。
+        // ビューサイズが未確定（0）またはインセットが大き過ぎる場合はビューポート指定なしへフォールバック。
+        fun buildUpdate(): com.here.sdk.mapview.MapCameraUpdate {
+            val width = holder.mapView.width
+            val height = holder.mapView.height
+            val inset = padding.coerceAtLeast(0)
+            return if (inset > 0 && width > 2 * inset && height > 2 * inset) {
+                val viewRectangle =
+                    Rectangle2D(
+                        Point2D(inset.toDouble(), inset.toDouble()),
+                        Size2D(
+                            (width - 2 * inset).toDouble(),
+                            (height - 2 * inset).toDouble(),
+                        ),
+                    )
+                com.here.sdk.mapview.MapCameraUpdateFactory.lookAt(geoBox, viewRectangle)
+            } else {
+                com.here.sdk.mapview.MapCameraUpdateFactory.lookAt(geoBox)
+            }
+        }
+
+        camera.applyUpdate(buildUpdate())
         if (holder.mapView.width == 0 || holder.mapView.height == 0) {
             holder.mapView.post {
                 if (cameraRequestGeneration.get() == request) {
-                    camera.applyUpdate(cameraUpdate)
+                    camera.applyUpdate(buildUpdate())
                 }
             }
         }
@@ -498,6 +525,32 @@ class HereMapViewController(
 
     private var mapDesignType: HereMapDesignType = HereMapDesign.NormalDay
     private var mapDesignTypeChangeListener: HereMapDesignTypeChangeHandler? = null
+
+
+    override fun applyUISettings(settings: MapUISettings) {
+        val gestures = holder.mapView.gestures
+        fun apply(
+            enabled: Boolean,
+            gesture: GestureType,
+        ) {
+            if (enabled) gestures.enableDefaultAction(gesture) else gestures.disableDefaultAction(gesture)
+        }
+        apply(settings.scrollGesture, GestureType.PAN)
+        apply(settings.tiltGesture, GestureType.TWO_FINGER_PAN)
+        // HERE bundles pinch-zoom and rotation into one PINCH_ROTATE recogniser, so
+        // neither can be switched off alone; only drop it when both are off.
+        apply(settings.zoomGesture || settings.rotateGesture, GestureType.PINCH_ROTATE)
+        apply(settings.zoomGesture, GestureType.DOUBLE_TAP)
+        apply(settings.zoomGesture, GestureType.TWO_FINGER_TAP)
+        if (settings.zoomGesture != settings.rotateGesture) {
+            MapUISettingsDiagnostics.warnIfRequested(
+                false,
+                gesture = if (settings.zoomGesture) MapGesture.Rotate else MapGesture.Zoom,
+                provider = "HERE",
+                reason = "pinch zoom and rotation share one gesture recogniser, so they can only be disabled together",
+            )
+        }
+    }
 
     override fun setMapDesignType(value: HereMapDesignType) {
         val scene = value.getValue()

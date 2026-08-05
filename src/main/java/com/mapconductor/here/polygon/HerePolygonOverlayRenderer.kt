@@ -226,7 +226,7 @@ class HerePolygonOverlayRenderer(
         (
             if (geodesic) {
                 com.mapconductor.core.spherical
-                    .createInterpolatePoints(points)
+                    .WGS84Geodesic.createInterpolatePoints(points)
             } else {
                 points
             }

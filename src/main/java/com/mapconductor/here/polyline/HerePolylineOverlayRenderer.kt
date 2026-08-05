@@ -13,8 +13,8 @@ import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.polyline.AbstractPolylineOverlayRenderer
 import com.mapconductor.core.polyline.PolylineEntityInterface
 import com.mapconductor.core.polyline.PolylineState
-import com.mapconductor.core.spherical.createInterpolatePoints
-import com.mapconductor.core.spherical.createLinearInterpolatePoints
+import com.mapconductor.core.spherical.WGS84Geodesic
+import com.mapconductor.core.spherical.Planar
 import com.mapconductor.here.HereActualPolyline
 import com.mapconductor.here.HereViewHolder
 import com.mapconductor.here.toGeoCoordinates
@@ -89,8 +89,8 @@ class HerePolylineOverlayRenderer(
     private fun createGeoPolyline(state: PolylineState): GeoPolyline {
         val geoPoints: List<GeoPointInterface> =
             when (state.geodesic) {
-                true -> createInterpolatePoints(state.points)
-                false -> createLinearInterpolatePoints(state.points)
+                true -> WGS84Geodesic.createInterpolatePoints(state.points)
+                false -> Planar.createInterpolatePoints(state.points)
             }
         val points = geoPoints.map { GeoPoint.from(it).toGeoCoordinates() }
         return GeoPolyline(points)
