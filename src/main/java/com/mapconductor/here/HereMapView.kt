@@ -22,7 +22,6 @@ import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapProjection
-import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
@@ -75,7 +74,6 @@ fun HereMapView(
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val registry = remember { scope.buildRegistry() }
-    val serviceRegistry = remember { MutableMapServiceRegistry() }
     val cameraState = remember { mutableStateOf<MapCameraPositionInterface?>(state.cameraPosition) }
     // Capture the desired initial camera before any early camera callbacks can overwrite state.
     val initialCameraPosition = remember(state.id) { state.cameraPosition }
@@ -147,9 +145,8 @@ fun HereMapView(
             holderRef.value = controller.holder
             controllerRef.value = controller
 
-            serviceRegistry.clear()
             val mapController = controller
-            serviceRegistry.put(
+            state.serviceRegistry.put(
                 MarkerRenderingSupportKey,
                 object : MarkerRenderingSupport<HereActualMarker> {
                     override fun createMarkerRenderer(
@@ -212,7 +209,6 @@ fun HereMapView(
         },
         scope = scope,
         registry = registry,
-        serviceRegistry = serviceRegistry,
         onMapLoaded = onMapLoaded,
         customDisposableEffect = { _, holderRef ->
 
