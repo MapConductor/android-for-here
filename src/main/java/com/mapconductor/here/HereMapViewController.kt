@@ -13,7 +13,6 @@ import com.mapconductor.core.circle.CircleCapableInterface
 import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
-import com.mapconductor.core.controller.OverlayControllerInterface
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.GroundImageState
@@ -270,16 +269,6 @@ class HereMapViewController(
         holder.mapView.gestures.tapListener = this
         holder.mapView.gestures.longPressListener = this
     }
-
-    override fun getControllers(): Map<String, OverlayControllerInterface<*, *>> =
-        mapOf(
-            "marker" to markerController,
-            "polyline" to polylineController,
-            "polygon" to polygonController,
-            "circle" to circleController,
-            "ground_image" to groundImageController,
-            "raster_layer" to rasterLayerController,
-        )
 
     override fun setOnPolylineClickListener(listener: OnPolylineEventHandler?) {
         polylineController.clickListener = listener
