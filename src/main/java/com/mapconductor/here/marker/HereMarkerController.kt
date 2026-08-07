@@ -33,9 +33,10 @@ class HereMarkerController private constructor(
     renderer: HereMarkerRenderer,
     private val markerTiling: MarkerTilingOptions,
 ) : AbstractMarkerController<HereActualMarker>(
-    markerManager = markerManager,
-    renderer = renderer,
-), OnCameraChangeReceiverInterface {
+        markerManager = markerManager,
+        renderer = renderer,
+    ),
+    OnCameraChangeReceiverInterface {
     private var internalSelectedMarker: MarkerEntityInterface<HereActualMarker>? = null
 
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()

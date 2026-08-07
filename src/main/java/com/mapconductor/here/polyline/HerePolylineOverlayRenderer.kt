@@ -13,8 +13,8 @@ import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.polyline.AbstractPolylineOverlayRenderer
 import com.mapconductor.core.polyline.PolylineEntityInterface
 import com.mapconductor.core.polyline.PolylineState
-import com.mapconductor.core.spherical.WGS84Geodesic
 import com.mapconductor.core.spherical.Planar
+import com.mapconductor.core.spherical.WGS84Geodesic
 import com.mapconductor.here.HereActualPolyline
 import com.mapconductor.here.HereViewHolder
 import com.mapconductor.here.toGeoCoordinates

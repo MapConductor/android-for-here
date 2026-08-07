@@ -226,7 +226,8 @@ class HerePolygonOverlayRenderer(
         (
             if (geodesic) {
                 com.mapconductor.core.spherical
-                    .WGS84Geodesic.createInterpolatePoints(points)
+                    .WGS84Geodesic
+                    .createInterpolatePoints(points)
             } else {
                 points
             }
@@ -273,7 +274,9 @@ class HerePolygonOverlayRenderer(
             val cacheVersion = ((System.nanoTime() / 1_000_000) and 0x7fffffff).toInt()
             // Use query param for cache key - HERE SDK's TileUrlProviderFactory is stricter
             // about path segment formats. Query params are stripped during URL parsing.
-            val urlTemplate = tileServer.urlTemplateWithQueryCacheKey(routeId, MASK_TILE_SIZE_PX, cacheVersion.toString())
+            val urlTemplate =
+                tileServer
+                    .urlTemplateWithQueryCacheKey(routeId, MASK_TILE_SIZE_PX, cacheVersion.toString())
             Log.d(TAG, "URL template: $urlTemplate")
             val rasterState =
                 RasterLayerState(

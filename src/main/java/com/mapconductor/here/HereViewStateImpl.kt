@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.mapconductor.compose.map.BaseMapViewSaver
-import com.mapconductor.core.controller.OverlayControllerInterface
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.map.MapCameraPosition
@@ -57,6 +56,7 @@ class HereViewState(
 
     @Suppress("UNCHECKED_CAST")
     override fun getMapViewHolder(): HereViewHolder? = controller?.holder as? HereViewHolder
+
     override fun getControllers() = controller?.getControllers()
 
     override fun moveCameraTo(
