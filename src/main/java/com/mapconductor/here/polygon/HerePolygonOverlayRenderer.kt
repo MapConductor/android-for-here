@@ -33,13 +33,18 @@ private const val TAG = "HerePolygonRaster"
  *   半透明色では穴領域が二重ブレンドされて濃く塗られる
  * ため、穴を持つ 1 枚のリングでは表現できない。
  *
- * そこでコア共通の [splitPolygonWithHolesIntoSimpleRings]（TomTom Orbis iOS 向けに
- * 作られた分割方式）で「穴を持たない単純リング群」へ分割し、1 リング 1 枚の
- * MapPolygon として塗る。ピースは互いに素なので半透明でも二重に塗られない。
+ * そこで「穴を持たないピース群」へ分解し、1 ピース 1 枚の MapPolygon として塗る。
  * 輪郭（外周・各穴）は stroke-only の MapPolygon を重ねる。
  *
+ * ピースを 1 枚ずつ不透明に塗る以上、**合成は和集合**であってピースは互いに素でなければ
+ * ならない。重なると半透明色が二重に乗るだけでなく、穴の上で重なった場合はその穴が
+ * 塗り潰されてしまう。既定の [decomposePolygonWithHolesIntoTrapezoids]（台形分解）は
+ * これを原理的に保証する。コア共通の [splitPolygonWithHolesIntoSimpleRings] は
+ * 「偶奇合成で正しい」までしか保証せず重なりうるため、台形分解が使えないとき
+ * （測地線補間で枚数が膨らむ場合）の退避先に留める。
+ *
  * - 穴なし: MapPolygon（fill + outline）1 枚。
- * - 穴あり: 分割ピースごとの fill-only MapPolygon ＋ 外周・各穴の stroke-only MapPolygon。
+ * - 穴あり: 分解ピースごとの fill-only MapPolygon ＋ 外周・各穴の stroke-only MapPolygon。
  *
  * 以前は塗りをタイル画像へ焼き、LocalTileServer 経由でラスタレイヤとして重ねる
  * 「ラスタマスク方式」だった。分割方式に置き換えたのは、ベクタのまま描けるため拡大時に
@@ -158,12 +163,21 @@ class HerePolygonOverlayRenderer(
             val order = state.zIndex.coerceIn(0, 511)
 
             buildList {
-                // 塗り: 穴を持たない単純リング群へ分割し、1 リング 1 枚で塗る。
-                // 輪郭は付けない（ピース境界には分割の橋が含まれるため）。
+                // 塗り: 穴を持たないピース群へ分解し、1 ピース 1 枚で塗る。
+                // 輪郭は付けない（ピース境界には分解で生じた継ぎ目が含まれるため）。
+                //
+                // 既定は台形分解。1 枚ずつ不透明に塗る以上ピースは互いに素でなければならず、
+                // それを原理的に保証できるのはこちらだけ（理由は
+                // [decomposePolygonWithHolesIntoTrapezoids] のコメント参照）。
+                // 測地線補間で頂点が増えて枚数が上限を超えた場合だけ、従来の分割方式へ退避する。
                 val outerGeo = toGeoRing(state.points, state.geodesic)
                 val holeGeos = state.holes.map { toGeoRing(it, state.geodesic) }
-                val pieces = splitPolygonWithHolesIntoSimpleRings(outerGeo, holeGeos)
-                Log.d(TAG, "split into ${pieces.size} simple rings")
+                val pieces =
+                    decomposePolygonWithHolesIntoTrapezoids(outerGeo, holeGeos)
+                        ?: splitPolygonWithHolesIntoSimpleRings(outerGeo, holeGeos).also {
+                            Log.d(TAG, "trapezoid decomposition too large; fell back to split rings")
+                        }
+                Log.d(TAG, "fill decomposed into ${pieces.size} pieces")
                 for (piece in pieces) {
                     val coords = piece.map { GeoCoordinates(it.latitude, it.longitude) }
                     if (coords.size < 3) continue
