@@ -234,13 +234,9 @@ public final class com.mapconductor.here.HereViewState extends com.mapconductor.
   public com.mapconductor.here.HereViewState(java.lang.String, com.mapconductor.core.map.MapDesignTypeInterface<com.here.sdk.mapview.MapScheme>, com.mapconductor.core.map.MapCameraPosition);
   public com.mapconductor.here.HereViewState(java.lang.String, com.mapconductor.core.map.MapDesignTypeInterface, com.mapconductor.core.map.MapCameraPosition, int, kotlin.jvm.internal.DefaultConstructorMarker);
   public java.lang.String getId();
-  public com.mapconductor.core.map.MapCameraPosition getCameraPosition();
   public com.mapconductor.core.map.MapDesignTypeInterface<com.here.sdk.mapview.MapScheme> getMapDesignType();
   public void setMapDesignType(com.mapconductor.core.map.MapDesignTypeInterface<com.here.sdk.mapview.MapScheme>);
-  public void moveCameraTo(com.mapconductor.core.features.GeoPoint, java.lang.Long);
   public com.mapconductor.here.HereViewHolder getMapViewHolder();
-  public void moveCameraTo(com.mapconductor.core.map.MapCameraPosition, java.lang.Long);
-  public void fitBounds(com.mapconductor.core.features.GeoRectBounds, int);
   public java.lang.Object getMapDesignType();
   public void setMapDesignType(java.lang.Object);
   public com.mapconductor.core.map.MapViewHolderInterface getMapViewHolder();
