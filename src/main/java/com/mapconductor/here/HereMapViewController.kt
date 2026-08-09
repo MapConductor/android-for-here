@@ -10,12 +10,10 @@ import com.here.sdk.gestures.TapListener
 import com.here.sdk.mapview.MapCamera
 import com.here.sdk.mapview.MapCameraListener
 import com.mapconductor.core.circle.CircleCapableInterface
-import com.mapconductor.core.circle.CircleState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoRectBounds
-import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapGesture
@@ -24,15 +22,12 @@ import com.mapconductor.core.map.MapUISettingsDiagnostics
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
-import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.core.marker.MarkerTileRasterLayerCallback
 import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.core.polygon.OnPolygonEventHandler
-import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.core.polyline.PolylineState
-import com.mapconductor.core.raster.RasterLayerState
 import com.mapconductor.here.circle.HereCircleController
 import com.mapconductor.here.groundimage.HereGroundImageController
 import com.mapconductor.here.marker.DefaultHereMarkerEventController
@@ -96,33 +91,13 @@ class HereMapViewController(
         rasterLayerController.clear()
     }
 
-    override suspend fun compositionMarkers(data: List<MarkerState>) = markerController.add(data)
-
     override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {
         (markerController.renderer as HereMarkerRenderer).animationOverlayHost = host
     }
 
-    override suspend fun updateMarker(state: MarkerState) = markerController.update(state)
-
-    override suspend fun compositionGroundImages(data: List<GroundImageState>) = groundImageController.add(data)
-
-    override suspend fun updateGroundImage(state: GroundImageState) = groundImageController.update(state)
-
-    override fun hasMarker(state: MarkerState): Boolean = this.markerController.markerManager.hasEntity(state.id)
-
     override fun hasPolyline(state: PolylineState): Boolean =
         this.polylineController.polylineManager
             .hasEntity(state.id)
-
-    override fun hasPolygon(state: PolygonState): Boolean = this.polygonController.polygonManager.hasEntity(state.id)
-
-    override fun hasCircle(state: CircleState): Boolean = this.circleController.circleManager.hasEntity(state.id)
-
-    override fun hasGroundImage(state: GroundImageState): Boolean =
-        this.groundImageController.groundImageManager.hasEntity(state.id)
-
-    override fun hasRasterLayer(state: RasterLayerState): Boolean =
-        this.rasterLayerController.rasterLayerManager.hasEntity(state.id)
 
     @Deprecated("Use MarkerState.onDragStart instead.")
     override fun setOnMarkerDragStart(listener: OnMarkerEventHandler?) {
@@ -160,10 +135,6 @@ class HereMapViewController(
         markerEventControllers.forEach { it.setClickListener(listener) }
     }
 
-    override suspend fun compositionCircles(data: List<CircleState>) = circleController.add(data)
-
-    override suspend fun updateCircle(state: CircleState) = circleController.update(state)
-
     @Deprecated("Use CircleState.onClick instead.")
     override fun setOnCircleClickListener(listener: OnCircleEventHandler?) {
         this.circleController.clickListener = listener
@@ -173,18 +144,6 @@ class HereMapViewController(
     override fun setOnGroundImageClickListener(listener: OnGroundImageEventHandler?) {
         this.groundImageController.clickListener = listener
     }
-
-    override suspend fun compositionPolylines(data: List<PolylineState>) = polylineController.add(data)
-
-    override suspend fun updatePolyline(state: PolylineState) = polylineController.update(state)
-
-    override suspend fun compositionPolygons(data: List<PolygonState>) = polygonController.add(data)
-
-    override suspend fun updatePolygon(state: PolygonState) = polygonController.update(state)
-
-    override suspend fun compositionRasterLayers(data: List<RasterLayerState>) = rasterLayerController.add(data)
-
-    override suspend fun updateRasterLayer(state: RasterLayerState) = rasterLayerController.update(state)
 
     init {
         setupListeners()
