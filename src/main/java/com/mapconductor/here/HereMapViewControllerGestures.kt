@@ -5,6 +5,7 @@ import com.here.sdk.gestures.GestureState
 import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.groundimage.GroundImageEvent
+import com.mapconductor.core.marker.clickableOnly
 import com.mapconductor.core.polygon.PolygonEvent
 import com.mapconductor.core.polyline.PolylineEvent
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ internal fun HereMapViewController.handleTap(point: Point2D) {
     val touchPosition = this.getGeoPointFromPoint(point) ?: return
 
     markerEventControllers.forEach { controller ->
-        controller.find(touchPosition)?.let { entity ->
+        controller.find(touchPosition).clickableOnly()?.let { entity ->
             controller.dispatchClick(entity.state)
             return
         }
