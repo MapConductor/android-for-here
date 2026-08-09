@@ -1,6 +1,7 @@
 package com.mapconductor.here.marker
 
-import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.features.GeoPointInterface
+import com.mapconductor.core.marker.GeoMarkerClickTargetInterface
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerState
@@ -8,14 +9,14 @@ import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.here.HereActualMarker
 
-internal interface HereMarkerEventControllerInterface : MarkerEventControllerInterface<HereActualMarker> {
-    fun find(position: GeoPoint): MarkerEntityInterface<HereActualMarker>?
-
+internal interface HereMarkerEventControllerInterface :
+    MarkerEventControllerInterface<HereActualMarker>,
+    // find / dispatchClick はコアの契約。クリックカスケードは
+    // BaseMapViewController.dispatchTap が回す。
+    GeoMarkerClickTargetInterface<HereActualMarker> {
     fun getSelectedMarker(): MarkerEntityInterface<HereActualMarker>?
 
     fun setSelectedMarker(entity: MarkerEntityInterface<HereActualMarker>?)
-
-    fun dispatchClick(state: MarkerState)
 
     fun dispatchDragStart(state: MarkerState)
 
@@ -39,7 +40,7 @@ internal interface HereMarkerEventControllerInterface : MarkerEventControllerInt
 internal class DefaultHereMarkerEventController(
     private val controller: HereMarkerController,
 ) : HereMarkerEventControllerInterface {
-    override fun find(position: GeoPoint): MarkerEntityInterface<HereActualMarker>? = controller.find(position)
+    override fun find(position: GeoPointInterface): MarkerEntityInterface<HereActualMarker>? = controller.find(position)
 
     override fun getSelectedMarker(): MarkerEntityInterface<HereActualMarker>? = controller.selectedMarker
 
@@ -85,7 +86,7 @@ internal class StrategyHereMarkerEventController(
 ) : HereMarkerEventControllerInterface {
     private var selectedMarker: MarkerEntityInterface<HereActualMarker>? = null
 
-    override fun find(position: GeoPoint): MarkerEntityInterface<HereActualMarker>? = controller.find(position)
+    override fun find(position: GeoPointInterface): MarkerEntityInterface<HereActualMarker>? = controller.find(position)
 
     override fun getSelectedMarker(): MarkerEntityInterface<HereActualMarker>? = selectedMarker
 

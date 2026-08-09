@@ -141,6 +141,7 @@ public final class com.mapconductor.here.HereMapViewController extends com.mapco
   public void onMapCameraUpdated(com.here.sdk.mapview.MapCamera$State);
   public void onTap(com.here.sdk.core.Point2D);
   public void onLongPress(com.here.sdk.gestures.GestureState, com.here.sdk.core.Point2D);
+  protected boolean dispatchMarkerTap(com.mapconductor.core.features.GeoPointInterface);
   public final void setupListeners();
   public void setOnPolylineClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polyline.PolylineEvent, kotlin.Unit>);
   public void setOnPolygonClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polygon.PolygonEvent, kotlin.Unit>);
@@ -295,7 +296,7 @@ public final class com.mapconductor.here.groundimage.HereGroundImageOverlayRende
 }
 public final class com.mapconductor.here.marker.DefaultHereMarkerEventController implements com.mapconductor.here.marker.HereMarkerEventControllerInterface {
   public com.mapconductor.here.marker.DefaultHereMarkerEventController(com.mapconductor.here.marker.HereMarkerController);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> find(com.mapconductor.core.features.GeoPoint);
+  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> find(com.mapconductor.core.features.GeoPointInterface);
   public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> getSelectedMarker();
   public void setSelectedMarker(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>);
   public void dispatchClick(com.mapconductor.core.marker.MarkerState);
@@ -325,11 +326,9 @@ public final class com.mapconductor.here.marker.HereMarkerController extends com
 public final class com.mapconductor.here.marker.HereMarkerController$Companion {
   public final com.mapconductor.here.marker.HereMarkerController create(com.mapconductor.here.HereViewHolder, com.mapconductor.core.marker.MarkerTilingOptions);
 }
-public interface com.mapconductor.here.marker.HereMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.here.sdk.mapview.MapMarker> {
-  public abstract com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> find(com.mapconductor.core.features.GeoPoint);
+public interface com.mapconductor.here.marker.HereMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.here.sdk.mapview.MapMarker>, com.mapconductor.core.marker.GeoMarkerClickTargetInterface<com.here.sdk.mapview.MapMarker> {
   public abstract com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> getSelectedMarker();
   public abstract void setSelectedMarker(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>);
-  public abstract void dispatchClick(com.mapconductor.core.marker.MarkerState);
   public abstract void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
   public abstract void dispatchDrag(com.mapconductor.core.marker.MarkerState);
   public abstract void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);
@@ -355,7 +354,7 @@ public final class com.mapconductor.here.marker.HereMarkerRendererKt {
 }
 public final class com.mapconductor.here.marker.StrategyHereMarkerEventController implements com.mapconductor.here.marker.HereMarkerEventControllerInterface {
   public com.mapconductor.here.marker.StrategyHereMarkerEventController(com.mapconductor.core.marker.StrategyMarkerController<com.here.sdk.mapview.MapMarker>);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> find(com.mapconductor.core.features.GeoPoint);
+  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> find(com.mapconductor.core.features.GeoPointInterface);
   public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> getSelectedMarker();
   public void setSelectedMarker(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>);
   public void dispatchClick(com.mapconductor.core.marker.MarkerState);

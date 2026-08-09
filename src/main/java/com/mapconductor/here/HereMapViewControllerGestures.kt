@@ -2,73 +2,15 @@ package com.mapconductor.here
 
 import com.here.sdk.core.Point2D
 import com.here.sdk.gestures.GestureState
-import com.mapconductor.core.circle.CircleEvent
 import com.mapconductor.core.features.GeoPoint
-import com.mapconductor.core.groundimage.GroundImageEvent
-import com.mapconductor.core.marker.clickableOnly
-import com.mapconductor.core.polygon.PolygonEvent
-import com.mapconductor.core.polyline.PolylineEvent
-import kotlinx.coroutines.launch
 
 // タップと長押しの処理。
-// タップは**マーカーが先**で、どのマーカーにも当たらなかったときだけ
-// 地図のタップとして扱う（android の他プロバイダと同じ順序）。
+// タップのカスケード（marker → circle → groundImage → polyline → polygon → map）は
+// コアの BaseMapViewController.dispatchTap が回すので、ここは HERE の Point2D を
+// 地理座標へ直して渡すだけ。長押しはドラッグ開始の判定が要るのでここに残す。
 internal fun HereMapViewController.handleTap(point: Point2D) {
     val touchPosition = this.getGeoPointFromPoint(point) ?: return
-
-    markerEventControllers.forEach { controller ->
-        controller.find(touchPosition).clickableOnly()?.let { entity ->
-            controller.dispatchClick(entity.state)
-            return
-        }
-    }
-
-    circleController.find(touchPosition)?.let { entity ->
-        val event =
-            CircleEvent(
-                state = entity.state,
-                clicked = touchPosition,
-            )
-        circleController.dispatchClick(event)
-        return
-    }
-
-    groundImageController.find(touchPosition)?.let { entity ->
-        val event =
-            GroundImageEvent(
-                state = entity.state,
-                clicked = touchPosition,
-            )
-        groundImageController.dispatchClick(event)
-        return
-    }
-
-    polylineController.findWithClosestPoint(touchPosition)?.let { hitResult ->
-        val event =
-            PolylineEvent(
-                state = hitResult.entity.state,
-                clicked = hitResult.closestPoint,
-            )
-        mainCoroutine.launch {
-            polylineController.dispatchClick(event)
-        }
-        return
-    }
-
-    polygonController.find(touchPosition)?.let { entity ->
-        val event =
-            PolygonEvent(
-                state = entity.state,
-                clicked = touchPosition,
-            )
-        mainCoroutine.launch {
-            polygonController.dispatchClick(event)
-        }
-        return
-    }
-
-    // If no overlay is processed, process the tap as onMapClick
-    emitMapClick(touchPosition)
+    dispatchTap(touchPosition)
 }
 
 internal fun HereMapViewController.handleLongPress(

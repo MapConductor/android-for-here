@@ -28,10 +28,11 @@ internal fun decomposePolygonWithHolesIntoTrapezoids(
 ): List<List<GeoPointInterface>>? {
     if (outer.size < 3) return emptyList()
 
-    val rings = buildList {
-        add(outer)
-        holes.filter { it.size >= 3 }.forEach { add(it) }
-    }
+    val rings =
+        buildList {
+            add(outer)
+            holes.filter { it.size >= 3 }.forEach { add(it) }
+        }
 
     val latitudes = rings.flatMap { ring -> ring.map { it.latitude } }.distinct().sorted()
     if (latitudes.size < 2) return emptyList()
