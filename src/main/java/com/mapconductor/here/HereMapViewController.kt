@@ -19,6 +19,7 @@ import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapGesture
 import com.mapconductor.core.map.MapUISettings
 import com.mapconductor.core.map.MapUISettingsDiagnostics
+import com.mapconductor.core.marker.DefaultMarkerEventController
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
@@ -31,11 +32,8 @@ import com.mapconductor.core.polyline.OnPolylineEventHandler
 import com.mapconductor.core.polyline.PolylineState
 import com.mapconductor.here.circle.HereCircleController
 import com.mapconductor.here.groundimage.HereGroundImageController
-import com.mapconductor.here.marker.DefaultHereMarkerEventController
 import com.mapconductor.here.marker.HereMarkerController
-import com.mapconductor.here.marker.HereMarkerEventControllerInterface
 import com.mapconductor.here.marker.HereMarkerRenderer
-import com.mapconductor.here.marker.StrategyHereMarkerEventController
 import com.mapconductor.here.polygon.HerePolygonController
 import com.mapconductor.here.polyline.HerePolylineController
 import com.mapconductor.here.raster.HereRasterLayerController
@@ -61,8 +59,8 @@ class HereMapViewController(
     MapCameraListener,
     TapListener,
     LongPressListener {
-    internal val markerEventControllers = mutableListOf<HereMarkerEventControllerInterface>()
-    internal var activeDragController: HereMarkerEventControllerInterface? = null
+    internal val markerEventControllers = mutableListOf<DefaultMarkerEventController<HereActualMarker>>()
+    internal var activeDragController: DefaultMarkerEventController<HereActualMarker>? = null
     internal var markerClickListener: OnMarkerEventHandler? = null
     internal var markerDragStartListener: OnMarkerEventHandler? = null
     internal var markerDragListener: OnMarkerEventHandler? = null
@@ -154,7 +152,7 @@ class HereMapViewController(
         registerOverlayController(groundImageController)
         registerOverlayController(circleController)
         registerOverlayController(rasterLayerController)
-        registerMarkerEventController(DefaultHereMarkerEventController(markerController))
+        registerMarkerEventController(DefaultMarkerEventController(markerController))
 
         markerController.setRasterLayerCallback(
             MarkerTileRasterLayerCallback { state ->
@@ -290,7 +288,7 @@ class HereMapViewController(
         listener(mapDesignType)
     }
 
-    internal fun registerMarkerEventController(controller: HereMarkerEventControllerInterface) {
+    internal fun registerMarkerEventController(controller: DefaultMarkerEventController<HereActualMarker>) {
         if (markerEventControllers.contains(controller)) return
         markerEventControllers.add(controller)
         controller.setClickListener(markerClickListener)
@@ -305,10 +303,11 @@ class HereMapViewController(
 
     fun createMarkerEventController(
         controller: StrategyMarkerController<HereActualMarker>,
-    ): MarkerEventControllerInterface<HereActualMarker> = StrategyHereMarkerEventController(controller)
+    ): MarkerEventControllerInterface<HereActualMarker> = DefaultMarkerEventController(controller)
 
     fun registerMarkerEventController(controller: MarkerEventControllerInterface<HereActualMarker>) {
-        val typed = controller as? HereMarkerEventControllerInterface ?: return
+        @Suppress("UNCHECKED_CAST")
+        val typed = controller as? DefaultMarkerEventController<HereActualMarker> ?: return
         registerMarkerEventController(typed)
     }
 }

@@ -294,22 +294,6 @@ public final class com.mapconductor.here.groundimage.HereGroundImageOverlayRende
 }
 public final class com.mapconductor.here.groundimage.HereGroundImageOverlayRenderer$Companion {
 }
-public final class com.mapconductor.here.marker.DefaultHereMarkerEventController implements com.mapconductor.here.marker.HereMarkerEventControllerInterface {
-  public com.mapconductor.here.marker.DefaultHereMarkerEventController(com.mapconductor.here.marker.HereMarkerController);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> find(com.mapconductor.core.features.GeoPointInterface);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> getSelectedMarker();
-  public void setSelectedMarker(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>);
-  public void dispatchClick(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDrag(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);
-  public void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-}
 public final class com.mapconductor.here.marker.HereMarkerController extends com.mapconductor.core.marker.AbstractMarkerController<com.here.sdk.mapview.MapMarker> implements com.mapconductor.core.controller.OnCameraChangeReceiverInterface {
   public static final com.mapconductor.here.marker.HereMarkerController$Companion Companion;
   public final void setRasterLayerCallback(com.mapconductor.core.marker.MarkerTileRasterLayerCallback);
@@ -324,19 +308,6 @@ public final class com.mapconductor.here.marker.HereMarkerController extends com
 public final class com.mapconductor.here.marker.HereMarkerController$Companion {
   public final com.mapconductor.here.marker.HereMarkerController create(com.mapconductor.here.HereViewHolder, com.mapconductor.core.marker.MarkerTilingOptions);
 }
-public interface com.mapconductor.here.marker.HereMarkerEventControllerInterface extends com.mapconductor.core.marker.MarkerEventControllerInterface<com.here.sdk.mapview.MapMarker>, com.mapconductor.core.marker.GeoMarkerClickTargetInterface<com.here.sdk.mapview.MapMarker> {
-  public abstract com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> getSelectedMarker();
-  public abstract void setSelectedMarker(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>);
-  public abstract void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
-  public abstract void dispatchDrag(com.mapconductor.core.marker.MarkerState);
-  public abstract void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);
-  public abstract void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setDragStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setDragListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setDragEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setAnimateStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public abstract void setAnimateEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-}
 public final class com.mapconductor.here.marker.HereMarkerRenderer extends com.mapconductor.core.marker.AbstractMarkerOverlayRenderer<com.mapconductor.here.HereViewHolder, com.here.sdk.mapview.MapMarker> {
   public com.mapconductor.here.marker.HereMarkerRenderer(com.mapconductor.here.HereViewHolder, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.here.marker.HereMarkerRenderer(com.mapconductor.here.HereViewHolder, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
@@ -349,22 +320,6 @@ public final class com.mapconductor.here.marker.HereMarkerRenderer extends com.m
   public java.lang.Object onChange(java.util.List<? extends com.mapconductor.core.marker.MarkerOverlayRendererInterface$ChangeParamsInterface<com.here.sdk.mapview.MapMarker>>, kotlin.coroutines.Continuation<? super java.util.List<com.here.sdk.mapview.MapMarker>>);
 }
 public final class com.mapconductor.here.marker.HereMarkerRendererKt {
-}
-public final class com.mapconductor.here.marker.StrategyHereMarkerEventController implements com.mapconductor.here.marker.HereMarkerEventControllerInterface {
-  public com.mapconductor.here.marker.StrategyHereMarkerEventController(com.mapconductor.core.marker.StrategyMarkerController<com.here.sdk.mapview.MapMarker>);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> find(com.mapconductor.core.features.GeoPointInterface);
-  public com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker> getSelectedMarker();
-  public void setSelectedMarker(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>);
-  public void dispatchClick(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragStart(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDrag(com.mapconductor.core.marker.MarkerState);
-  public void dispatchDragEnd(com.mapconductor.core.marker.MarkerState);
-  public void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setDragEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateStartListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
-  public void setAnimateEndListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
 }
 public final class com.mapconductor.here.polygon.HerePolygonController extends com.mapconductor.core.polygon.PolygonController<java.util.List<? extends com.here.sdk.mapview.MapPolygon>> {
   public com.mapconductor.here.polygon.HerePolygonController(com.mapconductor.core.polygon.PolygonManagerInterface<java.util.List<com.here.sdk.mapview.MapPolygon>>, com.mapconductor.here.polygon.HerePolygonOverlayRenderer);

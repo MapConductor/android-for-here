@@ -35,8 +35,6 @@ class HereMarkerController private constructor(
         renderer = renderer,
     ),
     OnCameraChangeReceiverInterface {
-    private var internalSelectedMarker: MarkerEntityInterface<HereActualMarker>? = null
-
     private val defaultMarkerIcon: BitmapIcon = DefaultMarkerIcon().toBitmapIcon()
     private val tiledMarkerIds = LinkedHashSet<String>()
 
@@ -65,16 +63,6 @@ class HereMarkerController private constructor(
             setTileLayerVisible = ::setTileLayerVisible,
             invalidateTiles = ::updateRasterLayerSource,
         )
-
-    internal var selectedMarker: MarkerEntityInterface<HereActualMarker>?
-        set(value) {
-            if (value == null) {
-                internalSelectedMarker = null
-                return
-            }
-            internalSelectedMarker = value
-        }
-        get() = internalSelectedMarker
 
     fun setRasterLayerCallback(callback: MarkerTileRasterLayerCallback?) {
         rasterLayerCallback = callback
