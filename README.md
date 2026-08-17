@@ -10,6 +10,17 @@ Even you use the wrapper API, but you can still access to the native HERE view i
 
 https://mapconductor.com/setup/android/here/
 
+### API key
+
+HERE needs **two** values, both read from `AndroidManifest.xml`:
+
+```xml
+<meta-data android:name="HERE_ACCESS_KEY_ID" android:value="${HERE_ACCESS_KEY_ID}" />
+<meta-data android:name="HERE_ACCESS_KEY_SECRET" android:value="${HERE_ACCESS_KEY_SECRET}" />
+```
+
+Put the value in `secrets.properties` and let the Secrets Gradle Plugin inject it; keep that file out of source control.
+
 ## Usage
 
 ```kotlin
