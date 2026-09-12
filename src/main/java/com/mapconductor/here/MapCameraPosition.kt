@@ -7,6 +7,7 @@ import com.here.sdk.mapview.MapCameraUpdate
 import com.here.sdk.mapview.MapCameraUpdateFactory
 import com.here.sdk.mapview.MapMeasure
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.map.CameraBearing
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.spherical.Spherical
@@ -30,7 +31,7 @@ internal fun MapCameraPosition.toHereDisplayCamera(): HereDisplayCamera {
             target = GeoPoint.from(position),
             tiltDeg = tilt,
             hereZoomLevel = ZoomAltitudeConverter.googleZoomToHereZoom(zoom, position.latitude),
-            bearing = bearing,
+            bearing = CameraBearing.toNativeHeading(bearing),
         )
     }
     // tilt < 0: HERE cannot represent upward pitch directly.
@@ -40,13 +41,13 @@ internal fun MapCameraPosition.toHereDisplayCamera(): HereDisplayCamera {
     val hereZoomOrig = ZoomAltitudeConverter.googleZoomToHereZoom(zoom, position.latitude)
     val altitude = converter.zoomLevelToAltitude(hereZoomOrig, position.latitude, 0.0)
     val distanceForward = altitude * tan(tiltAbsRad)
-    val target = Spherical.computeOffset(position, distanceForward, bearing)
+    val target = Spherical.computeOffset(position, distanceForward, CameraBearing.toNativeHeading(bearing))
     val adjustedHereZoom = converter.altitudeToZoomLevel(altitude / cos(tiltAbsRad), target.latitude, 0.0)
     return HereDisplayCamera(
         target = target,
         tiltDeg = tiltAbsDeg,
         hereZoomLevel = adjustedHereZoom,
-        bearing = bearing,
+        bearing = CameraBearing.toNativeHeading(bearing),
     )
 }
 
@@ -93,7 +94,7 @@ internal fun MapCamera.State.toMapCameraPosition(logicalTiltHint: Double?): MapC
         return MapCameraPosition(
             position = position,
             zoom = ourZoom,
-            bearing = orientationAtTarget.bearing,
+            bearing = CameraBearing.bearingFromNativeHeading(orientationAtTarget.bearing),
             tilt = pitch,
             visibleRegion = null,
         )
@@ -114,7 +115,7 @@ internal fun MapCamera.State.toMapCameraPosition(logicalTiltHint: Double?): MapC
     return MapCameraPosition(
         position = originalCenter,
         zoom = originalGoogleZoom,
-        bearing = bear,
+        bearing = CameraBearing.bearingFromNativeHeading(bear),
         tilt = -pitchAbsDeg,
         visibleRegion = null,
     )
