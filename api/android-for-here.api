@@ -413,6 +413,7 @@ final class com.mapconductor.here.raster.HereRasterTileProxyProvider implements 
   public static final com.mapconductor.here.raster.HereRasterTileProxyProvider$Companion Companion;
   public com.mapconductor.here.raster.HereRasterTileProxyProvider(com.mapconductor.core.raster.RasterLayerState);
   public byte[] renderTile(com.mapconductor.core.tileserver.TileRequest);
+  public byte[] renderTile(com.mapconductor.core.tileserver.TileRequest, kotlin.jvm.functions.Function0<java.lang.Boolean>);
 }
 public final class com.mapconductor.here.raster.HereRasterTileProxyProvider$Companion {
 }
