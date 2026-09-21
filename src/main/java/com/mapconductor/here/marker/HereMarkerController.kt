@@ -292,6 +292,7 @@ class HereMarkerController private constructor(
                 cacheSizeBytes = markerTiling.cacheSize,
                 debugTileOverlay = markerTiling.debugTileOverlay,
                 iconScaleCallback = markerTiling.iconScaleCallback,
+                declutterPx = markerTiling.declutterPx,
                 extraIconScale = tileScale,
             )
         markerTileRenderer = tileRenderer
