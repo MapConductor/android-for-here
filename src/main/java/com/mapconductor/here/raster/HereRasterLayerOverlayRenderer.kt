@@ -33,9 +33,9 @@ import android.util.Log
 import android.util.LruCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class HereRasterLayerOverlayRenderer(
@@ -208,7 +208,8 @@ class HereRasterLayerOverlayRenderer(
                     // template is local when it is one of the server's own.
                     localTemplate =
                         template.takeIf {
-                            it.startsWith(tileServer.baseUrl + "/") && (routeId != null || source.scheme != TileScheme.TMS)
+                            it.startsWith(tileServer.baseUrl + "/") &&
+                                (routeId != null || source.scheme != TileScheme.TMS)
                         },
                 )
             }
@@ -299,6 +300,7 @@ private class LocalRasterTileSource(
         // slot is never freed, and after a few gestures HERE stops asking for
         // tiles at all -- the map keeps the last picture and looks frozen.
         val answered = AtomicBoolean(false)
+
         fun answer(bytes: ByteArray?) {
             if (!answered.compareAndSet(false, true)) return
             if (bytes != null) handler.loaded(tileKey, bytes, METADATA) else handler.failed(tileKey)
