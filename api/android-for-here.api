@@ -172,7 +172,7 @@ public final class com.mapconductor.here.HereMapViewControllerStore extends com.
   public final void initSDK(android.content.Context);
 }
 public final class com.mapconductor.here.HereMapViewKt {
-  public static final void HereMapView(com.mapconductor.here.HereViewState, androidx.compose.ui.Modifier, com.mapconductor.core.marker.MarkerTilingOptions, com.mapconductor.core.map.CameraRestriction, kotlin.jvm.functions.Function2<? super android.content.Context, ? super kotlin.coroutines.Continuation<? super java.lang.Boolean>, ? extends java.lang.Object>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapViewStateInterface<?>, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.features.GeoPoint, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.features.GeoPoint, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, com.mapconductor.core.map.MapProjection, kotlin.jvm.functions.Function3<? super com.mapconductor.here.HereViewScope, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int, int);
+  public static final void HereMapView(com.mapconductor.here.HereViewState, androidx.compose.ui.Modifier, com.mapconductor.core.marker.MarkerTilingOptions, com.mapconductor.core.map.CameraRestriction, kotlin.jvm.functions.Function2<? super android.content.Context, ? super kotlin.coroutines.Continuation<? super java.lang.Boolean>, ? extends java.lang.Object>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapViewStateInterface<?>, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.features.GeoPoint, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.features.GeoPoint, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, com.mapconductor.core.map.MapProjection, com.mapconductor.core.map.MapViewStyle, kotlin.jvm.functions.Function1<? super java.util.List<java.lang.String>, kotlin.Unit>, kotlin.jvm.functions.Function3<? super com.mapconductor.here.HereViewScope, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int, int);
 }
 public final class com.mapconductor.here.HereMapViewSaver extends com.mapconductor.compose.map.BaseMapViewSaver<com.mapconductor.here.HereViewState> {
   public com.mapconductor.here.HereMapViewSaver();
@@ -400,11 +400,13 @@ final class com.mapconductor.here.raster.HereRasterLayerOverlayRenderer$TileSpec
   public final java.lang.String getSourceName();
   public final java.lang.String getLayerName();
   public final java.util.List<java.lang.Integer> getStorageLevels();
+  public final java.lang.String getLocalTemplate();
   public final com.here.sdk.mapview.datasource.TileUrlProviderCallback component1();
   public final java.lang.String component2();
   public final java.lang.String component3();
   public final java.util.List<java.lang.Integer> component4();
-  public final com.mapconductor.here.raster.HereRasterLayerOverlayRenderer$TileSpec copy(com.here.sdk.mapview.datasource.TileUrlProviderCallback, java.lang.String, java.lang.String, java.util.List<java.lang.Integer>);
+  public final java.lang.String component5();
+  public final com.mapconductor.here.raster.HereRasterLayerOverlayRenderer$TileSpec copy(com.here.sdk.mapview.datasource.TileUrlProviderCallback, java.lang.String, java.lang.String, java.util.List<java.lang.Integer>, java.lang.String);
   public java.lang.String toString();
   public int hashCode();
   public boolean equals(java.lang.Object);
@@ -416,6 +418,22 @@ final class com.mapconductor.here.raster.HereRasterTileProxyProvider implements 
   public byte[] renderTile(com.mapconductor.core.tileserver.TileRequest, kotlin.jvm.functions.Function0<java.lang.Boolean>);
 }
 public final class com.mapconductor.here.raster.HereRasterTileProxyProvider$Companion {
+}
+final class com.mapconductor.here.raster.LocalRasterTileSource implements com.here.sdk.mapview.datasource.RasterTileSource {
+  public static final int RENDER_WIDTH;
+  public static final long TEN_YEARS_MS;
+  public com.mapconductor.here.raster.LocalRasterTileSource(com.mapconductor.core.tileserver.LocalTileServer, java.lang.String, java.util.List<java.lang.Integer>);
+  public com.here.sdk.mapview.datasource.TileSource$DataVersion getDataVersion(com.here.sdk.mapview.datasource.TileKey);
+  public void addListener(com.here.sdk.mapview.datasource.TileSource$Listener);
+  public void removeListener(com.here.sdk.mapview.datasource.TileSource$Listener);
+  public com.here.sdk.mapview.datasource.TilingScheme getTilingScheme();
+  public java.util.List<java.lang.Integer> getStorageLevels();
+  public com.here.sdk.mapview.datasource.TileSource$LoadTileRequestHandle loadTile(com.here.sdk.mapview.datasource.TileKey, com.here.sdk.mapview.datasource.RasterTileSource$LoadResultHandler);
+}
+final class com.mapconductor.here.raster.LocalRasterTileSource$Companion {
+  public final kotlinx.coroutines.CoroutineDispatcher getRenderDispatcher();
+  public final com.here.sdk.mapview.datasource.TileSource$DataVersion getVERSION();
+  public final com.here.sdk.mapview.datasource.TileSource$TileMetadata getMETADATA();
 }
 public final class com.mapconductor.here.zoom.ZoomAltitudeConverter extends com.mapconductor.core.zoom.AbstractZoomAltitudeConverter {
   public static final com.mapconductor.here.zoom.ZoomAltitudeConverter$Companion Companion;

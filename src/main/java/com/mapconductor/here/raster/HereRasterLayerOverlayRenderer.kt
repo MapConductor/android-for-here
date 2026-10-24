@@ -5,6 +5,9 @@ import com.here.sdk.mapview.MapLayer
 import com.here.sdk.mapview.MapLayerBuilder
 import com.here.sdk.mapview.datasource.RasterDataSource
 import com.here.sdk.mapview.datasource.RasterDataSourceConfiguration
+import com.here.sdk.mapview.datasource.RasterTileSource
+import com.here.sdk.mapview.datasource.TileKey
+import com.here.sdk.mapview.datasource.TileSource
 import com.here.sdk.mapview.datasource.TileUrlProviderCallback
 import com.here.sdk.mapview.datasource.TileUrlProviderFactory
 import com.here.sdk.mapview.datasource.TilingScheme
@@ -20,6 +23,8 @@ import com.mapconductor.here.HereViewHolder
 import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -28,6 +33,10 @@ import android.util.Log
 import android.util.LruCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class HereRasterLayerOverlayRenderer(
     private val holder: HereViewHolder,
@@ -83,30 +92,46 @@ class HereRasterLayerOverlayRenderer(
         }
         val urlProvider = tileSpec.provider
         val storageLevels = tileSpec.storageLevels
-        val dataSourceProvider =
-            RasterDataSourceConfiguration.Provider(
-                urlProvider,
-                TilingScheme.QUAD_TREE_MERCATOR,
-                storageLevels,
-            )
-        dataSourceProvider.hasAlphaChannel = true
-        val cache =
-            RasterDataSourceConfiguration.Cache(
-                holder.mapView.context.cacheDir.absolutePath,
-            )
-        val config =
-            RasterDataSourceConfiguration(
-                tileSpec.sourceName,
-                dataSourceProvider,
-                cache,
-            )
-        val dataSource = RasterDataSource(holder.mapView.mapContext, config)
+        // Tiles this process draws are handed over in process. HERE fetches
+        // through its own network stack and, while the device reports no
+        // connectivity, does not fetch at all -- not even from 127.0.0.1 --
+        // so a URL-fed source goes blank the moment the network is away.
+        // A tile source is asked for bytes and answered from the same
+        // providers, with no network in between.
+        val localTemplate = tileSpec.localTemplate
+        val dataSource =
+            if (localTemplate != null) {
+                RasterDataSource(
+                    holder.mapView.mapContext,
+                    tileSpec.sourceName,
+                    LocalRasterTileSource(tileServer, localTemplate, storageLevels),
+                )
+            } else {
+                val dataSourceProvider =
+                    RasterDataSourceConfiguration.Provider(
+                        urlProvider,
+                        TilingScheme.QUAD_TREE_MERCATOR,
+                        storageLevels,
+                    )
+                dataSourceProvider.hasAlphaChannel = true
+                val cache =
+                    RasterDataSourceConfiguration.Cache(
+                        holder.mapView.context.cacheDir.absolutePath,
+                    )
+                val config =
+                    RasterDataSourceConfiguration(
+                        tileSpec.sourceName,
+                        dataSourceProvider,
+                        cache,
+                    )
+                RasterDataSource(holder.mapView.mapContext, config)
+            }
 
         return try {
             val layer =
                 MapLayerBuilder()
                     .withName(tileSpec.layerName)
-                    .withDataSource(config.name, MapContentType.RASTER_IMAGE)
+                    .withDataSource(tileSpec.sourceName, MapContentType.RASTER_IMAGE)
                     .forMap(holder.mapView.hereMap)
                     .build()
             layer.setEnabled(state.visible)
@@ -179,6 +204,13 @@ class HereRasterLayerOverlayRenderer(
                     sourceName = "raster-source-${state.id}",
                     layerName = "raster-layer-${state.id}",
                     storageLevels = buildStorageLevels(source.minZoom, source.maxZoom),
+                    // The proxy route is local by construction; a direct
+                    // template is local when it is one of the server's own.
+                    localTemplate =
+                        template.takeIf {
+                            it.startsWith(tileServer.baseUrl + "/") &&
+                                (routeId != null || source.scheme != TileScheme.TMS)
+                        },
                 )
             }
             is RasterLayerSource.TileJson -> {
@@ -235,7 +267,94 @@ class HereRasterLayerOverlayRenderer(
         val sourceName: String,
         val layerName: String,
         val storageLevels: List<Int>,
+        /** The XYZ template on this process's tile server, when the tiles come from there. */
+        val localTemplate: String? = null,
     )
+}
+
+/**
+ * A HERE tile source answered from this process's tile server, with no HTTP
+ * hop and no dependence on the device's connectivity.
+ */
+private class LocalRasterTileSource(
+    private val tileServer: LocalTileServer,
+    private val template: String,
+    private val levels: List<Int>,
+) : RasterTileSource {
+    override fun getDataVersion(tileKey: TileKey): TileSource.DataVersion = VERSION
+
+    override fun addListener(listener: TileSource.Listener) {}
+
+    override fun removeListener(listener: TileSource.Listener) {}
+
+    override fun getTilingScheme(): TilingScheme = TilingScheme.QUAD_TREE_MERCATOR
+
+    override fun getStorageLevels(): List<Int> = levels
+
+    override fun loadTile(
+        tileKey: TileKey,
+        handler: RasterTileSource.LoadResultHandler,
+    ): TileSource.LoadTileRequestHandle {
+        // Exactly one answer per request, whatever happens. A request HERE
+        // cancels is still one it is waiting on: leave it unanswered and the
+        // slot is never freed, and after a few gestures HERE stops asking for
+        // tiles at all -- the map keeps the last picture and looks frozen.
+        val answered = AtomicBoolean(false)
+
+        fun answer(bytes: ByteArray?) {
+            if (!answered.compareAndSet(false, true)) return
+            if (bytes != null) handler.loaded(tileKey, bytes, METADATA) else handler.failed(tileKey)
+        }
+        // HERE counts rows from the south (Tokyo at z12 is row 2483, not
+        // 1612); the templates count from the north, as XYZ does.
+        val row = (1 shl tileKey.level) - 1 - tileKey.y
+        val url =
+            template
+                .replace("{z}", tileKey.level.toString())
+                .replace("{x}", tileKey.x.toString())
+                .replace("{y}", row.toString())
+        val job =
+            scope.launch {
+                answer(runCatching { tileServer.renderLocalTile(url) { !isActive } }.getOrNull())
+            }
+        // Cancelled, or the coroutine never ran: answered from a render
+        // thread rather than from whichever thread cancelled it.
+        job.invokeOnCompletion { if (!answered.get()) scope.launch { answer(null) } }
+        return TileSource.LoadTileRequestHandle { job.cancel() }
+    }
+
+    /**
+     * Renders run here and nowhere else.
+     *
+     * HERE asks for a screenful at once and every one of those is a tile to
+     * draw. On `Dispatchers.Default` they take every thread the rest of the
+     * SDK shares -- camera callbacks, overlays, the vector renderer itself --
+     * and the map stops answering gestures while it fills. This is the same
+     * width, and the same reasoning, as the tile server's own worker pool,
+     * which is what the HTTP path went through.
+     */
+    private val scope = CoroutineScope(SupervisorJob() + renderDispatcher)
+
+    private companion object {
+        @OptIn(ExperimentalCoroutinesApi::class)
+        val renderDispatcher = Dispatchers.Default.limitedParallelism(RENDER_WIDTH)
+
+        /** Tile rendering is CPU-bound; more workers than cores adds contention, not throughput. */
+        const val RENDER_WIDTH = 8
+
+        val VERSION = TileSource.DataVersion(0, 0)
+
+        /**
+         * Tiles drawn here change only with their URL, so they are given a
+         * long life -- but a plausible one. A date near the end of `Long`
+         * does not survive the trip into the SDK: every tile came back
+         * already expired, the same one was asked for again every 400 ms,
+         * and after a pinch the map stopped asking for tiles at all.
+         */
+        val METADATA = TileSource.TileMetadata(VERSION, Date(System.currentTimeMillis() + TEN_YEARS_MS))
+
+        const val TEN_YEARS_MS = 10L * 365 * 24 * 60 * 60 * 1000
+    }
 }
 
 data class HereRasterLayerHandle(
