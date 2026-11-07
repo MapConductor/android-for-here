@@ -238,7 +238,7 @@ class HereMapViewController(
         polygonController.clickListener = listener
     }
 
-    private var mapDesignType: HereMapDesignType = HereMapDesign.NormalDay
+    internal var mapDesignType: HereMapDesignType = HereMapDesign.NormalDay
     private var mapDesignTypeChangeListener: HereMapDesignTypeChangeHandler? = null
 
     override fun applyUISettings(settings: MapUISettings) {
