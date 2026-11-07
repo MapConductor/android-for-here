@@ -149,6 +149,10 @@ fun HereMapView(
             controller.setMapClickListener(onMapClick)
             controller.setMapLongClickListener(onMapLongClick)
             state.setController(controller)
+            // コントローラの既定値（NormalDay）のままリスナーを繋ぐと、それが state へ返り、
+            // アプリが渡した（あるいは回転後に復元した）デザインが NormalDay に化ける。
+            // 下の loadScene は state のデザインを読むので、その前に揃えておく。
+            controller.mapDesignType = state.mapDesignType
             controller.setMapDesignTypeChangeListener(state::onMapDesignTypeChange)
             cameraRestriction?.let { controller.setCameraRestriction(it) }
 
