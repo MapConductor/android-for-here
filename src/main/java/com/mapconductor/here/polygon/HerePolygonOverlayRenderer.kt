@@ -9,6 +9,7 @@ import com.mapconductor.core.ResourceProvider
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.features.GeoRectBounds
+import com.mapconductor.core.geometry.densifyPolygonRing
 import com.mapconductor.core.normalizeLng
 import com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer
 import com.mapconductor.core.polygon.PolygonEntityInterface
@@ -237,15 +238,10 @@ class HerePolygonOverlayRenderer(
         points: List<GeoPointInterface>,
         geodesic: Boolean,
     ): List<GeoCoordinates> =
-        (
-            if (geodesic) {
-                com.mapconductor.core.spherical
-                    .WGS84Geodesic
-                    .createInterpolatePoints(points)
-            } else {
-                points
-            }
-        ).map { GeoCoordinates(it.latitude, normalizeLng(it.longitude)) }
+        // 閉じる辺（末尾 → 先頭）も他の辺と同じく補間する（塗りと輪郭が同じネイティブポリゴン）。
+        // geodesic は大圏、geodesic=false は緯度経度の線形補間（ポリラインの false と同じ線）。
+        densifyPolygonRing(points, geodesic)
+            .map { GeoCoordinates(it.latitude, normalizeLng(it.longitude)) }
             .let { pts -> if (pts.size >= 2 && pts.first() == pts.last()) pts.dropLast(1) else pts }
 
     /** [toRing] と同じ補間・正規化を、分割へ渡すため GeoPointInterface のまま返す。 */
@@ -253,15 +249,9 @@ class HerePolygonOverlayRenderer(
         points: List<GeoPointInterface>,
         geodesic: Boolean,
     ): List<GeoPointInterface> =
-        (
-            if (geodesic) {
-                com.mapconductor.core.spherical
-                    .WGS84Geodesic
-                    .createInterpolatePoints(points)
-            } else {
-                points
-            }
-        ).map { GeoPoint(latitude = it.latitude, longitude = normalizeLng(it.longitude)) }
+        // 閉じる辺（末尾 → 先頭）も他の辺と同じく補間する（塗りと輪郭が同じネイティブポリゴン）。
+        // geodesic は大圏、geodesic=false は緯度経度の線形補間（ポリラインの false と同じ線）。
+        densifyPolygonRing(points, geodesic).map { GeoPoint(latitude = it.latitude, longitude = normalizeLng(it.longitude)) }
 
     private fun boundsOf(points: List<GeoPointInterface>): GeoRectBounds? {
         if (points.isEmpty()) return null
