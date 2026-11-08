@@ -17,6 +17,7 @@ import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polygon.splitPolygonWithHolesIntoSimpleRings
 import com.mapconductor.core.polygon.unionHoles
 import com.mapconductor.here.HereActualPolygon
+import com.mapconductor.here.HereOverlayStacking
 import com.mapconductor.here.HereViewHolder
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -145,7 +146,7 @@ class HerePolygonOverlayRenderer(
                 }
             }
             if (finger.zIndex != prevFinger.zIndex) {
-                polygon.forEach { it.drawOrder = current.state.zIndex.coerceIn(0, 511) }
+                polygon.forEach { it.drawOrder = HereOverlayStacking.polygonDrawOrder(current.state.zIndex) }
             }
 
             polygon
@@ -161,7 +162,7 @@ class HerePolygonOverlayRenderer(
             val strokeWidth = ResourceProvider.dpToPx(state.strokeWidth)
             val transparentFill = Color.valueOf(0f, 0f, 0f, 0f)
             val fillColor = Color.valueOf(state.fillColor.toArgb())
-            val order = state.zIndex.coerceIn(0, 511)
+            val order = HereOverlayStacking.polygonDrawOrder(state.zIndex)
 
             buildList {
                 // 塗り: 穴を持たないピース群へ分解し、1 ピース 1 枚で塗る。
@@ -231,7 +232,7 @@ class HerePolygonOverlayRenderer(
             Color.valueOf(state.fillColor.toArgb()),
             Color.valueOf(state.strokeColor.toArgb()),
             outlineWidth,
-        ).apply { drawOrder = state.zIndex.coerceIn(0, 511) }
+        ).apply { drawOrder = HereOverlayStacking.polygonDrawOrder(state.zIndex) }
     }
 
     private fun toRing(

@@ -3,6 +3,8 @@ package com.mapconductor.here.raster
 import com.here.sdk.mapview.MapContentType
 import com.here.sdk.mapview.MapLayer
 import com.here.sdk.mapview.MapLayerBuilder
+import com.here.sdk.mapview.MapLayerPriority
+import com.here.sdk.mapview.MapLayerPriorityBuilder
 import com.here.sdk.mapview.datasource.RasterDataSource
 import com.here.sdk.mapview.datasource.RasterDataSourceConfiguration
 import com.here.sdk.mapview.datasource.RasterTileSource
@@ -19,6 +21,7 @@ import com.mapconductor.core.raster.TileScheme
 import com.mapconductor.core.tileserver.LocalTileServer
 import com.mapconductor.core.tileserver.TileProviderInterface
 import com.mapconductor.core.tileserver.TileRequest
+import com.mapconductor.here.HereOverlayStacking
 import com.mapconductor.here.HereViewHolder
 import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
@@ -132,6 +135,7 @@ class HereRasterLayerOverlayRenderer(
                 MapLayerBuilder()
                     .withName(tileSpec.layerName)
                     .withDataSource(tileSpec.sourceName, MapContentType.RASTER_IMAGE)
+                    .withPriority(priorityFor(state))
                     .forMap(holder.mapView.hereMap)
                     .build()
             layer.setEnabled(state.visible)
@@ -149,6 +153,17 @@ class HereRasterLayerOverlayRenderer(
             null
         }
     }
+
+    /**
+     * アプリのラスターはラスターの帯（GroundImage・map item の下）。マーカーのタイルは
+     * マーカーの帯なので、ポリゴン等の map item より上（最後に描く）。
+     */
+    private fun priorityFor(state: RasterLayerState): MapLayerPriority =
+        if (state.id.startsWith("marker-tile-")) {
+            MapLayerPriorityBuilder().renderedLast().build()
+        } else {
+            HereOverlayStacking.rasterPriority()
+        }
 
     private fun updateLayer(
         handle: HereRasterLayerHandle,
