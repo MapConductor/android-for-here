@@ -28,7 +28,10 @@ class HereViewState(
     cameraPosition: MapCameraPosition = MapCameraPosition.Default,
 ) : MapViewState<HereMapDesignType>(cameraPosition),
     HereViewStateInterface {
-    private var controller: HereMapViewControllerInterface? = null
+    // Read through the base so that letting go of the controller there (MapViewBase
+    // does it when the map is torn down) leaves nothing behind here.
+    private val controller: HereMapViewControllerInterface?
+        get() = attachedMapController as? HereMapViewControllerInterface
 
     private var _mapDesignType: HereMapDesignType = mapDesignType
 
@@ -43,7 +46,6 @@ class HereViewState(
     override fun getMapViewHolder(): HereViewHolder? = super.getMapViewHolder() as? HereViewHolder
 
     internal fun setController(controller: HereMapViewControllerInterface) {
-        this.controller = controller
 //        controller.setMapDesignType(_mapDesignType)
         attachController(controller)
     }
