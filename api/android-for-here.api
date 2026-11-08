@@ -184,6 +184,14 @@ public final class com.mapconductor.here.HereMapViewSaver extends com.mapconduct
   public com.mapconductor.core.map.MapViewStateInterface createState(java.lang.String, android.os.Bundle, com.mapconductor.core.map.MapCameraPosition);
   public java.lang.String getStateId(com.mapconductor.core.map.MapViewStateInterface);
 }
+public final class com.mapconductor.here.HereOverlayStacking {
+  public static final com.mapconductor.here.HereOverlayStacking INSTANCE;
+  public final int polygonDrawOrder(int);
+  public final int circleDrawOrder(int);
+  public final int polylineDrawOrder(int);
+  public final com.here.sdk.mapview.MapLayerPriority rasterPriority();
+  public final com.here.sdk.mapview.MapLayerPriority groundImagePriority();
+}
 public final class com.mapconductor.here.HereTypeAliasKt {
 }
 public final class com.mapconductor.here.HereViewControllerStoreKt {

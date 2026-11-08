@@ -12,6 +12,7 @@ import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.core.groundimage.GroundImageTileProvider
 import com.mapconductor.core.tileserver.LocalTileServer
 import com.mapconductor.here.HereActualGroundImage
+import com.mapconductor.here.HereOverlayStacking
 import com.mapconductor.here.HereViewHolder
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -136,6 +137,8 @@ class HereGroundImageOverlayRenderer(
                 MapLayerBuilder()
                     .withName(layerName)
                     .withDataSource(config.name, MapContentType.RASTER_IMAGE)
+                    // GroundImage の帯（ラスターの上、ポリゴン等の map item の下）。
+                    .withPriority(HereOverlayStacking.groundImagePriority())
                     .forMap(holder.mapView.hereMap)
                     .build()
             HereGroundImageHandle(

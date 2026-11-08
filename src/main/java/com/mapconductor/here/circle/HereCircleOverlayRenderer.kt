@@ -15,6 +15,7 @@ import com.mapconductor.core.features.normalize
 import com.mapconductor.core.geometry.circleToRing
 import com.mapconductor.core.geometry.closeRing
 import com.mapconductor.here.HereActualCircle
+import com.mapconductor.here.HereOverlayStacking
 import com.mapconductor.here.HereViewHolder
 import com.mapconductor.here.toGeoCoordinates
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +37,7 @@ class HereCircleOverlayRenderer(
                 Color.valueOf(state.strokeColor.toArgb()),
                 lineWidth,
             ).apply {
-                drawOrder = (state.zIndex ?: 0).coerceIn(0, 511)
+                drawOrder = HereOverlayStacking.circleDrawOrder(state.zIndex ?: 0)
             }
         coroutine.launch {
             holder.map.addMapPolygon(mapCircle)
@@ -96,7 +97,7 @@ class HereCircleOverlayRenderer(
                     )
             }
             if (finger.zIndex != prevFinger.zIndex) {
-                current.circle.drawOrder = (current.state.zIndex ?: 0).coerceIn(0, 511)
+                current.circle.drawOrder = HereOverlayStacking.circleDrawOrder(current.state.zIndex ?: 0)
             }
 
             circle

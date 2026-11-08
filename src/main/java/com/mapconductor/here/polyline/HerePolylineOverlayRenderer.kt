@@ -16,6 +16,7 @@ import com.mapconductor.core.polyline.PolylineState
 import com.mapconductor.core.spherical.Planar
 import com.mapconductor.core.spherical.WGS84Geodesic
 import com.mapconductor.here.HereActualPolyline
+import com.mapconductor.here.HereOverlayStacking
 import com.mapconductor.here.HereViewHolder
 import com.mapconductor.here.toGeoCoordinates
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +33,7 @@ class HerePolylineOverlayRenderer(
         val representation = createRepresentation(state)
         val mapPolyline =
             MapPolyline(geoPolyline, representation).apply {
-                drawOrder = (state.zIndex + 512).coerceIn(512, 1023)
+                drawOrder = HereOverlayStacking.polylineDrawOrder(state.zIndex)
             }
 
         coroutine.launch {
@@ -66,7 +67,7 @@ class HerePolylineOverlayRenderer(
             }
 
             if (finger.zIndex != prevFinger.zIndex) {
-                polyline.drawOrder = (current.state.zIndex + 512).coerceIn(512, 1023)
+                polyline.drawOrder = HereOverlayStacking.polylineDrawOrder(current.state.zIndex)
                 needsReAdd = true
             }
 
