@@ -9,6 +9,7 @@ import com.mapconductor.core.ResourceProvider
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.features.GeoRectBounds
+import com.mapconductor.core.geometry.densifyGeodesicRing
 import com.mapconductor.core.normalizeLng
 import com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer
 import com.mapconductor.core.polygon.PolygonEntityInterface
@@ -239,9 +240,8 @@ class HerePolygonOverlayRenderer(
     ): List<GeoCoordinates> =
         (
             if (geodesic) {
-                com.mapconductor.core.spherical
-                    .WGS84Geodesic
-                    .createInterpolatePoints(points)
+                // 閉じる辺（末尾 → 先頭）も大圏で補間する（塗りと輪郭が同じネイティブポリゴン）。
+                densifyGeodesicRing(points)
             } else {
                 points
             }
@@ -255,9 +255,8 @@ class HerePolygonOverlayRenderer(
     ): List<GeoPointInterface> =
         (
             if (geodesic) {
-                com.mapconductor.core.spherical
-                    .WGS84Geodesic
-                    .createInterpolatePoints(points)
+                // 閉じる辺（末尾 → 先頭）も大圏で補間する（塗りと輪郭が同じネイティブポリゴン）。
+                densifyGeodesicRing(points)
             } else {
                 points
             }
