@@ -191,6 +191,7 @@ public final class com.mapconductor.here.HereOverlayStacking {
   public final int polylineDrawOrder(int);
   public final com.here.sdk.mapview.MapLayerPriority rasterPriority();
   public final com.here.sdk.mapview.MapLayerPriority groundImagePriority();
+  public final com.here.sdk.mapview.MapLayerPriority polygonTilePriority();
 }
 public final class com.mapconductor.here.HereTypeAliasKt {
 }
