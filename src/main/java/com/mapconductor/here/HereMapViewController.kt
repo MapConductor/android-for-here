@@ -32,7 +32,10 @@ import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.core.marker.dispatchGeoMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
 import com.mapconductor.core.polyline.OnPolylineEventHandler
+import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
 import com.mapconductor.core.polyline.PolylineState
+import com.mapconductor.core.polyline.PolylineTiler
+import com.mapconductor.core.polyline.polylineTileRasterLayerState
 import com.mapconductor.here.circle.HereCircleController
 import com.mapconductor.here.groundimage.HereGroundImageController
 import com.mapconductor.here.marker.HereMarkerController
@@ -182,6 +185,18 @@ class HereMapViewController(
                         rasterLayerController.upsert(polygonTileRasterLayerState(template, tileSize))
                     } else {
                         rasterLayerController.removeById(POLYGON_TILE_LAYER_ID)
+                    }
+                }
+            }
+
+        // Many polylines too: the same raster layer path, in the polyline band.
+        polylineController.tiler =
+            PolylineTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polylineTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYLINE_TILE_LAYER_ID)
                     }
                 }
             }
