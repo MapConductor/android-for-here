@@ -13,6 +13,7 @@ import com.here.sdk.mapview.datasource.TileSource
 import com.here.sdk.mapview.datasource.TileUrlProviderCallback
 import com.here.sdk.mapview.datasource.TileUrlProviderFactory
 import com.here.sdk.mapview.datasource.TilingScheme
+import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
@@ -156,11 +157,14 @@ class HereRasterLayerOverlayRenderer(
 
     /**
      * アプリのラスターはラスターの帯（GroundImage・map item の下）。マーカーのタイルは
-     * マーカーの帯なので、ポリゴン等の map item より上（最後に描く）。
+     * マーカーの帯なので、ポリゴン等の map item より上（最後に描く）。ポリゴンのタイルは
+     * ポリゴンの帯の一番下（GroundImage の上、map item の下）。
      */
     private fun priorityFor(state: RasterLayerState): MapLayerPriority =
         if (state.id.startsWith("marker-tile-")) {
             MapLayerPriorityBuilder().renderedLast().build()
+        } else if (state.id == POLYGON_TILE_LAYER_ID) {
+            HereOverlayStacking.polygonTilePriority()
         } else {
             HereOverlayStacking.rasterPriority()
         }
