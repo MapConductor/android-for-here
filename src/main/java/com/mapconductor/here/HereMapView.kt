@@ -1,15 +1,11 @@
 package com.mapconductor.here
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.node.Ref
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.here.sdk.mapview.MapProjection as HereMapProjection
 import com.here.sdk.mapview.MapRenderMode
 import com.here.sdk.mapview.MapView
@@ -44,7 +40,6 @@ import com.mapconductor.here.raster.HereRasterLayerController
 import com.mapconductor.here.raster.HereRasterLayerOverlayRenderer
 import java.util.concurrent.atomic.AtomicBoolean
 import android.annotation.SuppressLint
-import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -82,7 +77,6 @@ fun HereMapView(
     val scope = remember { HereViewScope() }
     val controllerRef = remember { Ref<HereMapViewController>() }
     val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val registry = remember { scope.buildRegistry() }
     val cameraState = remember { mutableStateOf<MapCameraPositionInterface?>(state.cameraPosition) }
     // Capture the desired initial camera before any early camera callbacks can overwrite state.
@@ -224,46 +218,12 @@ fun HereMapView(
         scope = scope,
         registry = registry,
         onMapLoaded = onMapLoaded,
-        customDisposableEffect = { _, holderRef ->
-
-            // HERE specific DisposableEffect logic
-            DisposableEffect(lifecycle) {
-                val stateId = state.id // from BaseMapViewState
-                val observer =
-                    object : DefaultLifecycleObserver {
-                        override fun onResume(owner: LifecycleOwner) {
-                            // Do not call here to keep the MapView instance
-                            // holderRef.value?.mapView?.onResume()
-                        }
-
-                        override fun onPause(owner: LifecycleOwner) {
-                            // Do not call here to keep the MapView instance
-                            // holderRef.value?.mapView?.onPause()
-                        }
-
-                        override fun onDestroy(owner: LifecycleOwner) {
-                            val currentHolder = holderRef.value
-                            if (currentHolder != null) {
-                                val activity = context.findActivity()
-                                if (activity?.isChangingConfigurations == true) {
-                                    (currentHolder.mapView.parent as? ViewGroup)?.removeView(currentHolder.mapView)
-                                } else {
-                                    // Ensure these calls are safe if mapView might be null or already destroyed
-                                    currentHolder.mapView.onPause()
-                                    currentHolder.mapView.onDestroy()
-                                    // Real teardown: free overlay controllers (tile-server
-                                    // routes, marker managers) and cancel the controller scope.
-                                    HereMapViewControllerStore.get(stateId)?.destroy()
-                                    HereMapViewControllerStore.remove(stateId) // Clean up from your store
-                                }
-                            }
-                        }
-                    }
-                lifecycle.addObserver(observer)
-                onDispose {
-                    lifecycle.removeObserver(observer)
-                }
-            }
+        // Created resumed in viewProvider, so paused before it is destroyed. A
+        // MapView left alive keeps its render loop and, through its listeners,
+        // the controller with every overlay.
+        onDestroyMapView = { mapView ->
+            mapView.onPause()
+            mapView.onDestroy()
         },
         // Pass content if it needs to be rendered within the overlay providers in MapViewBase,
         // or handle it here if it's specific to HereMapView structure before calling MapViewBase.
