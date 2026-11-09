@@ -29,6 +29,12 @@ internal object HereOverlayStacking {
     /** GroundImage: "traffic_on_route" レイヤーの手前（ラスターより上、map item より下）。 */
     fun groundImagePriority(): MapLayerPriority = MapLayerPriorityBuilder().renderedBeforeLayer(GROUND_IMAGE_ANCHOR).build()
 
+    /**
+     * ポリゴンのタイル（SDK が描くラスター）: ポリゴンの帯の一番下。GroundImage のアンカー
+     * "traffic_on_route" の直後（GroundImage より上、map item より下）。
+     */
+    fun polygonTilePriority(): MapLayerPriority = MapLayerPriorityBuilder().renderedAfterLayer(GROUND_IMAGE_ANCHOR).build()
+
     private const val RASTER_ANCHOR = "route"
     private const val GROUND_IMAGE_ANCHOR = "traffic_on_route"
 }
