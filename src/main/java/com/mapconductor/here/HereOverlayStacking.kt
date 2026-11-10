@@ -33,7 +33,27 @@ internal object HereOverlayStacking {
      * ポリゴンのタイル（SDK が描くラスター）: ポリゴンの帯の一番下。GroundImage のアンカー
      * "traffic_on_route" の直後（GroundImage より上、map item より下）。
      */
-    fun polygonTilePriority(): MapLayerPriority = MapLayerPriorityBuilder().renderedAfterLayer(GROUND_IMAGE_ANCHOR).build()
+    fun polygonTilePriority(): MapLayerPriority = polygonTilePriority(beforeLayer = null)
+
+    /** [polygonTilePriority]; when the polyline tiles are already on the map, just below them ([beforeLayer]). */
+    fun polygonTilePriority(beforeLayer: String?): MapLayerPriority =
+        if (beforeLayer != null) {
+            MapLayerPriorityBuilder().renderedBeforeLayer(beforeLayer).build()
+        } else {
+            MapLayerPriorityBuilder().renderedAfterLayer(GROUND_IMAGE_ANCHOR).build()
+        }
+
+    /**
+     * ポリラインのタイル（SDK が描くラスター）: ポリゴンのタイルの上（[afterLayer]、無ければ
+     * GroundImage のアンカーの直後）、map item の下。
+     *
+     * HERE の map item（ポリゴン・サークル・ポリライン）は 1 枚の層にまとめて描かれ、
+     * MapLayer をサークルとポリラインの間に挟めない。map item の下に置くので、ネイティブの
+     * ポリゴン・サークルもこのタイルの上に来る（帯の決まりからの、HERE だけの差）。
+     * マーカーとマーカーのタイルより下、ポリゴンのタイルより上は守る。
+     */
+    fun polylineTilePriority(afterLayer: String?): MapLayerPriority =
+        MapLayerPriorityBuilder().renderedAfterLayer(afterLayer ?: GROUND_IMAGE_ANCHOR).build()
 
     private const val RASTER_ANCHOR = "route"
     private const val GROUND_IMAGE_ANCHOR = "traffic_on_route"

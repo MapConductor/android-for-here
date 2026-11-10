@@ -14,6 +14,7 @@ import com.here.sdk.mapview.datasource.TileUrlProviderCallback
 import com.here.sdk.mapview.datasource.TileUrlProviderFactory
 import com.here.sdk.mapview.datasource.TilingScheme
 import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
+import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
@@ -140,6 +141,7 @@ class HereRasterLayerOverlayRenderer(
                     .forMap(holder.mapView.hereMap)
                     .build()
             layer.setEnabled(state.visible)
+            if (isShapeTileLayer(state.id)) shapeTileLayers.add(state.id)
             HereRasterLayerHandle(
                 dataSource = dataSource,
                 layer = layer,
@@ -155,19 +157,34 @@ class HereRasterLayerOverlayRenderer(
         }
     }
 
+    /** The SDK's shape tile layers on the map now (their ids), so each can be placed against the other. */
+    private val shapeTileLayers = java.util.Collections.synchronizedSet(HashSet<String>())
+
     /**
      * アプリのラスターはラスターの帯（GroundImage・map item の下）。マーカーのタイルは
      * マーカーの帯なので、ポリゴン等の map item より上（最後に描く）。ポリゴンのタイルは
-     * ポリゴンの帯の一番下（GroundImage の上、map item の下）。
+     * ポリゴンの帯の一番下（GroundImage の上、map item の下）。ポリラインのタイルはその上
+     * （[HereOverlayStacking.polylineTilePriority]）。どちらも版が変わるたびに作り直すので、
+     * もう片方があればそれを基準に置き、作った順に左右されないようにする。
      */
     private fun priorityFor(state: RasterLayerState): MapLayerPriority =
         if (state.id.startsWith("marker-tile-")) {
             MapLayerPriorityBuilder().renderedLast().build()
         } else if (state.id == POLYGON_TILE_LAYER_ID) {
-            HereOverlayStacking.polygonTilePriority()
+            HereOverlayStacking.polygonTilePriority(
+                beforeLayer = layerNameOf(POLYLINE_TILE_LAYER_ID).takeIf { POLYLINE_TILE_LAYER_ID in shapeTileLayers },
+            )
+        } else if (state.id == POLYLINE_TILE_LAYER_ID) {
+            HereOverlayStacking.polylineTilePriority(
+                afterLayer = layerNameOf(POLYGON_TILE_LAYER_ID).takeIf { POLYGON_TILE_LAYER_ID in shapeTileLayers },
+            )
         } else {
             HereOverlayStacking.rasterPriority()
         }
+
+    private fun layerNameOf(id: String) = "raster-layer-$id"
+
+    private fun isShapeTileLayer(id: String) = id == POLYGON_TILE_LAYER_ID || id == POLYLINE_TILE_LAYER_ID
 
     private fun updateLayer(
         handle: HereRasterLayerHandle,
@@ -178,6 +195,7 @@ class HereRasterLayerOverlayRenderer(
 
     private fun removeLayer(entity: RasterLayerEntityInterface<HereRasterLayerHandle>) {
         val handle = entity.layer
+        if (isShapeTileLayer(entity.state.id)) shapeTileLayers.remove(entity.state.id)
         handle.routeId?.let { tileServer.unregister(it) }
         handle.layer.destroy()
         handle.dataSource.destroy()
