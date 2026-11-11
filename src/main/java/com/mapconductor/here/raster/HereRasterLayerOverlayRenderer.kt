@@ -14,6 +14,7 @@ import com.here.sdk.mapview.datasource.TileUrlProviderCallback
 import com.here.sdk.mapview.datasource.TileUrlProviderFactory
 import com.here.sdk.mapview.datasource.TilingScheme
 import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
+import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
 import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
@@ -172,11 +173,17 @@ class HereRasterLayerOverlayRenderer(
             MapLayerPriorityBuilder().renderedLast().build()
         } else if (state.id == POLYGON_TILE_LAYER_ID) {
             HereOverlayStacking.polygonTilePriority(
+                beforeLayer = layerNameOf(CIRCLE_TILE_LAYER_ID).takeIf { CIRCLE_TILE_LAYER_ID in shapeTileLayers }
+                    ?: layerNameOf(POLYLINE_TILE_LAYER_ID).takeIf { POLYLINE_TILE_LAYER_ID in shapeTileLayers },
+            )
+        } else if (state.id == CIRCLE_TILE_LAYER_ID) {
+            HereOverlayStacking.polygonTilePriority(
                 beforeLayer = layerNameOf(POLYLINE_TILE_LAYER_ID).takeIf { POLYLINE_TILE_LAYER_ID in shapeTileLayers },
             )
         } else if (state.id == POLYLINE_TILE_LAYER_ID) {
             HereOverlayStacking.polylineTilePriority(
-                afterLayer = layerNameOf(POLYGON_TILE_LAYER_ID).takeIf { POLYGON_TILE_LAYER_ID in shapeTileLayers },
+                afterLayer = layerNameOf(CIRCLE_TILE_LAYER_ID).takeIf { CIRCLE_TILE_LAYER_ID in shapeTileLayers }
+                    ?: layerNameOf(POLYGON_TILE_LAYER_ID).takeIf { POLYGON_TILE_LAYER_ID in shapeTileLayers },
             )
         } else {
             HereOverlayStacking.rasterPriority()
@@ -184,7 +191,7 @@ class HereRasterLayerOverlayRenderer(
 
     private fun layerNameOf(id: String) = "raster-layer-$id"
 
-    private fun isShapeTileLayer(id: String) = id == POLYGON_TILE_LAYER_ID || id == POLYLINE_TILE_LAYER_ID
+    private fun isShapeTileLayer(id: String) = id == POLYGON_TILE_LAYER_ID || id == CIRCLE_TILE_LAYER_ID || id == POLYLINE_TILE_LAYER_ID
 
     private fun updateLayer(
         handle: HereRasterLayerHandle,
