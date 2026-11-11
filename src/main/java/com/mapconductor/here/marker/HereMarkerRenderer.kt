@@ -2,9 +2,9 @@ package com.mapconductor.here.marker
 
 import com.here.sdk.core.Metadata
 import com.here.sdk.mapview.MapMarker
-import com.mapconductor.core.calculateZIndex
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.marker.AbstractMarkerOverlayRenderer
+import com.mapconductor.core.marker.MarkerDrawOrder
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.here.HereActualMarker
@@ -27,8 +27,9 @@ class HereMarkerRenderer(
         holder = holder,
         coroutine = coroutine,
     ) {
+    // HERE の drawOrder は整数。zIndex が第 1 キー、同じなら南（さらに西）が手前。
     private fun resolveDrawOrder(state: com.mapconductor.core.marker.MarkerState): Int =
-        state.zIndex ?: calculateZIndex(state.position)
+        MarkerDrawOrder.ofInt(state.zIndex, state.position)
 
     override val supportsAnimationOverlay: Boolean = true
 
