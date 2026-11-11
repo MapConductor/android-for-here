@@ -322,6 +322,7 @@ public final class com.mapconductor.here.marker.HereMarkerController$Companion {
 public final class com.mapconductor.here.marker.HereMarkerRenderer extends com.mapconductor.core.marker.AbstractMarkerOverlayRenderer<com.mapconductor.here.HereViewHolder, com.here.sdk.mapview.MapMarker> {
   public com.mapconductor.here.marker.HereMarkerRenderer(com.mapconductor.here.HereViewHolder, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.here.marker.HereMarkerRenderer(com.mapconductor.here.HereViewHolder, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  protected java.lang.Object applyDrawOrder(java.util.List<? extends com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public boolean getSupportsAnimationOverlay();
   public void setMarkerVisible(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>, boolean);
   public void setMarkerPosition(com.mapconductor.core.marker.MarkerEntityInterface<com.here.sdk.mapview.MapMarker>, com.mapconductor.core.features.GeoPoint);

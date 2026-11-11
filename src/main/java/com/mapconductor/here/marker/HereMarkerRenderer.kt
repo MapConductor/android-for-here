@@ -4,9 +4,9 @@ import com.here.sdk.core.Metadata
 import com.here.sdk.mapview.MapMarker
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.marker.AbstractMarkerOverlayRenderer
-import com.mapconductor.core.marker.MarkerDrawOrder
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
+import com.mapconductor.core.marker.MarkerState
 import com.mapconductor.here.HereActualMarker
 import com.mapconductor.here.HereViewHolder
 import com.mapconductor.here.toAnchor2D
@@ -16,6 +16,7 @@ import java.io.Serializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HereMarkerRenderer(
     holder: HereViewHolder,
@@ -27,9 +28,32 @@ class HereMarkerRenderer(
         holder = holder,
         coroutine = coroutine,
     ) {
-    // HERE の drawOrder は整数。zIndex が第 1 キー、同じなら南（さらに西）が手前。
-    private fun resolveDrawOrder(state: com.mapconductor.core.marker.MarkerState): Int =
-        MarkerDrawOrder.ofInt(state.zIndex, state.position)
+    // HERE の drawOrder は整数で、しかも小さい値でしか効かない（タブレットの実機で 2849 は
+    // 効き、4274 以上は無視されて足した順になった）。zIndex と位置を 1 つの値に詰める余地が
+    // 無いので、全マーカーを [drawOrderOf]（zIndex が第 1 キー、同じなら画面で下が手前）で
+    // 並べた順位を 0..[MAX_DRAW_ORDER] に割り振る。足す・変える・地図が回るたびに振り直す。
+    private val live = LinkedHashMap<String, Pair<MapMarker, MarkerState>>()
+
+    private fun track(
+        marker: MapMarker,
+        state: MarkerState,
+    ) = synchronized(live) { live[state.id] = marker to state }
+
+    private suspend fun assignDrawOrders() {
+        val sorted = synchronized(live) { live.values.toList() }.sortedBy { (_, state) -> drawOrderOf(state) }
+        if (sorted.isEmpty()) return
+        val last = (sorted.size - 1).coerceAtLeast(1).toLong()
+        withContext(coroutine.coroutineContext) {
+            sorted.forEachIndexed { i, (marker, _) ->
+                // 数が多いと順位を間引く（隣どうしが同じ値になり、その間だけ足した順になる）。
+                val order = if (sorted.size <= MAX_DRAW_ORDER + 1) i else (i * MAX_DRAW_ORDER / last).toInt()
+                if (marker.drawOrder != order) marker.drawOrder = order
+            }
+        }
+    }
+
+    // 地図が回ったら、今の向きで順位を振り直す。
+    override suspend fun applyDrawOrder(entities: List<MarkerEntityInterface<HereActualMarker>>) = assignDrawOrders()
 
     override val supportsAnimationOverlay: Boolean = true
 
@@ -66,7 +90,6 @@ class HereMarkerRenderer(
                         params.bitmapIcon.toMapImage(),
                         params.bitmapIcon.toAnchor2D(),
                     ).apply {
-                        drawOrder = resolveDrawOrder(params.state)
                         metadata =
                             Metadata().apply {
                                 // Always include MapConductor marker id
@@ -75,6 +98,7 @@ class HereMarkerRenderer(
                                 putExtras(params.state.extra)
                             }
                     }
+                track(marker, params.state)
                 return@map marker
             }
 
@@ -85,6 +109,7 @@ class HereMarkerRenderer(
     }
 
     override suspend fun onRemove(data: List<MarkerEntityInterface<HereActualMarker>>) {
+        synchronized(live) { data.forEach { live.remove(it.state.id) } }
         coroutine.launch {
             val markers: List<HereActualMarker> = data.mapNotNull { params -> params.marker }
             if (markers.isNotEmpty()) {
@@ -94,7 +119,7 @@ class HereMarkerRenderer(
     }
 
     override suspend fun onPostProcess() {
-        // Do nothing here
+        assignDrawOrders()
     }
 
     override suspend fun onChange(
@@ -112,12 +137,15 @@ class HereMarkerRenderer(
             }
             marker.coordinates =
                 GeoPoint.from(params.current.state.position).toGeoCoordinates()
-            marker.drawOrder = resolveDrawOrder(params.current.state)
+            track(marker, params.current.state)
 
             // Hereはマーカーを再作成しなくてよいので、同じマーカーのインスタンスを返す
             marker
         }
 }
+
+/** マーカーの drawOrder に使う上限。実機で効いた最大（2849）より小さく取る。 */
+private const val MAX_DRAW_ORDER = 2047
 
 // Convert MarkerState.extra into HERE Metadata entries.
 // Supports Map<String, Any?> by best-effort type mapping; otherwise stores value as string under key "mc:extra".
