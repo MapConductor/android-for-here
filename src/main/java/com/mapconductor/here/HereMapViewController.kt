@@ -1,5 +1,8 @@
 package com.mapconductor.here
 
+import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
+import com.mapconductor.core.circle.CircleTiler
+import com.mapconductor.core.circle.circleTileRasterLayerState
 import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
 import com.mapconductor.core.polygon.PolygonTiler
 import com.mapconductor.core.polygon.polygonTileRasterLayerState
@@ -197,6 +200,16 @@ class HereMapViewController(
                         rasterLayerController.upsert(polylineTileRasterLayerState(template, tileSize))
                     } else {
                         rasterLayerController.removeById(POLYLINE_TILE_LAYER_ID)
+                    }
+                }
+            }
+        circleController.tiler =
+            CircleTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(circleTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(CIRCLE_TILE_LAYER_ID)
                     }
                 }
             }
