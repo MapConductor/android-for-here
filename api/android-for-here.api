@@ -156,6 +156,9 @@ public final class com.mapconductor.here.HereMapViewController extends com.mapco
 public final class com.mapconductor.here.HereMapViewController$Companion {
 }
 public final class com.mapconductor.here.HereMapViewControllerCameraKt {
+  public static final double viewportHeightDp(com.mapconductor.here.HereMapViewController);
+  public static final java.lang.Double verticalFov(com.mapconductor.here.HereMapViewController);
+  public static final com.mapconductor.core.map.MapCameraPosition toNativeCamera(com.mapconductor.here.HereMapViewController, com.mapconductor.core.map.MapCameraPosition);
   public static final void handleMoveCamera(com.mapconductor.here.HereMapViewController, com.mapconductor.core.map.MapCameraPosition);
   public static final void handleAnimateCamera(com.mapconductor.here.HereMapViewController, com.mapconductor.core.map.MapCameraPosition, long);
   public static final void handleFitBounds(com.mapconductor.here.HereMapViewController, com.mapconductor.core.features.GeoRectBounds, int);

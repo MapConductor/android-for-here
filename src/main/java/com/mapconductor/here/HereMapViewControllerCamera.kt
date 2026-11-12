@@ -11,8 +11,12 @@ import com.here.sdk.mapview.MapCameraAnimationFactory
 import com.here.sdk.mapview.MapMeasure
 import com.here.time.Duration
 import com.mapconductor.core.features.GeoRectBounds
+import com.mapconductor.core.map.CameraPaddingEmulation
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.VisibleRegion
+import com.mapconductor.core.spherical.Spherical
+import kotlin.math.atan
+import kotlin.math.hypot
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,11 +25,52 @@ import kotlinx.coroutines.launch
 // HERE は「動き終わった」を通知しないので、更新が止まったところを
 // デバウンスで作っている。範囲制限もネイティブ API が無く、停止時に
 // 矩形内へクランプして再適用する。
+
+/** 地図の高さ（dp）。パディングのエミュレーションで遠近を解くのに使う。 */
+internal fun HereMapViewController.viewportHeightDp(): Double {
+    val density = holder.mapView.resources.displayMetrics.density
+    return holder.mapView.height / density.toDouble()
+}
+
+/**
+ * HERE のカメラの縦方向の視野角（度）。SDK に取得 API が無いので、今のカメラから測る。
+ *
+ * ピンホールカメラでは、注視点で横に 1 m ずらすと `焦点距離 / 注視点までの距離` px 動く。
+ * HERE は注視点までの距離（[MapCamera.State.distanceToTargetInMeters]）を返すので、
+ * 横の 1 m が何 px かを投影で測れば焦点距離が出る。TB520FU では地図の大きさ・向き・
+ * 画面密度によらず約 3550 px で、縦の視野角は縦長の全画面で約 45°、横長で約 29°。
+ */
+internal fun HereMapViewController.verticalFov(): Double? {
+    val height = holder.mapView.height
+    if (height <= 0) return null
+    val state = holder.mapView.camera.state
+    val target = state.targetCoordinates.toGeoPoint()
+    val sideways = Spherical.computeOffset(target, 100.0, state.orientationAtTarget.bearing + 90.0)
+    val a = holder.mapView.geoToViewCoordinates(target.toGeoCoordinates())
+    val b = holder.mapView.geoToViewCoordinates(sideways.toGeoCoordinates())
+    if (a != null && b != null && state.distanceToTargetInMeters > 0) {
+        val pxPerMeter = hypot(b.x - a.x, b.y - a.y) / 100.0
+        if (pxPerMeter > 0) focalLengthPx = state.distanceToTargetInMeters * pxPerMeter
+    }
+    val f = focalLengthPx ?: return null
+    return Math.toDegrees(2 * atan((height / 2.0) / f))
+}
+
+/** パディングを中心のずらしに置き換えたカメラ。paddings が null なら今のパディングを使い続ける。 */
+internal fun HereMapViewController.toNativeCamera(position: MapCameraPosition): MapCameraPosition {
+    position.paddings?.let { cameraPaddings = it }
+    return CameraPaddingEmulation.toNativeCamera(
+        position.copy(paddings = cameraPaddings),
+        verticalFov(),
+        viewportHeightDp(),
+    )
+}
+
 internal fun HereMapViewController.handleMoveCamera(position: MapCameraPosition) {
     lastRequestedCameraPosition = position
     val request = cameraRequestGeneration.incrementAndGet()
     val camera = this.holder.mapView.camera
-    val adjustCameraUpdate = position.toMapCameraUpdate()
+    val adjustCameraUpdate = toNativeCamera(position).toMapCameraUpdate()
 
     camera.applyUpdate(adjustCameraUpdate)
 
@@ -47,7 +92,7 @@ internal fun HereMapViewController.handleAnimateCamera(
     cameraRequestGeneration.incrementAndGet()
     val camera = this.holder.mapView.camera
 
-    val display = position.toHereDisplayCamera()
+    val display = toNativeCamera(position).toHereDisplayCamera()
 
 //      bowFactor > 0: 最初にズームアウト → 到達時にズームイン
 //      bowFactor < 0: 最初にズームイン → 到達時にズームアウト（ややレア）
@@ -180,7 +225,12 @@ internal fun HereMapViewController.getMapCameraPosition(cameraState: MapCamera.S
                 farRight = holder.fromScreenOffsetSync(Offset(mapWidth, 0.0f)),
             )
         val logicalCamera =
-            HereCameraStateSnapshot(cameraState, lastRequestedCameraPosition?.tilt).toMapCameraPosition()
+            CameraPaddingEmulation.fromNativeCamera(
+                HereCameraStateSnapshot(cameraState, lastRequestedCameraPosition?.tilt).toMapCameraPosition(),
+                cameraPaddings,
+                verticalFov(),
+                viewportHeightDp(),
+            )
         return@let logicalCamera.copy(visibleRegion = visibleRegion)
     }
 }
