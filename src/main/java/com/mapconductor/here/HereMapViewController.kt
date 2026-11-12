@@ -1,6 +1,9 @@
 package com.mapconductor.here
 
 import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
+import com.mapconductor.core.map.CameraPaddingEmulation
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapPaddingsInterface
 import com.mapconductor.core.circle.CircleTiler
 import com.mapconductor.core.circle.circleTileRasterLayerState
 import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
@@ -77,6 +80,18 @@ class HereMapViewController(
     internal var markerAnimateStartListener: OnMarkerEventHandler? = null
     internal var markerAnimateEndListener: OnMarkerEventHandler? = null
     internal var lastRequestedCameraPosition: MapCameraPosition? = null
+
+    /**
+     * 今カメラに付いているパディング（dp）。
+     *
+     * HERE の principal point は使わない。flyTo のアニメーションに載らず、付けた瞬間に
+     * 画面が跳ぶため。代わりにカメラ中心をずらして再現し（[CameraPaddingEmulation]）、
+     * 読むときに元へ戻すためにここで覚えておく。
+     */
+    internal var cameraPaddings: MapPaddingsInterface = MapPaddings.Zeros
+
+    /** 最後に測れたカメラの焦点距離（px）。HERE は地図の大きさによらず一定。 */
+    internal var focalLengthPx: Double? = null
     internal val cameraRequestGeneration = AtomicLong(0L)
 
     // HERE's MapCameraListener provides only continuous updates. Synthesize a "move end" after an idle window

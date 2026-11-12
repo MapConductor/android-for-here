@@ -72,6 +72,7 @@ fun MapCameraPosition.Companion.from(position: MapCameraPositionInterface): MapC
                 tilt = position.tilt,
                 paddings = position.paddings,
                 visibleRegion = position.visibleRegion,
+                fov = position.fov,
             )
     }
 
