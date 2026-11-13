@@ -9,6 +9,7 @@ import com.mapconductor.core.ResourceProvider
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.features.GeoRectBounds
+import com.mapconductor.core.geometry.densifyPolygonRing
 import com.mapconductor.core.normalizeLng
 import com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer
 import com.mapconductor.core.polygon.PolygonEntityInterface
@@ -16,6 +17,7 @@ import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polygon.splitPolygonWithHolesIntoSimpleRings
 import com.mapconductor.core.polygon.unionHoles
 import com.mapconductor.here.HereActualPolygon
+import com.mapconductor.here.HereOverlayStacking
 import com.mapconductor.here.HereViewHolder
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -144,7 +146,7 @@ class HerePolygonOverlayRenderer(
                 }
             }
             if (finger.zIndex != prevFinger.zIndex) {
-                polygon.forEach { it.drawOrder = current.state.zIndex.coerceIn(0, 511) }
+                polygon.forEach { it.drawOrder = HereOverlayStacking.polygonDrawOrder(current.state.zIndex) }
             }
 
             polygon
@@ -160,7 +162,7 @@ class HerePolygonOverlayRenderer(
             val strokeWidth = ResourceProvider.dpToPx(state.strokeWidth)
             val transparentFill = Color.valueOf(0f, 0f, 0f, 0f)
             val fillColor = Color.valueOf(state.fillColor.toArgb())
-            val order = state.zIndex.coerceIn(0, 511)
+            val order = HereOverlayStacking.polygonDrawOrder(state.zIndex)
 
             buildList {
                 // 塗り: 穴を持たないピース群へ分解し、1 ピース 1 枚で塗る。
@@ -230,22 +232,17 @@ class HerePolygonOverlayRenderer(
             Color.valueOf(state.fillColor.toArgb()),
             Color.valueOf(state.strokeColor.toArgb()),
             outlineWidth,
-        ).apply { drawOrder = state.zIndex.coerceIn(0, 511) }
+        ).apply { drawOrder = HereOverlayStacking.polygonDrawOrder(state.zIndex) }
     }
 
     private fun toRing(
         points: List<GeoPointInterface>,
         geodesic: Boolean,
     ): List<GeoCoordinates> =
-        (
-            if (geodesic) {
-                com.mapconductor.core.spherical
-                    .WGS84Geodesic
-                    .createInterpolatePoints(points)
-            } else {
-                points
-            }
-        ).map { GeoCoordinates(it.latitude, normalizeLng(it.longitude)) }
+        // 閉じる辺（末尾 → 先頭）も他の辺と同じく補間する（塗りと輪郭が同じネイティブポリゴン）。
+        // geodesic は大圏、geodesic=false は緯度経度の線形補間（ポリラインの false と同じ線）。
+        densifyPolygonRing(points, geodesic)
+            .map { GeoCoordinates(it.latitude, normalizeLng(it.longitude)) }
             .let { pts -> if (pts.size >= 2 && pts.first() == pts.last()) pts.dropLast(1) else pts }
 
     /** [toRing] と同じ補間・正規化を、分割へ渡すため GeoPointInterface のまま返す。 */
@@ -253,15 +250,9 @@ class HerePolygonOverlayRenderer(
         points: List<GeoPointInterface>,
         geodesic: Boolean,
     ): List<GeoPointInterface> =
-        (
-            if (geodesic) {
-                com.mapconductor.core.spherical
-                    .WGS84Geodesic
-                    .createInterpolatePoints(points)
-            } else {
-                points
-            }
-        ).map { GeoPoint(latitude = it.latitude, longitude = normalizeLng(it.longitude)) }
+        // 閉じる辺（末尾 → 先頭）も他の辺と同じく補間する（塗りと輪郭が同じネイティブポリゴン）。
+        // geodesic は大圏、geodesic=false は緯度経度の線形補間（ポリラインの false と同じ線）。
+        densifyPolygonRing(points, geodesic).map { GeoPoint(latitude = it.latitude, longitude = normalizeLng(it.longitude)) }
 
     private fun boundsOf(points: List<GeoPointInterface>): GeoRectBounds? {
         if (points.isEmpty()) return null

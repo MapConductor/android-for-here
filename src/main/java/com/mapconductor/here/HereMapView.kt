@@ -1,15 +1,11 @@
 package com.mapconductor.here
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.node.Ref
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.here.sdk.mapview.MapProjection as HereMapProjection
 import com.here.sdk.mapview.MapRenderMode
 import com.here.sdk.mapview.MapView
@@ -22,6 +18,7 @@ import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapProjection
+import com.mapconductor.core.map.MapViewStyle
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerOverlayRendererInterface
 import com.mapconductor.core.marker.MarkerRenderingStrategyInterface
@@ -43,7 +40,6 @@ import com.mapconductor.here.raster.HereRasterLayerController
 import com.mapconductor.here.raster.HereRasterLayerOverlayRenderer
 import java.util.concurrent.atomic.AtomicBoolean
 import android.annotation.SuppressLint
-import android.view.ViewGroup
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -63,6 +59,15 @@ fun HereMapView(
     onCameraMove: OnCameraMoveHandler? = null,
     onCameraMoveEnd: OnCameraMoveHandler? = null,
     projection: MapProjection = MapProjection.Globe,
+    /**
+     * How the map looks, when the app states it rather than naming a design.
+     *
+     * A vector style *is* the basemap. `com.mapconductor:vectorstyle` builds
+     * one; what happens underneath depends on this backend and the app does
+     * not have to know.
+     */
+    style: MapViewStyle? = null,
+    onStyleDiagnostics: ((List<String>) -> Unit)? = null,
     content: (@Composable HereViewScope.() -> Unit)? = null,
 ) {
     // Warmup the tile server early to reduce latency for raster layers
@@ -72,7 +77,6 @@ fun HereMapView(
     val scope = remember { HereViewScope() }
     val controllerRef = remember { Ref<HereMapViewController>() }
     val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val registry = remember { scope.buildRegistry() }
     val cameraState = remember { mutableStateOf<MapCameraPositionInterface?>(state.cameraPosition) }
     // Capture the desired initial camera before any early camera callbacks can overwrite state.
@@ -139,6 +143,10 @@ fun HereMapView(
             controller.setMapClickListener(onMapClick)
             controller.setMapLongClickListener(onMapLongClick)
             state.setController(controller)
+            // コントローラの既定値（NormalDay）のままリスナーを繋ぐと、それが state へ返り、
+            // アプリが渡した（あるいは回転後に復元した）デザインが NormalDay に化ける。
+            // 下の loadScene は state のデザインを読むので、その前に揃えておく。
+            controller.mapDesignType = state.mapDesignType
             controller.setMapDesignTypeChangeListener(state::onMapDesignTypeChange)
             cameraRestriction?.let { controller.setCameraRestriction(it) }
 
@@ -210,50 +218,18 @@ fun HereMapView(
         scope = scope,
         registry = registry,
         onMapLoaded = onMapLoaded,
-        customDisposableEffect = { _, holderRef ->
-
-            // HERE specific DisposableEffect logic
-            DisposableEffect(lifecycle) {
-                val stateId = state.id // from BaseMapViewState
-                val observer =
-                    object : DefaultLifecycleObserver {
-                        override fun onResume(owner: LifecycleOwner) {
-                            // Do not call here to keep the MapView instance
-                            // holderRef.value?.mapView?.onResume()
-                        }
-
-                        override fun onPause(owner: LifecycleOwner) {
-                            // Do not call here to keep the MapView instance
-                            // holderRef.value?.mapView?.onPause()
-                        }
-
-                        override fun onDestroy(owner: LifecycleOwner) {
-                            val currentHolder = holderRef.value
-                            if (currentHolder != null) {
-                                val activity = context.findActivity()
-                                if (activity?.isChangingConfigurations == true) {
-                                    (currentHolder.mapView.parent as? ViewGroup)?.removeView(currentHolder.mapView)
-                                } else {
-                                    // Ensure these calls are safe if mapView might be null or already destroyed
-                                    currentHolder.mapView.onPause()
-                                    currentHolder.mapView.onDestroy()
-                                    // Real teardown: free overlay controllers (tile-server
-                                    // routes, marker managers) and cancel the controller scope.
-                                    HereMapViewControllerStore.get(stateId)?.destroy()
-                                    HereMapViewControllerStore.remove(stateId) // Clean up from your store
-                                }
-                            }
-                        }
-                    }
-                lifecycle.addObserver(observer)
-                onDispose {
-                    lifecycle.removeObserver(observer)
-                }
-            }
+        // Created resumed in viewProvider, so paused before it is destroyed. A
+        // MapView left alive keeps its render loop and, through its listeners,
+        // the controller with every overlay.
+        onDestroyMapView = { mapView ->
+            mapView.onPause()
+            mapView.onDestroy()
         },
         // Pass content if it needs to be rendered within the overlay providers in MapViewBase,
         // or handle it here if it's specific to HereMapView structure before calling MapViewBase.
         // For now, assuming content relates to overlay definitions.
+        style = style,
+        onStyleDiagnostics = onStyleDiagnostics,
         content = content, // This might need adjustment based on how overlays are handled
     )
 }

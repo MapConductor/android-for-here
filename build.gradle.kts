@@ -97,6 +97,15 @@ dependencies {
             ),
         ),
     )
+    // 実機テスト（HereMapViewSaverTest）は MapScheme などを実行時に読むので、テスト APK には同梱する。
+    androidTestImplementation(
+        fileTree(
+            mapOf(
+                "dir" to rootDir.resolve("libs").toString(),
+                "include" to arrayOf("heresdk*.jar", "heresdk*.aar"),
+            ),
+        ),
+    )
     if (findProject(":android-sdk-compose") != null) {
         api(project(":android-sdk-compose"))
     } else {

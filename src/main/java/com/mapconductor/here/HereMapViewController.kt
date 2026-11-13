@@ -1,5 +1,14 @@
 package com.mapconductor.here
 
+import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
+import com.mapconductor.core.map.CameraPaddingEmulation
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapPaddingsInterface
+import com.mapconductor.core.circle.CircleTiler
+import com.mapconductor.core.circle.circleTileRasterLayerState
+import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
+import com.mapconductor.core.polygon.PolygonTiler
+import com.mapconductor.core.polygon.polygonTileRasterLayerState
 import HereMapDesignTypeChangeHandler
 import HereMapViewControllerInterface
 import com.here.sdk.core.Point2D
@@ -29,7 +38,10 @@ import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.core.marker.dispatchGeoMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
 import com.mapconductor.core.polyline.OnPolylineEventHandler
+import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
 import com.mapconductor.core.polyline.PolylineState
+import com.mapconductor.core.polyline.PolylineTiler
+import com.mapconductor.core.polyline.polylineTileRasterLayerState
 import com.mapconductor.here.circle.HereCircleController
 import com.mapconductor.here.groundimage.HereGroundImageController
 import com.mapconductor.here.marker.HereMarkerController
@@ -68,6 +80,18 @@ class HereMapViewController(
     internal var markerAnimateStartListener: OnMarkerEventHandler? = null
     internal var markerAnimateEndListener: OnMarkerEventHandler? = null
     internal var lastRequestedCameraPosition: MapCameraPosition? = null
+
+    /**
+     * 今カメラに付いているパディング（dp）。
+     *
+     * HERE の principal point は使わない。flyTo のアニメーションに載らず、付けた瞬間に
+     * 画面が跳ぶため。代わりにカメラ中心をずらして再現し（[CameraPaddingEmulation]）、
+     * 読むときに元へ戻すためにここで覚えておく。
+     */
+    internal var cameraPaddings: MapPaddingsInterface = MapPaddings.Zeros
+
+    /** 最後に測れたカメラの焦点距離（px）。HERE は地図の大きさによらず一定。 */
+    internal var focalLengthPx: Double? = null
     internal val cameraRequestGeneration = AtomicLong(0L)
 
     // HERE's MapCameraListener provides only continuous updates. Synthesize a "move end" after an idle window
@@ -88,6 +112,8 @@ class HereMapViewController(
         groundImageController.clear()
         circleController.clear()
         rasterLayerController.clear()
+        // 拡張モジュール（クラスタリングなど）が登録した Strategy のマーカーも消す。
+        clearStrategyMarkerControllers()
     }
 
     override fun setMarkerAnimationOverlayHost(host: MarkerAnimationOverlayHost?) {
@@ -167,6 +193,41 @@ class HereMapViewController(
                 }
             },
         )
+
+        // Many polygons are drawn as raster tiles, shown through the same RasterLayer
+        // controller as the marker tiles (upsert / removeById, never the app's layers).
+        polygonController.tiler =
+            PolygonTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polygonTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYGON_TILE_LAYER_ID)
+                    }
+                }
+            }
+
+        // Many polylines too: the same raster layer path, in the polyline band.
+        polylineController.tiler =
+            PolylineTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polylineTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYLINE_TILE_LAYER_ID)
+                    }
+                }
+            }
+        circleController.tiler =
+            CircleTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(circleTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(CIRCLE_TILE_LAYER_ID)
+                    }
+                }
+            }
     }
 
     override fun moveCamera(position: MapCameraPosition) = handleMoveCamera(position)
@@ -238,7 +299,7 @@ class HereMapViewController(
         polygonController.clickListener = listener
     }
 
-    private var mapDesignType: HereMapDesignType = HereMapDesign.NormalDay
+    internal var mapDesignType: HereMapDesignType = HereMapDesign.NormalDay
     private var mapDesignTypeChangeListener: HereMapDesignTypeChangeHandler? = null
 
     override fun applyUISettings(settings: MapUISettings) {
